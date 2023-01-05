@@ -1,11 +1,12 @@
-## Process this file with automake to produce Makefile.in
-
-## Created by Anjuta
 
 AM_CPPFLAGS = \
 	-DPACKAGE_LOCALE_DIR=\""$(localedir)"\" \
-	-DPACKAGE_SRC_DIR=\""$(srcdir)"\" \
-	-DPACKAGE_DATA_DIR=\""$(pkgdatadir)"\"
+	-DPACKAGE_SRC_DIR=\""$(srcdir). \
+	$(GLIBMM_CFLAGS). \
+	$(CUNIT_CFLAGS)"\" \
+	-DPACKAGE_DATA_DIR=\""$(pkgdatadir)"\" \
+	-DOCTETOS_CAVE_LOCALEDIR=\"${OCTETOS_CAVE_LOCALEDIR}\"
+	
 
 AM_CFLAGS =\
 	 -Wall\
@@ -13,14 +14,7 @@ AM_CFLAGS =\
 
 bin_PROGRAMS = cave
 
-cave_SOURCES = \
-	main.cc
-
+cave_SOURCES = main.cc
 cave_LDFLAGS = 
-
-cave_LDADD = 
-
-
-if NATIVE_WIN32
-cave_LDFLAGS += -mwindows
-endif
+cave_LDADD = $(OCTETOS_CAVE_BASE_LIBS)
+cave_CXXFLAGS = $(OCTETOS_CAVE_BASE_FLAGS)

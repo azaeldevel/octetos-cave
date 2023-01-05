@@ -120,6 +120,10 @@ do
 	echo "Making $dr/aclocal.m4 writable ..."
 	test -r $dr/aclocal.m4 && chmod u+w $dr/aclocal.m4
       fi
+	test -n "$srcdir" || srcdir=`dirname "$0"`
+	test -n "$srcdir" || srcdir=.
+
+	autoreconf --force --install --verbose --warnings=all "$srcdir"
       if grep "^IT_PROG_INTLTOOL" configure.ac >/dev/null; then
         echo "Running intltoolize..."
 	intltoolize --copy --force --automake
