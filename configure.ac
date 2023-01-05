@@ -20,7 +20,7 @@ AC_SUBST(OCTETOS_CAVE_LOCALEDIR)
 
 LT_INIT
 PKG_CHECK_MODULES(OCTETOS_CAVE_BASE, [octetos-core glibmm-2.4])
-s
+
 AC_ARG_ENABLE([os],[AS_HELP_STRING([--enable-os],[Enable configuration for particular OS])])
 case $enableval in
 	  	archlinux)
@@ -52,6 +52,7 @@ fi
 AM_CONDITIONAL(DATABASE_ENGINE_MARIA,false)
 AM_CONDITIONAL(DATABASE_ENGINE_MYSQL,false)
 AM_CONDITIONAL(DATABASE_ENGINE_POSTGRESQL,false)
+AM_CONDITIONAL(DATABASE_ENGINE_SQLITE,false)
 AC_ARG_ENABLE([database],[AS_HELP_STRING([--enable-database],[Enabling sopport for Database])])
 case $enableval in
 	maria)

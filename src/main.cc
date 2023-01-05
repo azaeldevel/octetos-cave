@@ -20,13 +20,16 @@
 
 #include <iostream>
 #include <glibmm/i18n.h>
+#include "config.h"
 
-bindtextdomain(GETTEXT_PACKAGE, OCTETOS_CAVE_LOCALEDIR);
-bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
-textdomain(GETTEXT_PACKAGE);
+
 
 int main()
 {
+	bindtextdomain(GETTEXT_PACKAGE, OCTETOS_CAVE_LOCALEDIR);
+	bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
+	textdomain(GETTEXT_PACKAGE);
+	
 	std::cout << _("Hello world!") << std::endl;
 	return 0;
 }

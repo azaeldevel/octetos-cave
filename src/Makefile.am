@@ -12,9 +12,9 @@ AM_CFLAGS =\
 	 -Wall\
 	 -g
 
-bin_PROGRAMS = cave
+bin_PROGRAMS = devel
 
-cave_SOURCES = main.cc
-cave_LDFLAGS = 
-cave_LDADD = $(OCTETOS_CAVE_BASE_LIBS)
-cave_CXXFLAGS = $(OCTETOS_CAVE_BASE_FLAGS)
+devel_LDADD = $(OCTETOS_CAVE_BASE_LIBS)
+devel_CXXFLAGS = $(OCTETOS_CAVE_BASE_FLAGS) -I$(top_builddir) -I/usr/include/glibmm-2.4 -I/usr/lib/glibmm-2.4/include -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include
+devel_SOURCES = main.cc
+devel_LDFLAGS = 
