@@ -1,6 +1,7 @@
 
 #include <glibmm/i18n.h>
 #include <string>
+#include <iostream>
 
 #include "config.h"
 #if defined LINUX_ARCH
@@ -19,15 +20,13 @@
 
 namespace oct::cave
 {
-
-
+typedef void* Handle;
 struct Data
 {
 	virtual const char* get_name() const = 0;
 	virtual const char* get_label() const = 0;
 
 };
-
 
 struct DataMaria : public Data
 {
@@ -56,6 +55,54 @@ struct DataMaria : public Data
 	unsigned long flags;	
 };
 
+
+template<typename D> class Result
+{
+public:
+	Result() : result(NULL)
+	{
+		std::cout << "Result()\n";
+	}
+	Result(Result<D>&& r) 
+	{
+		result = r.result;
+		r.result = NULL;
+		std::cout << "Result(Result<D>&& " << result << ")\n";
+	}
+	Result(Handle&& h)
+	{
+		result = h;
+		std::cout << "Result(Handle&& " << result << ")\n";
+	}
+	~Result()
+	{
+		if(result)
+		{
+			mysql_free_result((MYSQL_RES*)result);
+			result = NULL;
+		}
+	}
+
+	operator Handle()
+	{
+		return result;
+	}
+	Result& operator =(Result&& r)
+	{
+		result = r.result;
+		std::cout << "Result& operator =(Result&&  " << result << ")\n";
+		r.result = NULL;
+		return *this;
+	}
+	bool is_stored()const
+	{
+		return (result ? true : false);
+	}
+	
+private:
+	Handle result;
+};
+
 template<typename Data> class Connection
 {
 public:
@@ -66,6 +113,12 @@ public:
 	{
 		return connected;
 	}
+	operator Handle()
+	{
+		return connection;
+	}
+
+	Result<Data> execute(const std::string&);
 
 protected:
 
@@ -74,7 +127,6 @@ private:
 	bool connected;
 
 };
-
 
 
 }

@@ -104,4 +104,19 @@ namespace oct::cave
 			connection = NULL;
 		}		
 	}
+
+	template<> Result<DataMaria> Connection<DataMaria>::execute(const std::string& str)
+	{
+		if (mysql_query((MYSQL*)connection, str.c_str()) != 0) 
+		{
+			std::cout << "Erro : " << mysql_error((MYSQL*)connection) << "\n";
+			return Result<DataMaria>();
+		}
+
+		return Result<DataMaria>(mysql_store_result((MYSQL*)connection));
+	}
+
+
+
+
 }
