@@ -12,16 +12,18 @@ AM_CFLAGS =\
 	 -Wall\
 	 -g
 
-LIBS = $(OCTETOS_CAVE_BASE_LIBS) $(OCTETOS_CAVE_MARIA_LIBS) 
+LIBS = $(OCTETOS_CAVE_BASE_LIBS) 
 FLAGS = $(OCTETOS_CAVE_BASE_FLAGS) -I$(top_builddir) -I/usr/include/glibmm-2.4 -I/usr/lib/glibmm-2.4/include -I/usr/include/glib-2.0 -I/usr/lib/glib-2.0/include
 
+lib_LTLIBRARIES = 
 
-
-lib_LTLIBRARIES = liboctetos-cave.la
-
-liboctetos_cave_la_CXXFLAGS = $(FLAGS)
-liboctetos_cave_la_SOURCES = client.cc
-liboctetos_cave_la_LIBADD =  $(LIBS)
+if DATABASE_ENGINE_MARIA
+LIBS += $(OCTETOS_CAVE_MARIA_LIBS)
+lib_LTLIBRARIES += liboctetos-cave-maria.la
+liboctetos_cave_maria_la_CXXFLAGS = $(FLAGS)
+liboctetos_cave_maria_la_SOURCES = client.cc client-maria.cc
+liboctetos_cave_maria_la_LIBADD =  $(LIBS)  
+endif
 
 
 bin_PROGRAMS = devel
