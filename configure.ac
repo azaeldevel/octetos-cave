@@ -56,11 +56,11 @@ AM_CONDITIONAL(DATABASE_ENGINE_SQLITE,false)
 AC_ARG_ENABLE([database],[AS_HELP_STRING([--enable-database],[Enabling sopport for Database])])
 case $enableval in
 	maria)
-		PKG_CHECK_MODULES(OCTETOS_CAVE_MARIA, [octetos-db-maria])
+		PKG_CHECK_MODULES(OCTETOS_CAVE_MARIA, [libmariadb])
 		AM_CONDITIONAL(DATABASE_ENGINE_MARIA,true)
 	;;
 	postgresql)
-		PKG_CHECK_MODULES(OCTETOS_CAVE_PQ, [octetos-db-postgresql])
+		PKG_CHECK_MODULES(OCTETOS_CAVE_PQ, [libpq])
 		AM_CONDITIONAL(DATABASE_ENGINE_POSTGRESQL,true)
 	;;
 	*)
