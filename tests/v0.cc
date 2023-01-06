@@ -5,7 +5,6 @@
 
 #include <iostream>
 
-
 int v0_init(void)
 {
 	return 0;
@@ -17,6 +16,5 @@ int v0_clean(void)
 
 void v0_develop()
 {
-	std::cout << "Testing..\n";
-	
+	std::cout << "Testing cave component..\n";
 }

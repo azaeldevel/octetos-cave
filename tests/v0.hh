@@ -4,8 +4,6 @@
 
 #include <CUnit/Basic.h>
 
-
-
 #if __linux__
     
 #elif defined MSYS2

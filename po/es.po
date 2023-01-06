@@ -1,0 +1,7 @@
+#: main.cc:30
+msgid "UTF-8"
+msgstr ""
+
+#: main.cc:33
+msgid "Hello world!"
+msgstr "¡Hola mundo!"

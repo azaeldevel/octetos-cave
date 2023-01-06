@@ -1,7 +1,7 @@
 
 #include <CUnit/Basic.h>
 
-#ifdef MUPOSYS_CORE_ENABLE_TDD
+#ifdef OCTEOTOS_CAVE_ENABLE_TDD
 	#include "v0.hh"
 #endif
 
