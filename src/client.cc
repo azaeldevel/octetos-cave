@@ -74,4 +74,37 @@ namespace oct::cave
 	{
 		return flags;
 	}
+
+
+
+	template<> Connection<DataMaria>::Connection(const DataMaria& data): connection((void*)mysql_init(NULL)),connected(false)
+	{
+		MYSQL* con = mysql_real_connect(
+						 (MYSQL*)connection, 
+						 data.host.empty() ? NULL : data.host.c_str(), 
+						 data.user.empty() ? NULL : data.user.c_str(), 
+						 data.password.empty() ? NULL : data.password.c_str(), 
+						 data.database.empty() ? NULL : data.database.c_str(), 
+						 data.port, 
+						 data.socket.empty() ? NULL : data.socket.c_str(), 
+						 data.flags
+		                             	);
+		if(con)
+		{
+			connected = true;
+		}
+		else
+		{
+			mysql_close(con);
+			connection = NULL;
+		}		
+	}
+	template<> Connection<DataMaria>::~Connection()
+	{
+		if(connection)
+		{
+			mysql_close((MYSQL*)connection);
+			connection = NULL;
+		}		
+	}
 }

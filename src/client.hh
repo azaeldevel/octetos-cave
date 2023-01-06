@@ -56,32 +56,11 @@ struct DataMaria : public Data
 	unsigned long flags;	
 };
 
-template<typename Data>
-class Connection
+template<typename Data> class Connection
 {
 public:
-	Connection(const Data& data) : connection((void*)mysql_init(NULL)),connected(false)
-	{
-		MYSQL* con = mysql_real_connect((MYSQL*)connection, data.host.c_str(), data.user.c_str(), data.password.c_str(), NULL, 0, NULL, 0);
-		if(con)
-		{
-			connected = true;
-		}
-		else
-		{
-			mysql_close(con);
-			connection = NULL;
-		}		
-	}
-	
-	~Connection()
-	{
-		if(connection)
-		{
-			mysql_close((MYSQL*)connection);
-			connection = NULL;
-		}		
-	}
+	Connection(const Data& data);	
+	~Connection();
 
 	bool is_connected()const
 	{
@@ -95,6 +74,7 @@ private:
 	bool connected;
 
 };
+
 
 
 }
