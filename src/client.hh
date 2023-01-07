@@ -1,8 +1,14 @@
 
+#ifndef OCTETOS_CAVE_CLIENT_HH
+#define OCTETOS_CAVE_CLIENT_HH
+
+#ifdef OCTEOTOS_CAVE_ENABLE_DEV
+	#include <iostream>
+#endif
+
 #include <glibmm/i18n.h>
 #include <string>
-#include <iostream>
-
+#include <vector>
 #include "config.h"
 #if defined LINUX_ARCH
 	#include <mysql/mysql.h>
@@ -20,16 +26,16 @@
 
 namespace oct::cave
 {
+//class DataMaria;
+//template<> Connection<DataMaria>;
+
+
 typedef void* Handle;
-struct Data
-{
-	virtual const char* get_name() const = 0;
-	virtual const char* get_label() const = 0;
+typedef unsigned long index;
 
-};
-
-struct DataMaria : public Data
+class DataMaria
 {
+public:
 	DataMaria(const std::string& host,const std::string& user,const std::string& password);
 	DataMaria(const std::string& host,const std::string& user,const std::string& password,const std::string& database);
 	DataMaria(const std::string& host,const std::string& user,const std::string& password,unsigned int port);	
@@ -38,8 +44,8 @@ struct DataMaria : public Data
 	DataMaria(const std::string& host,const std::string& user,const std::string& password,const std::string& database,unsigned int port,const std::string& socket,unsigned long flags);
 	~DataMaria();
 		
-	virtual const char* get_name() const;
-	virtual const char* get_label() const;
+	const char* get_name() const;
+	const char* get_label() const;
 	const std::string& get_host()const;
 	const std::string& get_user()const;
 	const std::string& get_password()const;
@@ -47,32 +53,95 @@ struct DataMaria : public Data
 	const std::string& get_socket()const;
 	unsigned int get_port()const;
 	unsigned long get_flags()const;
-
-
-	//data members
+	
+private:
 	std::string host,user,password,database,socket;
 	unsigned int port;
 	unsigned long flags;	
 };
 
 
+template<class S>
+concept Row = requires(S s)
+{
+	s = (const char**)0;//operator de asignacio para arreglo de c strings
+};
+
+
+template<class S>
+concept RowMaria = requires(S s)
+{
+	s = (char**)0;//operator de asignacio para arreglo de c strings
+};
+
 template<typename D> class Result
 {
 public:
 	Result() : result(NULL)
 	{
-		std::cout << "Result()\n";
+		//std::cout << "Result()\n";
 	}
 	Result(Result<D>&& r) 
 	{
 		result = r.result;
 		r.result = NULL;
-		std::cout << "Result(Result<D>&& " << result << ")\n";
+		//std::cout << "Result(Result<D>&& " << result << ")\n";
 	}
 	Result(Handle&& h)
 	{
 		result = h;
-		std::cout << "Result(Handle&& " << result << ")\n";
+		//std::cout << "Result(Handle&& " << result << ")\n";
+	}
+	~Result();
+
+	operator Handle()
+	{
+		return result;
+	}
+	Result& operator =(Result&& r)
+	{
+		result = r.result;
+		//std::cout << "Result& operator =(Result&&  " << result << ")\n";
+		r.result = NULL;
+		return *this;
+	}
+	bool is_stored() const
+	{
+		return (result ? true : false);
+	}
+
+	unsigned long number_rows()const;
+		
+	template<Row S> void store(std::vector<S>& v)
+	{
+#ifdef OCTEOTOS_CAVE_ENABLE_DEV
+	std::cout << "template<typename S> void store(std::vector<S>& v)\n";
+#endif
+		
+	}
+
+private:
+	Handle result;
+};
+
+
+template<> class Result<DataMaria>
+{
+public:
+	Result() : result(NULL)
+	{
+		//std::cout << "Result()\n";
+	}
+	Result(Result<DataMaria>&& r) 
+	{
+		result = r.result;
+		r.result = NULL;
+		//std::cout << "Result(Result<D>&& " << result << ")\n";
+	}
+	Result(Handle&& h)
+	{
+		result = h;
+		//std::cout << "Result(Handle&& " << result << ")\n";
 	}
 	~Result()
 	{
@@ -90,18 +159,47 @@ public:
 	Result& operator =(Result&& r)
 	{
 		result = r.result;
-		std::cout << "Result& operator =(Result&&  " << result << ")\n";
+		//std::cout << "Result& operator =(Result&&  " << result << ")\n";
 		r.result = NULL;
 		return *this;
 	}
-	bool is_stored()const
+	bool is_stored() const
 	{
 		return (result ? true : false);
+	}
+
+	unsigned long number_rows()const
+	{
+		if(result) return mysql_num_rows((MYSQL_RES*)result);
+		
+		return 0;
+	}
+	
+	template<RowMaria S> void store(std::vector<S>& v)
+	{
+#ifdef OCTEOTOS_CAVE_ENABLE_DEV
+		//std::cout << "template<typename S> void store(std::vector<S>& v)\n";
+#endif
+		v.resize(number_rows());
+		char** row;
+		for(index i = 0; i < number_rows(); i++)
+		{
+			row = mysql_fetch_row((MYSQL_RES*)result);
+			if(row)
+			{
+				v.at(i) = row;
+			}
+			else
+			{
+				;//error
+			}
+		}	
 	}
 	
 private:
 	Handle result;
 };
+
 
 template<typename Data> class Connection
 {
@@ -130,3 +228,5 @@ private:
 
 
 }
+
+#endif

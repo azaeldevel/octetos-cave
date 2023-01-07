@@ -3,6 +3,7 @@
 
 #include "v0.hh"
 
+#include <string>
 #include <iostream>
 #include <src/client.hh>
 
@@ -14,6 +15,18 @@ int v0_clean(void)
 {
 	return 0;
 }
+
+struct DB_name
+{
+	std::string name;
+
+	char** operator =(char** s)
+	{
+		name = s[0];
+
+		return s;
+	}
+};
 
 void v0_develop()
 {
@@ -30,5 +43,17 @@ void v0_develop()
 	CU_ASSERT(not rest.is_stored());
 	rest = conn.execute("show databases;");
 	CU_ASSERT(rest.is_stored());
-	std::cout << "rest : " << (void*)rest << "\n";
+	//std::cout << "rest : " << (void*)rest << "\n";
+
+	std::cout << "Cantidad : " << rest.number_rows() << "\n";
+
+	std::vector<DB_name> vec_dbs;
+	rest.store(vec_dbs);
+	for(const DB_name& n : vec_dbs)
+	{
+		std::cout << "Database : " << n.name << "\n";
+	}
+
+	
+	
 }

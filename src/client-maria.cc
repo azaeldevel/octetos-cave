@@ -71,20 +71,28 @@ namespace oct::cave
 	{
 		return flags;
 	}
-
-
-
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	template<> Connection<DataMaria>::Connection(const DataMaria& data): connection((void*)mysql_init(NULL)),connected(false)
 	{
 		MYSQL* con = mysql_real_connect(
 						 (MYSQL*)connection, 
-						 data.host.empty() ? NULL : data.host.c_str(), 
-						 data.user.empty() ? NULL : data.user.c_str(), 
-						 data.password.empty() ? NULL : data.password.c_str(), 
-						 data.database.empty() ? NULL : data.database.c_str(), 
-						 data.port, 
-						 data.socket.empty() ? NULL : data.socket.c_str(), 
-						 data.flags
+						 data.get_host().empty() ? NULL : data.get_host().c_str(), 
+						 data.get_user().empty() ? NULL : data.get_user().c_str(), 
+						 data.get_password().empty() ? NULL : data.get_password().c_str(), 
+						 data.get_database().empty() ? NULL : data.get_database().c_str(), 
+						 data.get_port(), 
+						 data.get_socket().empty() ? NULL : data.get_socket().c_str(), 
+						 data.get_flags()
 		                             	);
 		if(con)
 		{
@@ -109,7 +117,7 @@ namespace oct::cave
 	{
 		if (mysql_query((MYSQL*)connection, str.c_str()) != 0) 
 		{
-			std::cout << "Erro : " << mysql_error((MYSQL*)connection) << "\n";
+			//std::cout << "Erro : " << mysql_error((MYSQL*)connection) << "\n";
 			return Result<DataMaria>();
 		}
 
