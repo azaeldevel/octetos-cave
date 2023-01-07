@@ -45,8 +45,6 @@ public:
 	DataMaria(const std::string& host,const std::string& user,const std::string& password,const std::string& database,unsigned int port,const std::string& socket,unsigned long flags);
 	~DataMaria();
 		
-	const char* get_name() const;
-	const char* get_label() const;
 	const std::string& get_host()const;
 	const std::string& get_user()const;
 	const std::string& get_password()const;
@@ -207,14 +205,40 @@ public:
 	{
 		return connected;
 	}
+	bool is_autocommit()const
+	{
+		return autocommit;
+	}
 	operator Handle()
 	{
 		return connection;
 	}
 
 	Result<Data> execute(const std::string&);
-	Result<Data> select(const std::string& fields,const std::string& table);
-	Result<Data> select(const std::string& fields,const std::string& table,const std::string& where);
+	Result<Data> select(const std::string& fields,const std::string& table)
+	{
+		std::string srtsql = "SELECT ";
+		srtsql += fields;
+		srtsql += " FROM ";
+		srtsql += table;
+		srtsql += ";";
+		std::cout << srtsql << "\n";
+
+		return execute(srtsql);
+	}
+	Result<Data> select(const std::string& fields,const std::string& table,const std::string& where)
+	{
+		std::string srtsql = "SELECT ";
+		srtsql += fields;
+		srtsql += " FROM ";
+		srtsql += table;
+		srtsql += " WHERE ";
+		srtsql += where;
+		srtsql += ";";
+		std::cout << srtsql << "\n";
+
+		return execute(srtsql);
+	}
 	
 	bool begin();
 	bool commit();
@@ -226,8 +250,8 @@ public:
 protected:
 
 private:
-	void* connection;
 	bool connected;
+	void* connection;
 	bool autocommit;
 };
 

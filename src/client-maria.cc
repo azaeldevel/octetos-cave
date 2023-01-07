@@ -32,16 +32,6 @@ namespace oct::cave
 	}
 	
 	
-	const char* DataMaria::get_name() const
-	{
-		return "maria";
-	}
-	const char* DataMaria::get_label() const
-	{
-		return "Maria";
-	}
-
-	
 
 	const std::string& DataMaria::get_host()const
 	{
@@ -76,11 +66,10 @@ namespace oct::cave
 		
 	
 	
-	template<> bool Connection<DataMaria>::connect(const DataMaria& data, bool autocommit)
+	template<> bool Connection<DataMaria>::connect(const DataMaria& data, bool a)
 	{
-		if(connection) return false;//ya esta conectada
-		if(connected) return false;//ya esta conectada
-		
+		//if(connection) return false;//ya esta conectada
+		//if(connected) return false;//ya esta conectada		
 		MYSQL* con = mysql_real_connect(
 						 (MYSQL*)connection, 
 						 data.get_host().empty() ? NULL : data.get_host().c_str(), 
@@ -102,11 +91,13 @@ namespace oct::cave
 			connection = NULL;
 		}
 
+		if(mysql_autocommit(con,a) == 0) autocommit = a;
+
 		return connected;
 	}
-	template<> Connection<DataMaria>::Connection(const DataMaria& data, bool a): connection((void*)mysql_init(NULL)),connected(false), autocommit(a)
+	template<> Connection<DataMaria>::Connection(const DataMaria& d, bool a): connection((void*)mysql_init(NULL)),connected(false), autocommit(a)
 	{
-		connect(data,autocommit);
+		connect(d,a);
 	}
 	template<> Connection<DataMaria>::~Connection()
 	{

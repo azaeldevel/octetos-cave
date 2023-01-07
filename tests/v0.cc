@@ -28,14 +28,25 @@ struct DB_name
 	}
 };
 
+
+struct CatalogItem_testv0
+{
+	std::string number;
+
+	char** operator =(char** s)
+	{
+		number = s[0];
+
+		return s;
+	}
+};
+
 void v0_develop()
 {
 	std::cout << "Testing cave component..\n";
 
 	oct::cave::DataMaria dtm("localhost","muposys","123456","muposys-0-alpha");
-	std::cout << "Testing : " << dtm.get_label() << "..\n";
-	CU_ASSERT(strcmp(dtm.get_name(),"maria") == 0);
-	
+		
 	oct::cave::Connection<oct::cave::DataMaria> conn(dtm,true);
 	CU_ASSERT(conn.is_connected());
 	
@@ -54,6 +65,11 @@ void v0_develop()
 		std::cout << "Database : " << n.name << "\n";
 	}
 
-	
-	
+	oct::cave::Result<oct::cave::DataMaria> rest2  = conn.select("number","CatalogItem");
+	std::vector<CatalogItem_testv0> vec_items;
+	rest2.store(vec_items);
+	for(const CatalogItem_testv0& n : vec_items)
+	{
+		std::cout << "Item : " << n.number << "\n";
+	}
 }
