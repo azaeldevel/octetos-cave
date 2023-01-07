@@ -36,7 +36,7 @@ void v0_develop()
 	std::cout << "Testing : " << dtm.get_label() << "..\n";
 	CU_ASSERT(strcmp(dtm.get_name(),"maria") == 0);
 	
-	oct::cave::Connection<oct::cave::DataMaria> conn(dtm);
+	oct::cave::Connection<oct::cave::DataMaria> conn(dtm,true);
 	CU_ASSERT(conn.is_connected());
 	
 	oct::cave::Result<oct::cave::DataMaria> rest;

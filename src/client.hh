@@ -9,6 +9,7 @@
 #include <glibmm/i18n.h>
 #include <string>
 #include <vector>
+#include <list>
 #include "config.h"
 #if defined LINUX_ARCH
 	#include <mysql/mysql.h>
@@ -113,6 +114,7 @@ public:
 	unsigned long number_rows()const;
 		
 	template<Row S> void store(std::vector<S>& v);
+	template<Row S> void store(std::list<S>& v);
 
 private:
 	Handle result;
@@ -169,7 +171,7 @@ public:
 		return 0;
 	}
 	
-	template<RowMaria S> void store(std::vector<S>& v)
+	template<RowMaria R> void store(std::vector<R>& v)
 	{
 #ifdef OCTEOTOS_CAVE_ENABLE_DEV
 		//std::cout << "template<typename S> void store(std::vector<S>& v)\n";
@@ -193,43 +195,12 @@ public:
 private:
 	Handle result;
 };
-/*
-class ResultMaria : public Result<DataMaria>
-{
-public:	
-	ResultMaria();
-	ResultMaria(Result<DataMaria>&& r);
-	ResultMaria(Handle&& h);
-	~ResultMaria();
-
-	template<RowMaria S> void store(std::vector<S>& v)
-	{
-#ifdef OCTEOTOS_CAVE_ENABLE_DEV
-		//std::cout << "template<typename S> void store(std::vector<S>& v)\n";
-#endif
-		v.resize(number_rows());
-		char** row;
-		for(index i = 0; i < number_rows(); i++)
-		{
-			row = mysql_fetch_row((MYSQL_RES*)result);
-			if(row)
-			{
-				v.at(i) = row;
-			}
-			else
-			{
-				;//error
-			}
-		}	
-	}
-};*/
-
-
 
 template<typename Data> class Connection
 {
 public:
-	Connection(const Data& data);	
+	Connection();
+	Connection(const Data& data, bool autocommit);	
 	~Connection();
 
 	bool is_connected()const
@@ -242,13 +213,22 @@ public:
 	}
 
 	Result<Data> execute(const std::string&);
+	Result<Data> select(const std::string& fields,const std::string& table);
+	Result<Data> select(const std::string& fields,const std::string& table,const std::string& where);
+	
+	bool begin();
+	bool commit();
+	bool rollback();
+
+	bool connect(const Data&, bool autocommit);
+	void close();
 
 protected:
 
 private:
 	void* connection;
 	bool connected;
-
+	bool autocommit;
 };
 
 

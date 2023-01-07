@@ -73,34 +73,14 @@ namespace oct::cave
 	}
 	
 	
-	
-	
-	/*
-	ResultMaria::ResultMaria()
-	{
-	}
-	ResultMaria::ResultMaria(Result<DataMaria>&& r)
-	{
 		
-	}
-	ResultMaria::ResultMaria(Handle&& h) 
-	{
-		result = h;
-	}
-	ResultMaria::~ResultMaria()
-	{
-		if(result)
-		{
-			mysql_free_result((MYSQL_RES*)result);
-			result = NULL;
-		}
-	}*/
-
 	
 	
-	
-	template<> Connection<DataMaria>::Connection(const DataMaria& data): connection((void*)mysql_init(NULL)),connected(false)
+	template<> bool Connection<DataMaria>::connect(const DataMaria& data, bool autocommit)
 	{
+		if(connection) return false;//ya esta conectada
+		if(connected) return false;//ya esta conectada
+		
 		MYSQL* con = mysql_real_connect(
 						 (MYSQL*)connection, 
 						 data.get_host().empty() ? NULL : data.get_host().c_str(), 
@@ -118,8 +98,15 @@ namespace oct::cave
 		else
 		{
 			mysql_close(con);
+			connected = false;
 			connection = NULL;
-		}		
+		}
+
+		return connected;
+	}
+	template<> Connection<DataMaria>::Connection(const DataMaria& data, bool a): connection((void*)mysql_init(NULL)),connected(false), autocommit(a)
+	{
+		connect(data,autocommit);
 	}
 	template<> Connection<DataMaria>::~Connection()
 	{
@@ -142,6 +129,27 @@ namespace oct::cave
 	}
 
 
+	
+	template<> bool Connection<DataMaria>::commit()
+	{
+		if(connection) if(mysql_commit((MYSQL*)connection) == 0) return true;
+
+		return false;
+	}
+	template<> bool Connection<DataMaria>::rollback()
+	{
+		if(connection) if(mysql_rollback((MYSQL*)connection) == 0) return true;
+
+		return false;
+	}
 
 
+	template<> void Connection<DataMaria>::close()
+	{
+		if(connection)
+		{
+			mysql_close((MYSQL*)connection);
+			connection = NULL;
+		}
+	}
 }
