@@ -75,10 +75,27 @@ namespace oct::cave
 	
 	
 	
-	
-	
-	
-	
+	/*
+	ResultMaria::ResultMaria()
+	{
+	}
+	ResultMaria::ResultMaria(Result<DataMaria>&& r)
+	{
+		
+	}
+	ResultMaria::ResultMaria(Handle&& h) 
+	{
+		result = h;
+	}
+	ResultMaria::~ResultMaria()
+	{
+		if(result)
+		{
+			mysql_free_result((MYSQL_RES*)result);
+			result = NULL;
+		}
+	}*/
+
 	
 	
 	

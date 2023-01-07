@@ -112,13 +112,7 @@ public:
 
 	unsigned long number_rows()const;
 		
-	template<Row S> void store(std::vector<S>& v)
-	{
-#ifdef OCTEOTOS_CAVE_ENABLE_DEV
-	std::cout << "template<typename S> void store(std::vector<S>& v)\n";
-#endif
-		
-	}
+	template<Row S> void store(std::vector<S>& v);
 
 private:
 	Handle result;
@@ -199,6 +193,37 @@ public:
 private:
 	Handle result;
 };
+/*
+class ResultMaria : public Result<DataMaria>
+{
+public:	
+	ResultMaria();
+	ResultMaria(Result<DataMaria>&& r);
+	ResultMaria(Handle&& h);
+	~ResultMaria();
+
+	template<RowMaria S> void store(std::vector<S>& v)
+	{
+#ifdef OCTEOTOS_CAVE_ENABLE_DEV
+		//std::cout << "template<typename S> void store(std::vector<S>& v)\n";
+#endif
+		v.resize(number_rows());
+		char** row;
+		for(index i = 0; i < number_rows(); i++)
+		{
+			row = mysql_fetch_row((MYSQL_RES*)result);
+			if(row)
+			{
+				v.at(i) = row;
+			}
+			else
+			{
+				;//error
+			}
+		}	
+	}
+};*/
+
 
 
 template<typename Data> class Connection
