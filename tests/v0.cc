@@ -5,7 +5,7 @@
 
 #include <string>
 #include <iostream>
-#include <src/client.hh>
+#include <src/base.hh>
 
 int v0_init(void)
 {
@@ -43,7 +43,7 @@ struct CatalogItem_testv0
 
 void v0_develop()
 {
-	std::cout << "Testing cave component..\n";
+	//std::cout << "Testing cave component..\n";
 
 	oct::cave::DataMaria dtm("localhost","muposys","123456","muposys-0-alpha");
 		

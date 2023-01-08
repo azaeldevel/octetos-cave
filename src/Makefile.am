@@ -25,7 +25,7 @@ if DATABASE_ENGINE_MARIA
 LIBS += $(OCTETOS_CAVE_MARIA_LIBS)
 lib_LTLIBRARIES += liboctetos-cave-maria.la
 liboctetos_cave_maria_la_CXXFLAGS = $(FLAGS)
-liboctetos_cave_maria_la_SOURCES = client.cc client-maria.cc
+liboctetos_cave_maria_la_SOURCES = base.cc maria.cc
 liboctetos_cave_maria_la_LIBADD =  $(LIBS)  
 endif
 
