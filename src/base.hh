@@ -10,6 +10,9 @@
 #include <string>
 #include <vector>
 #include <list>
+#include <octetos/core/Exception-v3.hh>
+
+
 #include "config.h"
 #if defined LINUX_ARCH
 	#include <mysql/mysql.h>
@@ -30,6 +33,61 @@ namespace oct::cave
 //class DataMaria;
 //template<> Connection<DataMaria>;
 
+
+class Exception : public oct::core::v3::Exception
+{
+public:
+	enum ErrosCodes
+	{
+		NoErros,
+		NotYet,
+		IlegalOperation,
+		NotCopiable,
+		NotCopiableResult,
+		NotVoidObject,
+		DB_ERROR,
+		DB_ERROR_Result,
+		DB_ERROR_Result_Unknow,
+	};
+public:
+	Exception();
+	Exception(const Exception&);
+	Exception(Exception&&);
+
+	Exception(unsigned int code);
+	Exception(unsigned int code,const char* filename, unsigned int line);
+
+	Exception(unsigned int code,const char* message);
+	Exception(unsigned int code,const char* message,const char* filename, unsigned int line);
+
+	Exception(const std::string& message);
+	Exception(const std::string& message,const char* filename, unsigned int line);
+
+	Exception(unsigned int code,const std::string& message);
+	Exception(unsigned int code,const std::string& message,const char* filename, unsigned int line);
+	virtual ~Exception();
+
+	virtual const char* what() const throw ();
+
+private:
+};
+
+class ExceptionMaria : public Exception
+{
+public:
+public:
+	ExceptionMaria();
+	ExceptionMaria(const ExceptionMaria&);
+	ExceptionMaria(ExceptionMaria&&);
+
+	ExceptionMaria(unsigned int code,const char* state,const char* filename, unsigned int line);
+	virtual ~ExceptionMaria();
+
+	virtual const char* what() const throw ();
+
+private:
+	const char* state;
+};
 
 typedef void* Handle;
 typedef unsigned long index;
@@ -78,18 +136,22 @@ template<typename D> class Result
 public:
 	Result() : result(NULL)
 	{
-		//std::cout << "Result()\n";
+		std::cout << "Result()\n";
 	}
 	Result(Result<D>&& r) 
 	{
 		result = r.result;
 		r.result = NULL;
-		//std::cout << "Result(Result<D>&& " << result << ")\n";
+		std::cout << "Result(Result<D>&& " << result << ")\n";
+	}
+	Result(const Result<D>&) 
+	{
+		throw Exception(Exception::NotCopiableResult,__FILE__,__LINE__);
 	}
 	Result(Handle&& h)
 	{
 		result = h;
-		//std::cout << "Result(Handle&& " << result << ")\n";
+		std::cout << "Result(Handle&& " << result << ")\n";
 	}
 	~Result();
 
@@ -99,15 +161,22 @@ public:
 	}
 	Result& operator =(Result&& r)
 	{
+		if(result) throw Exception(Exception::NotVoidObject,__FILE__,__LINE__);
+
 		result = r.result;
-		//std::cout << "Result& operator =(Result&&  " << result << ")\n";
+		std::cout << "Result& operator =(Result&&  " << result << ")\n";
 		r.result = NULL;
 		return *this;
+	}
+	const Result<D>& operator =(const Result<D>&)
+	{
+		throw Exception(Exception::NotCopiableResult,__FILE__,__LINE__);
 	}
 	bool is_stored() const
 	{
 		return (result ? true : false);
 	}
+	void close();
 
 	unsigned long number_rows()const;
 		
@@ -124,18 +193,18 @@ template<> class Result<DataMaria>
 public:
 	Result() : result(NULL)
 	{
-		//std::cout << "Result()\n";
+		std::cout << "Result()\n";
 	}
 	Result(Result<DataMaria>&& r) 
 	{
 		result = r.result;
 		r.result = NULL;
-		//std::cout << "Result(Result<D>&& " << result << ")\n";
+		std::cout << "Result(Result<D>&& " << result << ")\n";
 	}
 	Result(Handle&& h)
-	{
+	{		
 		result = h;
-		//std::cout << "Result(Handle&& " << result << ")\n";
+		std::cout << "Result(Handle&& " << result << ")\n";
 	}
 	~Result()
 	{
@@ -152,8 +221,8 @@ public:
 	}
 	Result& operator =(Result&& r)
 	{
+		std::cout << "Result& operator =(Result&&  " << r.result << ")\n";
 		result = r.result;
-		//std::cout << "Result& operator =(Result&&  " << result << ")\n";
 		r.result = NULL;
 		return *this;
 	}
@@ -167,6 +236,14 @@ public:
 		if(result) return mysql_num_rows((MYSQL_RES*)result);
 		
 		return 0;
+	}
+	void close()
+	{
+		if(result)
+		{
+			mysql_free_result((MYSQL_RES*)result);
+			result = NULL;
+		}
 	}
 	
 	template<RowMaria R> void store(std::vector<R>& v)
@@ -246,6 +323,7 @@ public:
 
 	bool connect(const Data&, bool autocommit);
 	void close();
+	bool ping();
 
 protected:
 

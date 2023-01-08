@@ -49,12 +49,13 @@ void v0_develop()
 		
 	oct::cave::Connection<oct::cave::DataMaria> conn(dtm,true);
 	CU_ASSERT(conn.is_connected());
+	CU_ASSERT(conn.ping());
 	
 	oct::cave::Result<oct::cave::DataMaria> rest;
 	CU_ASSERT(not rest.is_stored());
 	rest = conn.execute("show databases;");
 	CU_ASSERT(rest.is_stored());
-	//std::cout << "rest : " << (void*)rest << "\n";
+	std::cout << "rest : " << (void*)rest << "\n";
 
 	std::cout << "Cantidad : " << rest.number_rows() << "\n";
 

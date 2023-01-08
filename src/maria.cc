@@ -4,10 +4,10 @@
 namespace oct::cave
 {
 
-	DataMaria::DataMaria(const std::string& h,const std::string& u,const std::string& pwd) : host(h),user(u),password(pwd)
+	DataMaria::DataMaria(const std::string& h,const std::string& u,const std::string& pwd) : host(h),user(u),password(pwd),port(3306)
 	{
 	}
-	DataMaria::DataMaria(const std::string& h,const std::string& u,const std::string& pwd,const std::string& d)  : host(h),user(u),password(pwd),database(d)
+	DataMaria::DataMaria(const std::string& h,const std::string& u,const std::string& pwd,const std::string& d)  : host(h),user(u),password(pwd),database(d),port(3306)
 	{
 
 	}
@@ -71,7 +71,7 @@ namespace oct::cave
 		//if(connection) return false;//ya esta conectada
 		//if(connected) return false;//ya esta conectada		
 		MYSQL* con = mysql_real_connect(
-						 (MYSQL*)connection, 
+						 reinterpret_cast<MYSQL*>(connection), 
 						 data.get_host().empty() ? NULL : data.get_host().c_str(), 
 						 data.get_user().empty() ? NULL : data.get_user().c_str(), 
 						 data.get_password().empty() ? NULL : data.get_password().c_str(), 
@@ -103,33 +103,44 @@ namespace oct::cave
 	{
 		if(connection)
 		{
-			mysql_close((MYSQL*)connection);
+			mysql_close(reinterpret_cast<MYSQL*>(connection));
 			connection = NULL;
 		}		
 	}
 
 	template<> Result<DataMaria> Connection<DataMaria>::execute(const std::string& str)
 	{
-		if (mysql_query((MYSQL*)connection, str.c_str()) != 0) 
+		int ret_query = mysql_query(reinterpret_cast<MYSQL*>(connection), str.c_str());
+		
+		if (ret_query == -1 and mysql_errno(reinterpret_cast<MYSQL*>(connection)) == 2000) 
 		{
-			//std::cout << "Erro : " << mysql_error((MYSQL*)connection) << "\n";
-			return Result<DataMaria>();
+			throw Exception(Exception::DB_ERROR_Result_Unknow,__FILE__,__LINE__);
 		}
-
-		return Result<DataMaria>(mysql_store_result((MYSQL*)connection));
+		else if (ret_query == 0) 
+		{
+			return Result<DataMaria>(mysql_store_result(reinterpret_cast<MYSQL*>(connection)));
+		}
+		else
+		{
+			std::cout << "Error Maria : " << mysql_errno(reinterpret_cast<MYSQL*>(connection)) << "  " << mysql_error(reinterpret_cast<MYSQL*>(connection)) << "\n";
+			std::cout << "ret_query : " << ret_query << "\n";
+			std::cout << "SQL String : " << str << "\n";
+			//return Result<DataMaria>();
+			throw Exception(Exception::DB_ERROR_Result,__FILE__,__LINE__);
+		}		
 	}
 
 
 	
 	template<> bool Connection<DataMaria>::commit()
 	{
-		if(connection) if(mysql_commit((MYSQL*)connection) == 0) return true;
+		if(connection) if(mysql_commit(reinterpret_cast<MYSQL*>(connection)) == 0) return true;
 
 		return false;
 	}
 	template<> bool Connection<DataMaria>::rollback()
 	{
-		if(connection) if(mysql_rollback((MYSQL*)connection) == 0) return true;
+		if(connection) if(mysql_rollback(reinterpret_cast<MYSQL*>(connection)) == 0) return true;
 
 		return false;
 	}
@@ -139,8 +150,19 @@ namespace oct::cave
 	{
 		if(connection)
 		{
-			mysql_close((MYSQL*)connection);
+			mysql_close(reinterpret_cast<MYSQL*>(connection));
 			connection = NULL;
 		}
+	}
+	template<> bool Connection<DataMaria>::ping()
+	{
+		if(not connected) return false;
+		if(connection)
+		{
+			if(mysql_ping(reinterpret_cast<MYSQL*>(connection))) return false;
+			return true;
+		}
+
+		return false;
 	}
 }
