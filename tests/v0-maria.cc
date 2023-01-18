@@ -71,7 +71,7 @@ void v0_mesures()
 	CU_ASSERT(conn.is_connected());
 
 	constexpr size_t base_length = 1000;
-	constexpr size_t base_test = 3;
+	constexpr size_t base_test = 10;
 	
 	oct::core::MesureExecution mesures[base_test];
 	for(size_t i = 0; i < base_test; i++)
@@ -80,8 +80,11 @@ void v0_mesures()
 	}
 	
 	double media = oct::core::media(base_test,(oct::core::MesureExecution*)mesures,&oct::core::MesureExecution::media);
-	double fact = oct::core::desv(base_test,(oct::core::MesureExecution*)mesures,&oct::core::MesureExecution::media);
-	std::cout << "Factor de ejecucion : (" <<  media << ","<< fact << ")ms\n";
+	double desv = oct::core::desv(base_test,(oct::core::MesureExecution*)mesures,&oct::core::MesureExecution::media);
+	double time = desv/1000.0;
+	std::cout << "Factor de ejecucion : (" <<  media << ","<< desv << ")ms - "<< time << "s\n";
+	//if(media > 0.0) CU_ASSERT(150000 - media < 50000);
+	//CU_ASSERT(time < 5.0);
 }
 
 void v0_conection()

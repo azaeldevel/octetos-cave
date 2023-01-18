@@ -160,11 +160,13 @@ public:
 	{
 		return connection;
 	}
-
+	
 	Result<Data> execute(const std::string&);
 	Result<Data> select(const std::string& fields,const std::string& table)
 	{
-		std::string srtsql = "SELECT ";
+		std::string srtsql;
+		srtsql.reserve(20 + fields.size() + table.size());
+		srtsql = "SELECT ";
 		srtsql += fields;
 		srtsql += " FROM ";
 		srtsql += table;
@@ -175,7 +177,9 @@ public:
 	}
 	Result<Data> select(const std::string& fields,const std::string& table,const std::string& where)
 	{
-		std::string srtsql = "SELECT ";
+		std::string srtsql;
+		srtsql.reserve(30 + fields.size() + table.size() + where.size());
+		srtsql = "SELECT ";
 		srtsql += fields;
 		srtsql += " FROM ";
 		srtsql += table;
@@ -188,7 +192,15 @@ public:
 	}
 	Result<Data> select(const fields& list,const std::string& table,const std::string& where)
 	{
-		std::string srtsql = "SELECT ";
+		std::string srtsql;
+		size_t reserved = 30 + table.size() + where.size();
+		for(const std::string& s : list)
+		{
+			reserved += s.size() + 1;//el tamaño del estring mas una coma
+		}
+		srtsql.reserve(reserved);
+		
+		srtsql = "SELECT ";
 		if(list.size() > 1)
 		{
 			for(size_t i = 0; i < list.size() - 2; i++)
