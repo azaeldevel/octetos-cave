@@ -18,4 +18,7 @@ void v0_develop();
 void v0_conection();
 void v0_mesures();
 
+
+void v0_core_core();
+
 #endif

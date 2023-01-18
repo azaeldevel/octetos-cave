@@ -9,11 +9,9 @@
 
 #include <stdio.h>
 
-//>>>octetos::core
-#include <math.h>
-#include <concepts>
 
 #include <src/maria.hh>
+#include <src/oct-core.hh>
 
 namespace v0 = oct::cave::v0;
 
@@ -43,130 +41,7 @@ struct CatalogItem_testv0
 };
 
 
-struct MesureExecution
-{
-	std::chrono::high_resolution_clock::time_point start;
-	std::chrono::high_resolution_clock::time_point end;
-	std::chrono::high_resolution_clock::duration duration;
-	double media;	
-};
 
-namespace oct::core
-{
-	template < class T >
-	concept Number = std::is_same_v<T, float> or std::is_same_v<T, double> or std::is_same_v<T, int> or std::is_same_v<T, unsigned int>;
-	
-	template<Number Data> Data media(size_t length,const Data* n)
-	{
-		//std::cout << "media<T>(...)\n";
-		Data v = Data(0);
-		for(size_t i = 0; i < length; i++)
-		{
-			v += n[i];
-		}
-		//std::cout << "media<T>(...)  sigma : " << sigma << "\n";
-		Data m = v / Data(length);
-		//std::cout << "media<T>(...)  m : " << m << "\n";
-    	return m;
-	}
-	template<class Container,Number Data> double media(size_t length,const Container* data,const Data Container::* member)
-	{
-		std::cout << "media<T>(...)\n";
-		double v = double(0);
-		for(size_t i = 0; i < length; i++)
-		{
-			v += data[i].*member;
-		}
-		std::cout << "media<T>(...)  sigma : " << v << "\n";
-		double m = v / double(length);
-		std::cout << "media<T>(...)  m : " << m << "\n";
-    	return m;
-	}	
-	//https://www.scs.stanford.edu/~dm/blog/param-pack.html,https://iamsorush.com/posts/cpp-variadic-template/
-	/*template<typename T,typename ...Args> T media(Args... args)
-	{
-		//std::cout << "media<T>(...)\n";
-		T sigma =  (args+...);		
-		//std::cout << "media<T>(...)  sigma : " << sigma << "\n";
-		T m = sigma / sizeof...(args);
-		//std::cout << "media<T>(...)  m : " << m << "\n";
-    	return m;
-	}*/
-
-	template<Number Data> Data desv(size_t length,const Data* numbers)
-	{
-		//std::cout << "media<T>(...)\n";
-		Data m = media<Data>(length,numbers);
-		Data v = Data(0);
-		for(size_t i = 0; i < length; i++)
-		{
-			v += pow(numbers[i] - m,2.0);
-		}
-		//std::cout << "media<T>(...)  sigma : " << sigma << "\n";
-		v = v / Data(length);
-		//std::cout << "media<T>(...)  m : " << m << "\n";
-		v = sqrt(v);
-    	return v;
-	}
-	template<typename Container,Number Data> Data desv(size_t length,const Container* data,const Data Container::* member)
-	{
-		//std::cout << "media<T>(...)\n";
-		Data m = media<Container>(length,data,member);
-		Data v = Data(0);
-		for(size_t i = 0; i < length; i++)
-		{
-			v += pow(data[i].*member - m,2.0);
-		}
-		//std::cout << "media<T>(...)  sigma : " << sigma << "\n";
-		v = v / Data(length);
-		//std::cout << "media<T>(...)  m : " << m << "\n";
-		v = sqrt(v);
-    	return v;
-	}
-	/*template<typename T,typename ...Args> T desv(Args... args)
-	{
-		//std::cout << "desv<T>(...)\n";	
-		T m = media<T>(args...);
-		//std::cout << "media : " << m << "\n";
-		
-		T sigma = (pow(args- m,2.0)+...);	
-		//std::cout << "sigma : " << sigma << "\n";
-		T d = sigma / sizeof...(args);
-		d = sqrt(d);
-		
-		return d;
-	}*/
-	/*template<typename Container,typename Data = Container> Data desv(size_t length,const Container* numbers)
-	{
-		//std::cout << "media<T>(...)\n";
-		Container m = media<Container>(length,numbers);
-		Container v = Container(0);
-		for(size_t i = 0; i < length; i++)
-		{
-			v += pow(numbers[i] - m,2.0);
-		}
-		//std::cout << "media<T>(...)  sigma : " << sigma << "\n";
-		v = v / Container(length);
-		//std::cout << "media<T>(...)  m : " << m << "\n";
-		v = sqrt(v);
-    	return v;
-	}*/
-	/*template<> double desv(size_t length,const MesureExecution* numbers)
-	{
-		//std::cout << "media<T>(...)\n";
-		double m = media<MesureExecution,double>(length,numbers);
-		double v = Container(0);
-		for(size_t i = 0; i < length; i++)
-		{
-			v += pow(numbers[i].media - m,2.0);
-		}
-		//std::cout << "media<T>(...)  sigma : " << sigma << "\n";
-		v = v / double(length);
-		//std::cout << "media<T>(...)  m : " << m << "\n";
-		v = sqrt(v);
-    	return v;
-	}*/
-}
 
 void v0_develop()
 {
@@ -175,7 +50,7 @@ void v0_develop()
 }
 
 template<typename T = std::chrono::milliseconds>
-void mesure_query(short base_length,MesureExecution& mesure,v0::Connection<v0::DataMaria>& conn,const char* str)
+void mesure_query(short base_length,oct::core::MesureExecution& mesure,v0::Connection<v0::DataMaria>& conn,const char* str)
 {
 	mesure.start = std::chrono::high_resolution_clock::now();
 	v0::Result<v0::DataMaria> rest1[base_length];
@@ -199,14 +74,14 @@ void v0_mesures()
 	constexpr size_t base_length = 1000;
 	constexpr size_t base_test = 3;
 	
-	MesureExecution mesures[base_test];
+	oct::core::MesureExecution mesures[base_test];
 	for(size_t i = 0; i < base_test; i++)
 	{
 		mesure_query(base_length,mesures[i],conn,"show databases;");	
 	}
 	
-	double media = oct::core::media(base_test,(MesureExecution*)mesures,&MesureExecution::media);
-	double fact = oct::core::desv(base_test,(MesureExecution*)mesures,&MesureExecution::media);
+	double media = oct::core::media(base_test,(oct::core::MesureExecution*)mesures,&oct::core::MesureExecution::media);
+	double fact = oct::core::desv(base_test,(oct::core::MesureExecution*)mesures,&oct::core::MesureExecution::media);
 	std::cout << "Factor de ejecucion : (" <<  media << ","<< fact << ")ms\n";
 }
 

@@ -37,6 +37,19 @@ int main(int argc, char *argv[])
 		return CU_get_error();
 	}
 
+	CU_pSuite pSuite_cotetos_core_v0 = CU_add_suite("Octetos Core Library", v0_init, v0_clean);
+	if (NULL == pSuite_cotetos_core_v0)
+	{
+		CU_cleanup_registry();
+		return CU_get_error();
+	}
+	
+	if (NULL == CU_add_test(pSuite_v0, "Medidas de ejecucion ", v0_mesures))
+	{
+		CU_cleanup_registry();
+		return CU_get_error();
+	}
+
 #endif
 
 	/* Run all tests using the CUnit Basic interface */

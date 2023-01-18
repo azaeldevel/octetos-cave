@@ -16,3 +16,8 @@ int v0_clean(void)
 	return 0;
 }
 
+
+void v0_core_core()
+{
+
+}
