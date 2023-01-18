@@ -66,7 +66,7 @@ namespace oct::core
 		//std::cout << "media<T>(...)  m : " << m << "\n";
     	return m;
 	}*/
-	template<class Container,class Data> double media(size_t length,const Container* data,auto member)
+	template<class Container,class Data> double media(size_t length,Container* data,Data Container::* member)
 	{
 		std::cout << "media<T>(...)\n";
 		double v = double(0);
@@ -190,7 +190,7 @@ void v0_mesures()
 	}
 
 	
-	double media = oct::core::media<MesureExecution,double>(base_test,(const MesureExecution*)mesures,&MesureExecution::media);
+	double media = oct::core::media<MesureExecution,double>(base_test,(MesureExecution*)mesures,&MesureExecution::media);
 	//double fact = oct::core::desv(base_test,mesures);
 	//std::cout << "Factor de ejecucion : (" <<  media << ","<< fact << ")ms\n";
 }
