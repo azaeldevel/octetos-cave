@@ -171,10 +171,9 @@ void v0_develop()
 	
 }
 
-
-MesureExecution mesure_query(short base_length,v0::Connection<v0::DataMaria>& conn,const char* str)
+template<typename T = std::chrono::milliseconds>
+void mesure_query(short base_length,MesureExecution& mesure,v0::Connection<v0::DataMaria>& conn,const char* str)
 {
-	MesureExecution mesure;
 	mesure.start = std::chrono::high_resolution_clock::now();
 	v0::Result<v0::DataMaria> rest1[base_length];
 	for(size_t i = 0; i < base_length; i++)
@@ -182,11 +181,10 @@ MesureExecution mesure_query(short base_length,v0::Connection<v0::DataMaria>& co
 		rest1[i] = conn.execute(str);
 	}
 	mesure.end = std::chrono::high_resolution_clock::now();
-	mesure.duration = duration_cast<std::chrono::milliseconds>(mesure.end - mesure.start);
+	mesure.duration = duration_cast<T>(mesure.end - mesure.start);
   	//std::cout << "Ejecucion : took " << time_1/std::chrono::milliseconds(1) << "ns to run.\n";
 	mesure.media = double(mesure.duration.count()) / double(base_length);
 	
-	return mesure;
 }
 void v0_mesures()
 {
@@ -201,9 +199,8 @@ void v0_mesures()
 	MesureExecution mesures[base_test];
 	for(size_t i = 0; i < base_test; i++)
 	{
-		mesures[i] = mesure_query(base_length,conn,"show databases;");	
+		mesure_query(base_length,mesures[i],conn,"show databases;");	
 	}
-
 	
 	double media = oct::core::media<MesureExecution,double>(base_test,(MesureExecution*)mesures,&MesureExecution::media);
 	double fact = oct::core::desv<MesureExecution,double>(base_test,(MesureExecution*)mesures,&MesureExecution::media);
