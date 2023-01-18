@@ -22,4 +22,4 @@ endif
 v0_LDFLAGS =
 v0_LDADD = $(LIBS) 
 v0_CXXFLAGS = $(FLAGS) -I$(top_builddir)  -I$(top_srcdir)
-v0_SOURCES = main.cc v0.cc
+v0_SOURCES = main.cc v0.cc v0-maria.cc

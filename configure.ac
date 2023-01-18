@@ -72,6 +72,6 @@ esac
 AC_OUTPUT([
 Makefile
 src/Makefile
-po/Makefile.in
 tests/Makefile
+po/Makefile.in
 ])

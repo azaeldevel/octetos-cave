@@ -28,94 +28,56 @@
 	#error "Plataforma desconocida."
 #endif
 
-namespace oct::cave
+namespace oct::cave::v0
 {
-//class DataMaria;
-//template<> Connection<DataMaria>;
 
 
-class Exception : public oct::core::v3::Exception
+class ExceptionResult : public core::v3::Exception
 {
 public:
-	enum ErrosCodes
-	{
-		NoErros,
-		NotYet,
-		IlegalOperation,
-		NotCopiable,
-		NotCopiableResult,
-		NotVoidObject,
-		DB_ERROR,
-		DB_ERROR_Result,
-		DB_ERROR_Result_Unknow,
-	};
+	
 public:
-	Exception();
-	Exception(const Exception&);
-	Exception(Exception&&);
+	ExceptionResult();
+	ExceptionResult(const ExceptionResult&);
 
-	Exception(unsigned int code);
-	Exception(unsigned int code,const char* filename, unsigned int line);
-
-	Exception(unsigned int code,const char* message);
-	Exception(unsigned int code,const char* message,const char* filename, unsigned int line);
-
-	Exception(const std::string& message);
-	Exception(const std::string& message,const char* filename, unsigned int line);
-
-	Exception(unsigned int code,const std::string& message);
-	Exception(unsigned int code,const std::string& message,const char* filename, unsigned int line);
-	virtual ~Exception();
-
-	virtual const char* what() const throw ();
+	ExceptionResult(const char* message);
+	ExceptionResult(const char* message,const char* filename, unsigned int line);
+	virtual ~ExceptionResult();
 
 private:
 };
 
-class ExceptionMaria : public Exception
+class ExceptionQuery : public core::v3::Exception
 {
 public:
+	
 public:
-	ExceptionMaria();
-	ExceptionMaria(const ExceptionMaria&);
-	ExceptionMaria(ExceptionMaria&&);
+	ExceptionQuery();
+	ExceptionQuery(const ExceptionQuery&);
 
-	ExceptionMaria(unsigned int code,const char* state,const char* filename, unsigned int line);
-	virtual ~ExceptionMaria();
-
-	virtual const char* what() const throw ();
+	ExceptionQuery(const char* message);
+	ExceptionQuery(const char* message,const char* filename, unsigned int line);
+	virtual ~ExceptionQuery();
 
 private:
-	const char* state;
 };
 
 typedef void* Handle;
 typedef unsigned long index;
 
-class DataMaria
+
+class DataSource
 {
 public:
-	DataMaria(const std::string& host,const std::string& user,const std::string& password);
-	DataMaria(const std::string& host,const std::string& user,const std::string& password,const std::string& database);
-	DataMaria(const std::string& host,const std::string& user,const std::string& password,unsigned int port);	
-	DataMaria(const std::string& host,const std::string& user,const std::string& password,const std::string& database,unsigned int port);
-	DataMaria(const std::string& host,const std::string& user,const std::string& password,const std::string& database,unsigned int port,const std::string& socket);
-	DataMaria(const std::string& host,const std::string& user,const std::string& password,const std::string& database,unsigned int port,const std::string& socket,unsigned long flags);
-	~DataMaria();
-		
-	const std::string& get_host()const;
-	const std::string& get_user()const;
-	const std::string& get_password()const;
-	const std::string& get_database()const;
-	const std::string& get_socket()const;
-	unsigned int get_port()const;
-	unsigned long get_flags()const;
+	DataSource() = default;
+	DataSource(const std::string& database);
 	
-private:
-	std::string host,user,password,database,socket;
-	unsigned int port;
-	unsigned long flags;	
+	const std::string& get_database()const;
+	
+protected:
+	std::string database;
 };
+
 
 
 template<class S>
@@ -125,52 +87,42 @@ concept Row = requires(S s)
 };
 
 
-template<class S>
-concept RowMaria = requires(S s)
-{
-	s = (char**)0;//operator de asignacio para arreglo de c strings
-};
 
 template<typename D> class Result
 {
 public:
 	Result() : result(NULL)
 	{
-		std::cout << "Result()\n";
+		//std::cout << "Result()\n";
 	}
 	Result(Result<D>&& r) 
 	{
 		result = r.result;
 		r.result = NULL;
-		std::cout << "Result(Result<D>&& " << result << ")\n";
+		//std::cout << "Result(Result<D>&& " << result << ")\n";
 	}
 	Result(const Result<D>&) 
 	{
-		throw Exception(Exception::NotCopiableResult,__FILE__,__LINE__);
+		throw ExceptionResult("No puede ser copiado este objeto",__FILE__,__LINE__);
 	}
 	Result(Handle&& h)
 	{
 		result = h;
-		std::cout << "Result(Handle&& " << result << ")\n";
+		//std::cout << "Result(Handle&& " << result << ")\n";
 	}
 	~Result();
 
-	operator Handle()
+	void operator =(Result&& r)
 	{
-		return result;
-	}
-	Result& operator =(Result&& r)
-	{
-		if(result) throw Exception(Exception::NotVoidObject,__FILE__,__LINE__);
+		if(result) throw ExceptionResult("El objeto deve estar vacio para realizar esta operacion.",__FILE__,__LINE__);
 
 		result = r.result;
-		std::cout << "Result& operator =(Result&&  " << result << ")\n";
+		//std::cout << "Result& operator =(Result&&  " << result << ")\n";
 		r.result = NULL;
-		return *this;
 	}
 	const Result<D>& operator =(const Result<D>&)
 	{
-		throw Exception(Exception::NotCopiableResult,__FILE__,__LINE__);
+		throw ExceptionResult("No puede ser copiado este objeto",__FILE__,__LINE__);
 	}
 	bool is_stored() const
 	{
@@ -187,89 +139,6 @@ private:
 	Handle result;
 };
 
-
-template<> class Result<DataMaria>
-{
-public:
-	Result() : result(NULL)
-	{
-		std::cout << "Result()\n";
-	}
-	Result(Result<DataMaria>&& r) 
-	{
-		result = r.result;
-		r.result = NULL;
-		std::cout << "Result(Result<D>&& " << result << ")\n";
-	}
-	Result(Handle&& h)
-	{		
-		result = h;
-		std::cout << "Result(Handle&& " << result << ")\n";
-	}
-	~Result()
-	{
-		if(result)
-		{
-			mysql_free_result((MYSQL_RES*)result);
-			result = NULL;
-		}
-	}
-
-	operator Handle()
-	{
-		return result;
-	}
-	Result& operator =(Result&& r)
-	{
-		std::cout << "Result& operator =(Result&&  " << r.result << ")\n";
-		result = r.result;
-		r.result = NULL;
-		return *this;
-	}
-	bool is_stored() const
-	{
-		return (result ? true : false);
-	}
-
-	unsigned long number_rows()const
-	{
-		if(result) return mysql_num_rows((MYSQL_RES*)result);
-		
-		return 0;
-	}
-	void close()
-	{
-		if(result)
-		{
-			mysql_free_result((MYSQL_RES*)result);
-			result = NULL;
-		}
-	}
-	
-	template<RowMaria R> void store(std::vector<R>& v)
-	{
-#ifdef OCTEOTOS_CAVE_ENABLE_DEV
-		//std::cout << "template<typename S> void store(std::vector<S>& v)\n";
-#endif
-		v.resize(number_rows());
-		char** row;
-		for(index i = 0; i < number_rows(); i++)
-		{
-			row = mysql_fetch_row((MYSQL_RES*)result);
-			if(row)
-			{
-				v.at(i) = row;
-			}
-			else
-			{
-				;//error
-			}
-		}	
-	}
-	
-private:
-	Handle result;
-};
 
 template<typename Data> class Connection
 {
@@ -299,7 +168,7 @@ public:
 		srtsql += " FROM ";
 		srtsql += table;
 		srtsql += ";";
-		std::cout << srtsql << "\n";
+		//std::cout << srtsql << "\n";
 
 		return execute(srtsql);
 	}
@@ -312,7 +181,7 @@ public:
 		srtsql += " WHERE ";
 		srtsql += where;
 		srtsql += ";";
-		std::cout << srtsql << "\n";
+		//std::cout << srtsql << "\n";
 
 		return execute(srtsql);
 	}
@@ -332,6 +201,7 @@ private:
 	void* connection;
 	bool autocommit;
 };
+
 
 
 }

@@ -1,13 +1,25 @@
 
-#include "base.hh"
+#include "maria.hh"
 
-namespace oct::cave
+namespace oct::cave::v0
 {
 
-	DataMaria::DataMaria(const std::string& h,const std::string& u,const std::string& pwd) : host(h),user(u),password(pwd),port(3306)
+
+
+	DataSource::DataSource(const std::string& d) : database(d)
 	{
 	}
-	DataMaria::DataMaria(const std::string& h,const std::string& u,const std::string& pwd,const std::string& d)  : host(h),user(u),password(pwd),database(d),port(3306)
+	const std::string& DataSource::get_database()const
+	{
+		return database;
+	}
+
+	
+
+	DataMaria::DataMaria(const std::string& h,const std::string& u,const std::string& pwd)
+	{
+	}
+	DataMaria::DataMaria(const std::string& h,const std::string& u,const std::string& pwd,const std::string& d)  : host(h),user(u),password(pwd),DataSource(d),port(3306)
 	{
 
 	}
@@ -15,15 +27,15 @@ namespace oct::cave
 	{
 
 	}
-	DataMaria::DataMaria(const std::string& h,const std::string& u,const std::string& pwd,const std::string& d,unsigned int p) : host(h),user(u),password(pwd),database(d),port(p)
+	DataMaria::DataMaria(const std::string& h,const std::string& u,const std::string& pwd,const std::string& d,unsigned int p) : host(h),user(u),password(pwd),DataSource(d),port(p)
 	{
 
 	}
-	DataMaria::DataMaria(const std::string& h,const std::string& u,const std::string& pwd,const std::string& d,unsigned int p,const std::string& s) : host(h),user(u),password(pwd),database(d),port(p),socket(s)
+	DataMaria::DataMaria(const std::string& h,const std::string& u,const std::string& pwd,const std::string& d,unsigned int p,const std::string& s) : host(h),user(u),password(pwd),DataSource(d),port(p),socket(s)
 	{
 
 	}
-	DataMaria::DataMaria(const std::string& h,const std::string& u,const std::string& pwd,const std::string& d,unsigned int p,const std::string& s,unsigned long f) : host(h),user(u),password(pwd),database(d),port(p),socket(s),flags(f)
+	DataMaria::DataMaria(const std::string& h,const std::string& u,const std::string& pwd,const std::string& d,unsigned int p,const std::string& s,unsigned long f) : host(h),user(u),password(pwd),DataSource(d),port(p),socket(s),flags(f)
 	{
 	
 	}
@@ -44,10 +56,6 @@ namespace oct::cave
 	const std::string& DataMaria::get_password()const
 	{
 		return password;
-	}
-	const std::string& DataMaria::get_database()const
-	{
-		return database;
 	}
 	const std::string& DataMaria::get_socket()const
 	{
@@ -114,7 +122,7 @@ namespace oct::cave
 		
 		if (ret_query == -1 and mysql_errno(reinterpret_cast<MYSQL*>(connection)) == 2000) 
 		{
-			throw Exception(Exception::DB_ERROR_Result_Unknow,__FILE__,__LINE__);
+			throw ExceptionQuery("Se genero error desconocido como respuesta, este error podria deverse a un bug",__FILE__,__LINE__);
 		}
 		else if (ret_query == 0) 
 		{
@@ -122,11 +130,11 @@ namespace oct::cave
 		}
 		else
 		{
-			std::cout << "Error Maria : " << mysql_errno(reinterpret_cast<MYSQL*>(connection)) << "  " << mysql_error(reinterpret_cast<MYSQL*>(connection)) << "\n";
-			std::cout << "ret_query : " << ret_query << "\n";
-			std::cout << "SQL String : " << str << "\n";
+			//std::cout << "Error Maria : " << mysql_errno(reinterpret_cast<MYSQL*>(connection)) << "  " << mysql_error(reinterpret_cast<MYSQL*>(connection)) << "\n";
+			//std::cout << "ret_query : " << ret_query << "\n";
+			//std::cout << "SQL String : " << str << "\n";
 			//return Result<DataMaria>();
-			throw Exception(Exception::DB_ERROR_Result,__FILE__,__LINE__);
+			throw ExceptionQuery("Fallo la ejecucion de la consulta",__FILE__,__LINE__);
 		}		
 	}
 
