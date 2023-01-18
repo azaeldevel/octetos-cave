@@ -11,6 +11,7 @@
 
 //>>>octetos::core
 #include <math.h>
+#include <concepts>
 
 #include <src/maria.hh>
 
@@ -52,8 +53,10 @@ struct MesureExecution
 
 namespace oct::core
 {
+	template < class T >
+	concept Number = std::is_same_v<T, float> or std::is_same_v<T, double> or std::is_same_v<T, int> or std::is_same_v<T, unsigned int>;
 	
-	template<typename Data> Data media(size_t length,const Data* n)
+	template<Number Data> Data media(size_t length,const Data* n)
 	{
 		//std::cout << "media<T>(...)\n";
 		Data v = Data(0);
@@ -66,7 +69,7 @@ namespace oct::core
 		//std::cout << "media<T>(...)  m : " << m << "\n";
     	return m;
 	}
-	template<class Container,class Data> double media(size_t length,const Container* data,const Data Container::* member)
+	template<class Container,Number Data> double media(size_t length,const Container* data,const Data Container::* member)
 	{
 		std::cout << "media<T>(...)\n";
 		double v = double(0);
@@ -90,7 +93,7 @@ namespace oct::core
     	return m;
 	}*/
 
-	template<typename Data> Data desv(size_t length,const Data* numbers)
+	template<Number Data> Data desv(size_t length,const Data* numbers)
 	{
 		//std::cout << "media<T>(...)\n";
 		Data m = media<Data>(length,numbers);
@@ -105,7 +108,7 @@ namespace oct::core
 		v = sqrt(v);
     	return v;
 	}
-	template<typename Container,typename Data> Data desv(size_t length,const Container* data,const Data Container::* member)
+	template<typename Container,Number Data> Data desv(size_t length,const Container* data,const Data Container::* member)
 	{
 		//std::cout << "media<T>(...)\n";
 		Data m = media<Container>(length,data,member);
@@ -202,8 +205,8 @@ void v0_mesures()
 		mesure_query(base_length,mesures[i],conn,"show databases;");	
 	}
 	
-	double media = oct::core::media<MesureExecution,double>(base_test,(MesureExecution*)mesures,&MesureExecution::media);
-	double fact = oct::core::desv<MesureExecution,double>(base_test,(MesureExecution*)mesures,&MesureExecution::media);
+	double media = oct::core::media(base_test,(MesureExecution*)mesures,&MesureExecution::media);
+	double fact = oct::core::desv(base_test,(MesureExecution*)mesures,&MesureExecution::media);
 	std::cout << "Factor de ejecucion : (" <<  media << ","<< fact << ")ms\n";
 }
 
