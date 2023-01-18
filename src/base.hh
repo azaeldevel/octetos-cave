@@ -139,6 +139,7 @@ private:
 	Handle result;
 };
 
+typedef std::vector<std::string> fields;
 
 template<typename Data> class Connection
 {
@@ -155,7 +156,7 @@ public:
 	{
 		return autocommit;
 	}
-	operator Handle()
+	explicit operator Handle()
 	{
 		return connection;
 	}
@@ -176,6 +177,30 @@ public:
 	{
 		std::string srtsql = "SELECT ";
 		srtsql += fields;
+		srtsql += " FROM ";
+		srtsql += table;
+		srtsql += " WHERE ";
+		srtsql += where;
+		srtsql += ";";
+		//std::cout << srtsql << "\n";
+
+		return execute(srtsql);
+	}
+	Result<Data> select(const fields& list,const std::string& table,const std::string& where)
+	{
+		std::string srtsql = "SELECT ";
+		if(list.size() > 1)
+		{
+			for(size_t i = 0; i < list.size() - 2; i++)
+			{
+				srtsql += list[i];
+			}
+		}
+		else
+		{
+			srtsql += list[0];
+		}
+		
 		srtsql += " FROM ";
 		srtsql += table;
 		srtsql += " WHERE ";

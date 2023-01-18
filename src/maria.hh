@@ -43,7 +43,7 @@ template<> class Result<DataMaria>
 public:
 	Result() : result(NULL)
 	{
-		std::cout << "Result()\n";
+		//std::cout << "Result()\n";
 	}
 	Result(Result<DataMaria>&& r) 
 	{
@@ -118,7 +118,11 @@ private:
 
 
 }
-namespace oct::cave::v0::maria
+
+
+namespace oct::cave::maria::v0
 {
-	
+	typedef cave::v0::DataMaria DataMaria;
+	typedef cave::v0::Connection<DataMaria> Connection;
+	typedef cave::v0::Result<DataMaria> Result;
 }
