@@ -44,7 +44,7 @@ int main(int argc, char *argv[])
 		return CU_get_error();
 	}
 	
-	if (NULL == CU_add_test(pSuite_v0, "Medidas de ejecucion ", v0_mesures))
+	if (NULL == CU_add_test(pSuite_cotetos_core_v0, "Pretrabajo de OCtetos core ", v0_core_core))
 	{
 		CU_cleanup_registry();
 		return CU_get_error();

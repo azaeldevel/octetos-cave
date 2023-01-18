@@ -4,12 +4,15 @@
 
 #include <math.h>
 #include <concepts>
+#include <chrono>
 
 namespace oct::core
 {
 	template < class T >
-	concept Number = std::is_same_v<T, float> or std::is_same_v<T, double> or std::is_same_v<T, int> or std::is_same_v<T, unsigned int>;
+	concept Number = std::is_same_v<T, float> or std::is_same_v<T, double> or std::is_same_v<T, int> or std::is_same_v<T, unsigned int> or std::is_same_v<T, long> or std::is_same_v<T, unsigned long>;
 	
+
+	//>>>Media
 	template<Number Data> Data media(size_t length,const Data* n)
 	{
 		//std::cout << "media<T>(...)\n";
@@ -25,15 +28,15 @@ namespace oct::core
 	}
 	template<class Container,Number Data> double media(size_t length,const Container* data,const Data Container::* member)
 	{
-		std::cout << "media<T>(...)\n";
+		//std::cout << "media<T>(...)\n";
 		double v = double(0);
 		for(size_t i = 0; i < length; i++)
 		{
 			v += data[i].*member;
 		}
-		std::cout << "media<T>(...)  sigma : " << v << "\n";
+		//std::cout << "media<T>(...)  sigma : " << v << "\n";
 		double m = v / double(length);
-		std::cout << "media<T>(...)  m : " << m << "\n";
+		//std::cout << "media<T>(...)  m : " << m << "\n";
     	return m;
 	}	
 	//https://www.scs.stanford.edu/~dm/blog/param-pack.html,https://iamsorush.com/posts/cpp-variadic-template/
@@ -42,11 +45,22 @@ namespace oct::core
 		//std::cout << "media<T>(...)\n";
 		T sigma =  (args+...);		
 		//std::cout << "media<T>(...)  sigma : " << sigma << "\n";
-		T m = sigma / sizeof...(args);
+		T m = sigma / T(sizeof...(args));
+		//std::cout << "media<T>(...)  m : " << m << "\n";
+    	return m;
+	}
+	template<Number T,Number R,typename ...Args> R media(Args... args)
+	{
+		//std::cout << "media<T>(...)\n";
+		T sigma =  (args+...);		
+		//std::cout << "media<T>(...)  sigma : " << sigma << "\n";
+		R m = R(sigma) / R(sizeof...(args));
 		//std::cout << "media<T>(...)  m : " << m << "\n";
     	return m;
 	}
 
+
+	//desviacion estandar
 	template<Number Data> Data desv(size_t length,const Data* numbers)
 	{
 		//std::cout << "media<T>(...)\n";
@@ -54,7 +68,7 @@ namespace oct::core
 		Data v = Data(0);
 		for(size_t i = 0; i < length; i++)
 		{
-			v += pow(numbers[i] - m,2.0);
+			v += pow(numbers[i] - m,2);
 		}
 		//std::cout << "media<T>(...)  sigma : " << sigma << "\n";
 		v = v / Data(length);
@@ -69,7 +83,7 @@ namespace oct::core
 		Data v = Data(0);
 		for(size_t i = 0; i < length; i++)
 		{
-			v += pow(data[i].*member - m,2.0);
+			v += pow(data[i].*member - m,2);
 		}
 		//std::cout << "media<T>(...)  sigma : " << sigma << "\n";
 		v = v / Data(length);
@@ -83,9 +97,22 @@ namespace oct::core
 		T m = media<T>(args...);
 		//std::cout << "media : " << m << "\n";
 		
-		T sigma = (pow(args- m,2.0)+...);	
+		T sigma = (pow(args- m,T(2))+...);	
 		//std::cout << "sigma : " << sigma << "\n";
 		T d = sigma / sizeof...(args);
+		d = sqrt(d);
+		
+		return d;
+	}
+	template<Number T,Number R,typename ...Args> R desv(Args... args)
+	{
+		//std::cout << "desv<T>(...)\n";	
+		R m = media<T,R>(args...);
+		//std::cout << "media : " << m << "\n";
+		
+		R sigma = (pow(args- m,R(2))+...);	
+		//std::cout << "sigma : " << sigma << "\n";
+		R d = sigma / sizeof...(args);
 		d = sqrt(d);
 		
 		return d;
