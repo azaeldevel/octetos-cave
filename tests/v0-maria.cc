@@ -53,20 +53,20 @@ struct MesureExecution
 namespace oct::core
 {
 	
-	/*template<typename Container> Container media(size_t length,const Container* n)
+	template<typename Data> Data media(size_t length,const Data* n)
 	{
 		//std::cout << "media<T>(...)\n";
-		Container v = Container(0);
+		Data v = Data(0);
 		for(size_t i = 0; i < length; i++)
 		{
 			v += n[i];
 		}
 		//std::cout << "media<T>(...)  sigma : " << sigma << "\n";
-		Container m = v / Container(length);
+		Data m = v / Data(length);
 		//std::cout << "media<T>(...)  m : " << m << "\n";
     	return m;
-	}*/
-	template<class Container,class Data> double media(size_t length,Container* data,Data Container::* member)
+	}
+	template<class Container,class Data> double media(size_t length,const Container* data,const Data Container::* member)
 	{
 		std::cout << "media<T>(...)\n";
 		double v = double(0);
@@ -90,21 +90,36 @@ namespace oct::core
     	return m;
 	}*/
 
-	/*template<typename Container> Data desv(size_t length,const Container* numbers,auto member)
+	template<typename Data> Data desv(size_t length,const Data* numbers)
 	{
 		//std::cout << "media<T>(...)\n";
-		Container m = media<Container>(length,numbers,member);
-		Container v = Container(0);
+		Data m = media<Data>(length,numbers);
+		Data v = Data(0);
 		for(size_t i = 0; i < length; i++)
 		{
 			v += pow(numbers[i] - m,2.0);
 		}
 		//std::cout << "media<T>(...)  sigma : " << sigma << "\n";
-		v = v / Container(length);
+		v = v / Data(length);
 		//std::cout << "media<T>(...)  m : " << m << "\n";
 		v = sqrt(v);
     	return v;
-	}*/
+	}
+	template<typename Container,typename Data> Data desv(size_t length,const Container* data,const Data Container::* member)
+	{
+		//std::cout << "media<T>(...)\n";
+		Data m = media<Container>(length,data,member);
+		Data v = Data(0);
+		for(size_t i = 0; i < length; i++)
+		{
+			v += pow(data[i].*member - m,2.0);
+		}
+		//std::cout << "media<T>(...)  sigma : " << sigma << "\n";
+		v = v / Data(length);
+		//std::cout << "media<T>(...)  m : " << m << "\n";
+		v = sqrt(v);
+    	return v;
+	}
 	/*template<typename T,typename ...Args> T desv(Args... args)
 	{
 		//std::cout << "desv<T>(...)\n";	
@@ -191,8 +206,8 @@ void v0_mesures()
 
 	
 	double media = oct::core::media<MesureExecution,double>(base_test,(MesureExecution*)mesures,&MesureExecution::media);
-	//double fact = oct::core::desv(base_test,mesures);
-	//std::cout << "Factor de ejecucion : (" <<  media << ","<< fact << ")ms\n";
+	double fact = oct::core::desv<MesureExecution,double>(base_test,(MesureExecution*)mesures,&MesureExecution::media);
+	std::cout << "Factor de ejecucion : (" <<  media << ","<< fact << ")ms\n";
 }
 
 void v0_conection()
