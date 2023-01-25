@@ -63,7 +63,7 @@ ExceptionQuery::~ExceptionQuery()
 }
 
 
-ExceptionSQL::ExceptionSQL(const ExceptionQuery& e) : core::v3::Exception(e)
+ExceptionSQL::ExceptionSQL(const ExceptionQuery& e) : core::v3::Exception(e),handle(NULL)
 {
 }
 ExceptionSQL::~ExceptionSQL()

@@ -83,8 +83,26 @@ void v0_mesures()
 {
 	std::cout << "\n";
 	driver::Data dtm("localhost","muposys","123456","INFORMATION_SCHEMA", OCTEOTOS_CAVE_TESTS_MMSQL_PORT);
-	driver::Connection conn(dtm,true);
+	driver::Connection conn;
+	bool conectfl = false;
+	try
+	{
+		conectfl = conn.connect(dtm, true);
+	}
+	catch (const oct::core::v3::Exception& e)
+	{
+		CU_ASSERT(false);
+		std::cout << "Exception (cave testing) : " << e.describe() << "\n";
+		return;
+	}
+	catch (...)
+	{
+		CU_ASSERT(false);
+	}
+
+	CU_ASSERT(conectfl);
 	CU_ASSERT(conn.is_connected());
+	CU_ASSERT(conn.ping());
 
 	const size_t base_length = 1000;
 	const size_t base_test = 10;
@@ -108,8 +126,24 @@ void v0_conection()
 	//std::cout << "Testing cave component..\n";
 
 	driver::Data dtm("localhost","muposys","123456", OCTEOTOS_CAVE_TESTS_MMSQL_DB, OCTEOTOS_CAVE_TESTS_MMSQL_PORT);
-		
-	driver::Connection conn(dtm,true);
+	bool conectfl = false;
+	driver::Connection conn;
+	try
+	{
+		conectfl = conn.connect(dtm, true);
+	}
+	catch (const oct::core::v3::Exception& e)
+	{
+		CU_ASSERT(false);
+		std::cout << "Exception (cave testing) : " << e.describe() << "\n";
+		return;
+	}
+	catch (...)
+	{
+		CU_ASSERT(false);
+	}
+
+	CU_ASSERT(conectfl);
 	CU_ASSERT(conn.is_connected());
 	CU_ASSERT(conn.ping());
 	

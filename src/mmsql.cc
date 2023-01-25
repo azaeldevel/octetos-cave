@@ -26,9 +26,14 @@ namespace oct::cave::v0
 {
 
 
-	ExceptionSQL::ExceptionSQL(Handle h) : handle(h), core::v3::Exception(mysql_errno(reinterpret_cast<MYSQL*>(h)))
+	ExceptionSQL::ExceptionSQL(Handle h) : handle(h), core::v3::Exception(Code(mysql_errno(reinterpret_cast<MYSQL*>(h))))
 	{
 	}
+	ExceptionSQL::ExceptionSQL(Handle h, const char* f, unsigned int l) : handle(h), core::v3::Exception(Code(mysql_errno(reinterpret_cast<MYSQL*>(h))),f,l)
+	{
+	}
+
+
 	const char* ExceptionSQL::what() const noexcept
 	{
 		return mysql_error(reinterpret_cast<MYSQL*>(handle));
@@ -110,18 +115,20 @@ namespace oct::cave::v0
 		else
 		{
 			//std::cout << "Error : " << mysql_errno(reinterpret_cast<MYSQL*>(connection)) << " : " << mysql_error(reinterpret_cast<MYSQL*>(connection)) << "\n";
-
-			mysql_close(con);
+			//mysql_close(con);
 			connected = false;
-			connection = NULL;
-			throw ExceptionSQL(connection);
+			//connection = NULL;
+			throw ExceptionSQL(connection, __FILE__, __LINE__);
 		}
 
 		if(mysql_autocommit(con,a) == 0) autocommit = a;
 
 		return connected;
 	}
-	template<> Connection<DataMMSQL>::Connection(const DataMMSQL& d, bool a): connection((void*)mysql_init(NULL)),connected(false), autocommit(a)
+	template<> Connection<DataMMSQL>::Connection() : connection((Handle)mysql_init(NULL)), connected(false), autocommit(false)
+	{
+	}
+	template<> Connection<DataMMSQL>::Connection(const DataMMSQL& d, bool a): connection((Handle)mysql_init(NULL)),connected(false), autocommit(a)
 	{
 		connect(d,a);
 	}
@@ -136,13 +143,15 @@ namespace oct::cave::v0
 
 	template<> Result<DataMMSQL> Connection<DataMMSQL>::execute(const std::string& str)
 	{
-		if(not connection) throw ExceptionQuery("Conexion no inizializada.", __FILE__, __LINE__);
+		if (not connected) throw ExceptionSQL(connection, __FILE__, __LINE__);
+		if(not connection) throw ExceptionSQL(connection, __FILE__, __LINE__);
 
 		int ret_query = mysql_query(reinterpret_cast<MYSQL*>(connection), str.c_str());
 		
 		if (ret_query == -1 and mysql_errno(reinterpret_cast<MYSQL*>(connection)) == 2000) 
 		{
-			throw ExceptionQuery("Se genero error desconocido como respuesta, este error podria deverse a un bug",__FILE__,__LINE__);
+			//throw ExceptionQuery("Se genero error desconocido como respuesta, este error podria deverse a un bug",__FILE__,__LINE__);
+			throw ExceptionSQL(connection, __FILE__, __LINE__);
 		}
 		else if (ret_query == 0) 
 		{
@@ -154,7 +163,8 @@ namespace oct::cave::v0
 			//std::cout << "ret_query : " << ret_query << "\n";
 			//std::cout << "SQL String : " << str << "\n";
 			//return Result<DataMaria>();
-			throw ExceptionQuery("Fallo la ejecucion de la consulta",__FILE__,__LINE__);
+			//throw ExceptionQuery("Fallo la ejecucion de la consulta",__FILE__,__LINE__);
+			throw ExceptionSQL(connection, __FILE__, __LINE__);
 		}		
 	}
 

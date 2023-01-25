@@ -92,6 +92,7 @@ public:
 
 public:
 	ExceptionSQL(Handle);
+	ExceptionSQL(Handle,const char* filename, unsigned int line);
 	ExceptionSQL(const ExceptionQuery&);
 
 	virtual ~ExceptionSQL();
