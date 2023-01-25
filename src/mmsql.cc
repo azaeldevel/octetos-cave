@@ -16,74 +16,62 @@
  * You should have received a copy of the GNU General Public License along
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
-#include "maria.hh"
+
+#include "mmsql.hh"
+
 
 namespace oct::cave::v0
 {
 
 
 
-	DataSource::DataSource(const std::string& d) : database(d)
-	{
-	}
-	const std::string& DataSource::get_database()const
-	{
-		return database;
-	}
-
 	
 
-	DataMaria::DataMaria(const std::string& h,const std::string& u,const std::string& pwd)
+	DataMMSQL::DataMMSQL(const std::string& h,const std::string& u,const std::string& pwd) : port(3306),flags(0)
 	{
 	}
-	DataMaria::DataMaria(const std::string& h,const std::string& u,const std::string& pwd,const std::string& d)  : host(h),user(u),password(pwd),DataSource(d),port(3306)
+	DataMMSQL::DataMMSQL(const std::string& h,const std::string& u,const std::string& pwd,const std::string& d) : host(h),user(u),password(pwd),DataSource(d),port(3306),flags(0)
 	{
-
 	}
-	DataMaria::DataMaria(const std::string& h,const std::string& u,const std::string& pwd,unsigned int p) : host(h),user(u),password(pwd),port(p)
+	DataMMSQL::DataMMSQL(const std::string& h,const std::string& u,const std::string& pwd,unsigned int p) : host(h),user(u),password(pwd),port(p),flags(0)
 	{
-
 	}
-	DataMaria::DataMaria(const std::string& h,const std::string& u,const std::string& pwd,const std::string& d,unsigned int p) : host(h),user(u),password(pwd),DataSource(d),port(p)
+	DataMMSQL::DataMMSQL(const std::string& h,const std::string& u,const std::string& pwd,const std::string& d,unsigned int p) : host(h),user(u),password(pwd),DataSource(d),port(p),flags(0)
 	{
-
 	}
-	DataMaria::DataMaria(const std::string& h,const std::string& u,const std::string& pwd,const std::string& d,unsigned int p,const std::string& s) : host(h),user(u),password(pwd),DataSource(d),port(p),socket(s)
+	DataMMSQL::DataMMSQL(const std::string& h,const std::string& u,const std::string& pwd,const std::string& d,unsigned int p,const std::string& s) : host(h),user(u),password(pwd),DataSource(d),port(p),socket(s),flags(0)
 	{
-
 	}
-	DataMaria::DataMaria(const std::string& h,const std::string& u,const std::string& pwd,const std::string& d,unsigned int p,const std::string& s,unsigned long f) : host(h),user(u),password(pwd),DataSource(d),port(p),socket(s),flags(f)
+	DataMMSQL::DataMMSQL(const std::string& h,const std::string& u,const std::string& pwd,const std::string& d,unsigned int p,const std::string& s,unsigned long f) : host(h),user(u),password(pwd),DataSource(d),port(p),socket(s),flags(f)
 	{
-	
 	}
-	DataMaria::~DataMaria()
+	DataMMSQL::~DataMMSQL()
 	{
 	}
 	
 	
 
-	const std::string& DataMaria::get_host()const
+	const std::string& DataMMSQL::get_host()const
 	{
 		return host;
 	}
-	const std::string& DataMaria::get_user()const
+	const std::string& DataMMSQL::get_user()const
 	{
 		return user;
 	}
-	const std::string& DataMaria::get_password()const
+	const std::string& DataMMSQL::get_password()const
 	{
 		return password;
 	}
-	const std::string& DataMaria::get_socket()const
+	const std::string& DataMMSQL::get_socket()const
 	{
 		return socket;
 	}
-	unsigned int DataMaria::get_port()const
+	unsigned int DataMMSQL::get_port()const
 	{
 		return port;
 	}
-	unsigned long DataMaria::get_flags()const
+	unsigned long DataMMSQL::get_flags()const
 	{
 		return flags;
 	}
@@ -92,7 +80,7 @@ namespace oct::cave::v0
 		
 	
 	
-	template<> bool Connection<DataMaria>::connect(const DataMaria& data, bool a)
+	template<> bool Connection<DataMMSQL>::connect(const DataMMSQL& data, bool a)
 	{
 		//if(connection) return false;//ya esta conectada
 		//if(connected) return false;//ya esta conectada		
@@ -121,11 +109,11 @@ namespace oct::cave::v0
 
 		return connected;
 	}
-	template<> Connection<DataMaria>::Connection(const DataMaria& d, bool a): connection((void*)mysql_init(NULL)),connected(false), autocommit(a)
+	template<> Connection<DataMMSQL>::Connection(const DataMMSQL& d, bool a): connection((void*)mysql_init(NULL)),connected(false), autocommit(a)
 	{
 		connect(d,a);
 	}
-	template<> Connection<DataMaria>::~Connection()
+	template<> Connection<DataMMSQL>::~Connection()
 	{
 		if(connection)
 		{
@@ -134,7 +122,7 @@ namespace oct::cave::v0
 		}		
 	}
 
-	template<> Result<DataMaria> Connection<DataMaria>::execute(const std::string& str)
+	template<> Result<DataMMSQL> Connection<DataMMSQL>::execute(const std::string& str)
 	{
 		int ret_query = mysql_query(reinterpret_cast<MYSQL*>(connection), str.c_str());
 		
@@ -144,7 +132,7 @@ namespace oct::cave::v0
 		}
 		else if (ret_query == 0) 
 		{
-			return Result<DataMaria>(mysql_store_result(reinterpret_cast<MYSQL*>(connection)));
+			return Result<DataMMSQL>(mysql_store_result(reinterpret_cast<MYSQL*>(connection)));
 		}
 		else
 		{
@@ -158,13 +146,13 @@ namespace oct::cave::v0
 
 
 	
-	template<> bool Connection<DataMaria>::commit()
+	template<> bool Connection<DataMMSQL>::commit()
 	{
 		if(connection) if(mysql_commit(reinterpret_cast<MYSQL*>(connection)) == 0) return true;
 
 		return false;
 	}
-	template<> bool Connection<DataMaria>::rollback()
+	template<> bool Connection<DataMMSQL>::rollback()
 	{
 		if(connection) if(mysql_rollback(reinterpret_cast<MYSQL*>(connection)) == 0) return true;
 
@@ -172,7 +160,7 @@ namespace oct::cave::v0
 	}
 
 
-	template<> void Connection<DataMaria>::close()
+	template<> void Connection<DataMMSQL>::close()
 	{
 		if(connection)
 		{
@@ -180,7 +168,7 @@ namespace oct::cave::v0
 			connection = NULL;
 		}
 	}
-	template<> bool Connection<DataMaria>::ping()
+	template<> bool Connection<DataMMSQL>::ping()
 	{
 		if(not connected) return false;
 		if(connection)

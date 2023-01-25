@@ -1,13 +1,35 @@
 
 
+/*
+ * Copyright (C) 2022 Azael R. <azael.devel@gmail.com>
+ *
+ * octetos-cave is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * octetos-cave is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 #include "v0.hh"
 
 #include <string>
 #include <iostream>
-#include <src/base.hh>
-
-#include <src/oct-core.hh>
+#if  (defined(_WIN32) || defined(_WIN64)) && COMPILER_VS
+	#include <cave/src/base.hh>
+	#include <cave/src/oct-core.hh>
+#elif defined __linux__
+	#include <src/base.hh>
+	#include <src/oct-core.hh>
+#else
+	#error "Plataforma desconocida."
+#endif
 
 
 int v0_init(void)

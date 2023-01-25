@@ -1,6 +1,5 @@
-#ifndef OCTETOS_COVE_MARIA_V0_HH
-#define OCTETOS_COVE_MARIA_V0_HH
-
+#ifndef OCTETOS_COVE_MMSQL_V0_HH
+#define OCTETOS_COVE_MMSQL_V0_HH
 
 /*
  * Copyright (C) 2022 Azael R. <azael.devel@gmail.com>
@@ -18,8 +17,7 @@
  * You should have received a copy of the GNU General Public License along
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
- 
+
 #include "base.hh"
 
 
@@ -27,17 +25,16 @@
 namespace oct::cave::v0
 {
 
-
-class DataMaria : public DataSource
+class DataMMSQL : public DataSource
 {
 public:
-	DataMaria(const std::string& host,const std::string& user,const std::string& password);
-	DataMaria(const std::string& host,const std::string& user,const std::string& password,const std::string& database);
-	DataMaria(const std::string& host,const std::string& user,const std::string& password,unsigned int port);	
-	DataMaria(const std::string& host,const std::string& user,const std::string& password,const std::string& database,unsigned int port);
-	DataMaria(const std::string& host,const std::string& user,const std::string& password,const std::string& database,unsigned int port,const std::string& socket);
-	DataMaria(const std::string& host,const std::string& user,const std::string& password,const std::string& database,unsigned int port,const std::string& socket,unsigned long flags);
-	~DataMaria();
+	DataMMSQL(const std::string& host,const std::string& user,const std::string& password);
+	DataMMSQL(const std::string& host,const std::string& user,const std::string& password,const std::string& database);
+	DataMMSQL(const std::string& host,const std::string& user,const std::string& password,unsigned int port);
+	DataMMSQL(const std::string& host,const std::string& user,const std::string& password,const std::string& database,unsigned int port);
+	DataMMSQL(const std::string& host,const std::string& user,const std::string& password,const std::string& database,unsigned int port,const std::string& socket);
+	DataMMSQL(const std::string& host,const std::string& user,const std::string& password,const std::string& database,unsigned int port,const std::string& socket,unsigned long flags);
+	~DataMMSQL();
 		
 	const std::string& get_host()const;
 	const std::string& get_user()const;
@@ -59,14 +56,14 @@ concept RowMaria = requires(S s)
 	s = (char**)0;//operator de asignacio para arreglo de c strings
 };
 
-template<> class Result<DataMaria>
+template<> class Result<DataMMSQL>
 {
 public:
 	Result() : result(NULL)
 	{
 		//std::cout << "Result()\n";
 	}
-	Result(Result<DataMaria>&& r) noexcept
+	Result(Result<DataMMSQL>&& r) noexcept
 	{
 		result = r.result;
 		r.result = NULL;
@@ -86,7 +83,7 @@ public:
 		}
 	}
 
-	void operator =(Result&& r)
+	void operator =(Result&& r) noexcept
 	{
 		//std::cout << "Result& operator =(Result&&  " << r.result << ")\n";
 		result = r.result;
@@ -97,7 +94,7 @@ public:
 		return (result ? true : false);
 	}
 
-	unsigned long number_rows()const
+	uint64_t number_rows()const
 	{
 		if(result) return mysql_num_rows((MYSQL_RES*)result);
 		
@@ -141,11 +138,11 @@ private:
 }
 
 
-namespace oct::cave::maria::v0
+namespace oct::cave::v0::mmsql
 {
-	typedef cave::v0::DataMaria DataMaria;
-	typedef cave::v0::Connection<DataMaria> Connection;
-	typedef cave::v0::Result<DataMaria> Result;
+	typedef cave::v0::DataMMSQL Data;
+	typedef cave::v0::Connection<Data> Connection;
+	typedef cave::v0::Result<Data> Result;
 }
 
 #endif

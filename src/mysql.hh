@@ -1,6 +1,5 @@
-#ifndef OCTETOS_COVE_MARIA_V0_HH
-#define OCTETOS_COVE_MARIA_V0_HH
-
+#ifndef OCTETOS_COVE_MYSQL_V0_HH
+#define OCTETOS_COVE_MYSQL_V0_HH
 
 /*
  * Copyright (C) 2022 Azael R. <azael.devel@gmail.com>
@@ -18,15 +17,13 @@
  * You should have received a copy of the GNU General Public License along
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
- 
- 
+
 #include "base.hh"
 
 
 
 namespace oct::cave::v0
 {
-
 
 class DataMaria : public DataSource
 {
@@ -66,7 +63,7 @@ public:
 	{
 		//std::cout << "Result()\n";
 	}
-	Result(Result<DataMaria>&& r) noexcept
+	Result(Result<DataMaria>&& r) 
 	{
 		result = r.result;
 		r.result = NULL;

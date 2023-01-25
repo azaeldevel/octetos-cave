@@ -2,26 +2,48 @@
 #ifndef OCTETOS_CAVE_CLIENT_HH
 #define OCTETOS_CAVE_CLIENT_HH
 
+/*
+ * Copyright (C) 2022 Azael R. <azael.devel@gmail.com>
+ *
+ * octetos-cave is free software: you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * octetos-cave is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along
+ * with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 #ifdef OCTEOTOS_CAVE_ENABLE_DEV
 	#include <iostream>
 #endif
 
-#include <glibmm/i18n.h>
 #include <string>
 #include <vector>
 #include <list>
-#include <octetos/core/Exception-v3.hh>
+#if  (defined(_WIN32) || defined(_WIN64)) && COMPILER_VS
+	#include <core/src/Exception-v3.hh>
+#elif defined __linux__
+	#include <octetos/core/Exception-v3.hh>
+	#include <glibmm/i18n.h>
+	#include "config.h"
+#else
+	#error "Plataforma desconocida."
+#endif
 
-
-#include "config.h"
 #if defined LINUX_ARCH
 	#include <mysql/mysql.h>
 #elif defined LINUX_GENTOO
 	#include <mariadb/mysql.h>
 #elif defined LINUX_DEBIAN
 	#include <mariadb/mysql.h>
-#elif defined WINDOWS_MINGW && defined BUILDING_DLL
-    #include <mariadb/mysql.h>
+#elif (defined(_WIN32) || defined(_WIN64)) && COMPILER_VS
+    #include <mysql/mysql.h>
 #elif MSYS2
     #include <mariadb/mysql.h>
 #else
@@ -65,7 +87,13 @@ private:
 typedef void* Handle;
 typedef unsigned long index;
 
-
+enum class Source
+{
+	none,
+	mmsql,
+	maria,
+	mysql
+};
 class DataSource
 {
 public:
@@ -95,7 +123,7 @@ public:
 	{
 		//std::cout << "Result()\n";
 	}
-	Result(Result<D>&& r) 
+	Result(Result<D>&& r) noexcept
 	{
 		result = r.result;
 		r.result = NULL;
@@ -105,14 +133,14 @@ public:
 	{
 		throw ExceptionResult("No puede ser copiado este objeto",__FILE__,__LINE__);
 	}
-	Result(Handle&& h)
+	Result(Handle&& h) noexcept
 	{
 		result = h;
 		//std::cout << "Result(Handle&& " << result << ")\n";
 	}
 	~Result();
 
-	void operator =(Result&& r)
+	void operator =(Result&& r) noexcept
 	{
 		if(result) throw ExceptionResult("El objeto deve estar vacio para realizar esta operacion.",__FILE__,__LINE__);
 
