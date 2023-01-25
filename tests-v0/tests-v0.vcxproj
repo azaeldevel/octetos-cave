@@ -122,7 +122,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>COMPILER_VS;IMPORTING_OCTETOS_CORE_DLL;OCTEOTOS_CAVE_ENABLE_TDD_V0;OCTEOTOS_CAVE_TESTS_MMSQL_DB="muposys-dev";OCTEOTOS_CAVE_TESTS_MMSQL_PORT=3307</PreprocessorDefinitions>
+      <PreprocessorDefinitions>COMPILER_VS;IMPORTING_OCTETOS_CORE_DLL;OCTEOTOS_CAVE_ENABLE_TDD_V0;OCTEOTOS_CAVE_TESTS_MMSQL_DB="muposys-dev";OCTEOTOS_CAVE_TESTS_MMSQL_PORT=3307;OCTEOTOS_CAVE_TESTS_DRIVER_MMSQL</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
@@ -142,7 +142,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>COMPILER_VS;IMPORTING_OCTETOS_CORE_DLL;OCTEOTOS_CAVE_ENABLE_TDD_V0;OCTEOTOS_CAVE_TESTS_MMSQL_DB="muposys-dev";OCTEOTOS_CAVE_TESTS_MMSQL_PORT=3307</PreprocessorDefinitions>
+      <PreprocessorDefinitions>COMPILER_VS;IMPORTING_OCTETOS_CORE_DLL;OCTEOTOS_CAVE_ENABLE_TDD_V0;OCTEOTOS_CAVE_TESTS_MMSQL_DB="muposys-dev";OCTEOTOS_CAVE_TESTS_MMSQL_PORT=3307;OCTEOTOS_CAVE_TESTS_DRIVER_MMSQL</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>

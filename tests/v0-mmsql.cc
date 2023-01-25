@@ -9,15 +9,27 @@
 	#include <cave/src/mmsql.hh>
 	#include <cave/src/oct-core.hh>
 #elif defined __linux__
-	#include <src/maria.hh>
+	#include <src/mmsql.hh>
 	#include <src/oct-core.hh>
 #else
 #error "Plataforma desconocida."
 #endif
 
 
-namespace v0 = oct::cave::v0;
-namespace v0_sql = oct::cave::v0::mmsql;
+namespace core = oct::core::v3;
+#ifdef OCTEOTOS_CAVE_TESTS_DRIVER_MMSQL
+namespace cave = oct::cave::v0;
+namespace driver = oct::cave::v0::mmsql;
+#elif defined  OCTEOTOS_CAVE_TESTS_DRIVER_MARIA
+namespace cave = oct::cave::v0;
+namespace driver = oct::cave::v0::maria;
+#elif defined  OCTEOTOS_CAVE_TESTS_DRIVER_MYSQL
+namespace cave = oct::cave::v0;
+namespace driver = oct::cave::v0::mysql;
+#else
+	#error "Driver Desconocido."
+#endif
+//namespace v0_sql = oct::cave::v0::mmsql;
 
 
 struct DB_name
@@ -54,10 +66,10 @@ void v0_develop()
 }
 
 template<typename T = std::chrono::milliseconds>
-void mesure_query(size_t base_length,oct::core::MesureExecution& mesure, v0::mmsql::Connection& conn,const char* str)
+void mesure_query(size_t base_length,oct::core::MesureExecution& mesure, driver::Connection& conn,const char* str)
 {
 	mesure.start = std::chrono::high_resolution_clock::now();
-	v0::mmsql::Result rest1[base_length];//TODO: usar base_length
+	driver::Result rest1[base_length];//TODO: usar base_length
 	for(size_t i = 0; i < base_length; i++)
 	{
 		rest1[i] = conn.execute(str);
@@ -71,8 +83,8 @@ void mesure_query(size_t base_length,oct::core::MesureExecution& mesure, v0::mms
 void v0_mesures()
 {
 	std::cout << "\n";
-	v0::mmsql::Data dtm("localhost","muposys","123456","INFORMATION_SCHEMA", OCTEOTOS_CAVE_TESTS_MMSQL_PORT);
-	v0::Connection<v0::mmsql::Data> conn(dtm,true);
+	driver::Data dtm("localhost","muposys","123456","INFORMATION_SCHEMA", OCTEOTOS_CAVE_TESTS_MMSQL_PORT);
+	driver::Connection conn(dtm,true);
 	CU_ASSERT(conn.is_connected());
 
 	const size_t base_length = 1000;
@@ -96,19 +108,19 @@ void v0_conection()
 {
 	//std::cout << "Testing cave component..\n";
 
-	v0::mmsql::Data dtm("localhost","muposys","123456", OCTEOTOS_CAVE_TESTS_MMSQL_DB, OCTEOTOS_CAVE_TESTS_MMSQL_PORT);
+	driver::Data dtm("localhost","muposys","123456", OCTEOTOS_CAVE_TESTS_MMSQL_DB, OCTEOTOS_CAVE_TESTS_MMSQL_PORT);
 		
-	v0::mmsql::Connection conn(dtm,true);
+	driver::Connection conn(dtm,true);
 	CU_ASSERT(conn.is_connected());
 	CU_ASSERT(conn.ping());
 	
-	v0::mmsql::Result rest;
+	driver::Result rest;
 	CU_ASSERT(not rest.is_stored());
 	try
 	{
 		rest = conn.execute("show databases;");
 	}
-	catch(const v0::ExceptionQuery&)
+	catch(const cave::ExceptionQuery&)
 	{
 		CU_ASSERT(false);
 	}
@@ -129,7 +141,7 @@ void v0_conection()
 		
 	try
 	{
-		v0::mmsql::Result rest2  = conn.select("number","CatalogItem");
+		driver::Result rest2  = conn.select("number","CatalogItem");
 		std::vector<CatalogItem_testv0> vec_items;
 		rest2.store(vec_items);
 		/*for(const CatalogItem_testv0& n : vec_items)
@@ -137,7 +149,7 @@ void v0_conection()
 			std::cout << "Item : " << n.number << "\n";
 		}*/
 	}
-	catch(const v0::ExceptionQuery&)
+	catch(const cave::ExceptionQuery&)
 	{
 		CU_ASSERT(false);
 	}
