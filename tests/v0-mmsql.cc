@@ -17,7 +17,7 @@
 
 
 namespace core = oct::core::v3;
-#ifdef OCTEOTOS_CAVE_TESTS_DRIVER_MMSQL
+#if defined OCTEOTOS_CAVE_TESTS_DRIVER_MMSQL
 namespace cave = oct::cave::v0;
 namespace driver = oct::cave::v0::mmsql;
 #elif defined  OCTEOTOS_CAVE_TESTS_DRIVER_MARIA
@@ -29,7 +29,6 @@ namespace driver = oct::cave::v0::mysql;
 #else
 	#error "Driver Desconocido."
 #endif
-//namespace v0_sql = oct::cave::v0::mmsql;
 
 
 struct DB_name
