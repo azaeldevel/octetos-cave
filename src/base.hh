@@ -53,6 +53,8 @@
 namespace oct::cave::v0
 {
 
+	typedef void* Handle;
+	typedef unsigned long index;
 
 class ExceptionResult : public core::v3::Exception
 {
@@ -84,8 +86,21 @@ public:
 private:
 };
 
-typedef void* Handle;
-typedef unsigned long index;
+class ExceptionSQL : public core::v3::Exception
+{
+public:
+
+public:
+	ExceptionSQL(Handle);
+	ExceptionSQL(const ExceptionQuery&);
+
+	virtual ~ExceptionSQL();
+
+	virtual const char* what() const noexcept;
+private:
+	Handle handle;
+};
+
 
 enum class Source
 {

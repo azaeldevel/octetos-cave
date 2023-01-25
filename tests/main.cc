@@ -1,7 +1,7 @@
 
 #include <CUnit/Basic.h>
 
-#ifdef OCTEOTOS_CAVE_ENABLE_TDD
+#ifdef OCTEOTOS_CAVE_ENABLE_TDD_V0
 	#include "v0.hh"
 #endif
 

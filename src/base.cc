@@ -63,6 +63,14 @@ ExceptionQuery::~ExceptionQuery()
 }
 
 
+ExceptionSQL::ExceptionSQL(const ExceptionQuery& e) : core::v3::Exception(e)
+{
+}
+ExceptionSQL::~ExceptionSQL()
+{
+}
+
+
 
 
 DataSource::DataSource(const std::string& d) : database(d)

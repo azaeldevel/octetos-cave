@@ -71,7 +71,7 @@ void mesure_query(size_t base_length,oct::core::MesureExecution& mesure, v0::mms
 void v0_mesures()
 {
 	std::cout << "\n";
-	v0::mmsql::Data dtm("localhost","muposys","123456","INFORMATION_SCHEMA");
+	v0::mmsql::Data dtm("localhost","muposys","123456","INFORMATION_SCHEMA", OCTEOTOS_CAVE_TESTS_MMSQL_PORT);
 	v0::Connection<v0::mmsql::Data> conn(dtm,true);
 	CU_ASSERT(conn.is_connected());
 
@@ -96,7 +96,7 @@ void v0_conection()
 {
 	//std::cout << "Testing cave component..\n";
 
-	v0::mmsql::Data dtm("localhost","muposys","123456","muposys-0-alpha");
+	v0::mmsql::Data dtm("localhost","muposys","123456", OCTEOTOS_CAVE_TESTS_MMSQL_DB, OCTEOTOS_CAVE_TESTS_MMSQL_PORT);
 		
 	v0::mmsql::Connection conn(dtm,true);
 	CU_ASSERT(conn.is_connected());

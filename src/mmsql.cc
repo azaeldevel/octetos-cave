@@ -17,6 +17,8 @@
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <iostream>
+
 #include "mmsql.hh"
 
 
@@ -24,6 +26,13 @@ namespace oct::cave::v0
 {
 
 
+	ExceptionSQL::ExceptionSQL(Handle h) : handle(h), core::v3::Exception(mysql_errno(reinterpret_cast<MYSQL*>(h)))
+	{
+	}
+	const char* ExceptionSQL::what() const noexcept
+	{
+		return mysql_error(reinterpret_cast<MYSQL*>(handle));
+	}
 
 	
 
@@ -100,9 +109,12 @@ namespace oct::cave::v0
 		}
 		else
 		{
+			//std::cout << "Error : " << mysql_errno(reinterpret_cast<MYSQL*>(connection)) << " : " << mysql_error(reinterpret_cast<MYSQL*>(connection)) << "\n";
+
 			mysql_close(con);
 			connected = false;
 			connection = NULL;
+			throw ExceptionSQL(connection);
 		}
 
 		if(mysql_autocommit(con,a) == 0) autocommit = a;
@@ -124,6 +136,8 @@ namespace oct::cave::v0
 
 	template<> Result<DataMMSQL> Connection<DataMMSQL>::execute(const std::string& str)
 	{
+		if(not connection) throw ExceptionQuery("Conexion no inizializada.", __FILE__, __LINE__);
+
 		int ret_query = mysql_query(reinterpret_cast<MYSQL*>(connection), str.c_str());
 		
 		if (ret_query == -1 and mysql_errno(reinterpret_cast<MYSQL*>(connection)) == 2000) 
