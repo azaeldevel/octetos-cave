@@ -30,6 +30,9 @@
     <ClCompile Include="..\tests\v0-mmsql.cc">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
+    <ClCompile Include="..\tests\v0-schema.cc">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\tests\v0.hh">

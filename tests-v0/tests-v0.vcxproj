@@ -163,6 +163,7 @@
     <ClCompile Include="..\src\mmsql.cc" />
     <ClCompile Include="..\tests\main.cc" />
     <ClCompile Include="..\tests\v0-mmsql.cc" />
+    <ClCompile Include="..\tests\v0-schema.cc" />
     <ClCompile Include="..\tests\v0.cc" />
   </ItemGroup>
   <ItemGroup>

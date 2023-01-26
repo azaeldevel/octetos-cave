@@ -1,7 +1,6 @@
 
 
 
-#include "v0.hh"
 #include <string>
 #include <iostream>
 #include <stdio.h>
@@ -14,6 +13,9 @@
 #else
 #error "Plataforma desconocida."
 #endif
+
+
+#include "v0.hh"
 
 
 namespace core = oct::core::v3;
@@ -35,27 +37,12 @@ struct DB_name
 {
 	std::string name;
 
-	const char** operator =(const char** s)
+	DB_name() = default;
+	DB_name(const char** s)
 	{
 		name = s[0];
-
-		return s;
 	}
 };
-
-struct CatalogItem_testv0
-{
-	std::string number;
-
-	char** operator =(char** s)
-	{
-		number = s[0];
-
-		return s;
-	}
-};
-
-
 
 
 void v0_develop()
@@ -82,7 +69,7 @@ void mesure_query(size_t base_length,oct::core::MesureExecution& mesure, driver:
 void v0_mesures()
 {
 	std::cout << "\n";
-	driver::Data dtm("localhost","muposys","123456","INFORMATION_SCHEMA", OCTEOTOS_CAVE_TESTS_MMSQL_PORT);
+	driver::Data dtm("localhost","develop","123456","INFORMATION_SCHEMA", OCTEOTOS_CAVE_TESTS_MMSQL_PORT);
 	driver::Connection conn;
 	bool conectfl = false;
 	try
@@ -125,7 +112,7 @@ void v0_conection()
 {
 	//std::cout << "Testing cave component..\n";
 
-	driver::Data dtm("localhost","muposys","123456", OCTEOTOS_CAVE_TESTS_MMSQL_DB, OCTEOTOS_CAVE_TESTS_MMSQL_PORT);
+	driver::Data dtm("localhost","develop","123456", "INFORMATION_SCHEMA", OCTEOTOS_CAVE_TESTS_MMSQL_PORT);
 	bool conectfl = false;
 	driver::Connection conn;
 	try
@@ -142,8 +129,8 @@ void v0_conection()
 	{
 		CU_ASSERT(false);
 	}
-
 	CU_ASSERT(conectfl);
+
 	CU_ASSERT(conn.is_connected());
 	CU_ASSERT(conn.ping());
 	
@@ -171,5 +158,28 @@ void v0_conection()
 	{
 		std::cout << "Database : " << n.name << "\n";
 	}*/
-	
+	CU_ASSERT(rest.number_rows() == vec_dbs.size());
+
+	driver::Result rest2;
+	CU_ASSERT(not rest2.is_stored());
+	try
+	{
+		rest2 = conn.execute("show databases;");
+	}
+	catch (const cave::ExceptionQuery&)
+	{
+		CU_ASSERT(false);
+	}
+	catch (...)
+	{
+		CU_ASSERT(false);
+	}
+	CU_ASSERT(rest2.is_stored());
+	std::list<DB_name> lst_dbs;
+	rest2.store(lst_dbs);
+	/*for (const DB_name& n : lst_dbs)
+	{
+		std::cout << "Database : " << n.name << "\n";
+	}*/
+	CU_ASSERT(rest2.number_rows() == lst_dbs.size());
 }

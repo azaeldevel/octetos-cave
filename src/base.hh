@@ -26,6 +26,7 @@
 #include <string>
 #include <vector>
 #include <list>
+#include <type_traits>
 #if  (defined(_WIN32) || defined(_WIN64)) && COMPILER_VS
 	#include <core/src/Exception-v3.hh>
 #elif defined __linux__
@@ -125,10 +126,7 @@ protected:
 
 
 template<class S>
-concept Row = requires(S s)
-{
-	s = (const char**)0;//operator de asignacio para arreglo de c strings
-};
+concept Row = std::is_constructible_v<S, const char**> && std::is_default_constructible<S>::value && std::is_move_constructible_v<S>;
 
 
 

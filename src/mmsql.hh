@@ -76,24 +76,52 @@ namespace oct::cave::v0::mmsql
 
 		void operator =(v0::Result<DataMMSQL>&& r) noexcept;
 
-		template<RowMMSQL R> void store(std::vector<R>& v)
+		template<Row R> void store(std::vector<R>& v)
 		{
-#ifdef OCTEOTOS_CAVE_ENABLE_DEV
-			//std::cout << "template<typename S> void store(std::vector<S>& v)\n";
-#endif
-			v.resize(number_rows());
+			v.reserve(number_rows());
 			char** row;
 			for (index i = 0; i < number_rows(); i++)
 			{
 				row = mysql_fetch_row((MYSQL_RES*)result);
 				if (row)
 				{
-					v.at(i) = (const char**)row;
+					v.push_back((const char**)row);
 				}
 				else
 				{
 					;//error
 				}
+			}
+		}
+
+		template<Row R> void store(std::list<R>& v)
+		{
+			char** row;
+			for (index i = 0; i < number_rows(); i++)
+			{
+				row = mysql_fetch_row((MYSQL_RES*)result);
+				if (row)
+				{
+					v.push_back((const char**)row);
+				}
+				else
+				{
+					;//error
+				}
+			}
+		}
+		template<Row S, typename T> void store(const T& v, size_t field)
+		{
+			if(std::is_same<char,T>::value)
+			{
+			}
+			else if (std::is_same<bool, T>::value)
+			{
+
+			}
+			else if (std::is_same<int8_t, T>::value)
+			{
+
 			}
 		}
 	};
