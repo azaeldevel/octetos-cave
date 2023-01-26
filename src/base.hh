@@ -54,9 +54,6 @@
 namespace oct::cave::v0
 {
 
-	template<class R> concept RowContainer = std::is_same<const char**, R>::value;
-	template<class S> concept ResultStore = std::is_constructible_v<S, const char**> && std::is_default_constructible<S>::value && std::is_move_constructible_v<S>;
-
 	typedef void* Handle;
 	typedef unsigned long index;
 
@@ -127,13 +124,24 @@ namespace oct::cave::v0
 		std::string database;
 	};
 
+	template<class R> concept RowContainer = std::is_same<const char**, R>::value;
+	template<class S> concept ResultContainer = std::is_constructible_v<S, const char**> && std::is_default_constructible<S>::value && std::is_move_constructible_v<S> && !RowContainer<S>;
+
 	template<RowContainer R>
 	class Row
 	{
 	public:
+		Row() : r(NULL)
+		{
+		}
 		Row(R r)
 		{
 			this->r = r;
+		}
+
+		const char* operator[] (size_t i)const
+		{
+			return r[i];
 		}
 
 		template<typename T> T store(size_t field);
@@ -186,9 +194,11 @@ namespace oct::cave::v0
 
 		void close();
 		size_t number_rows()const;
-		
-		template<ResultStore S> void store(std::vector<S>& v);
-		template<ResultStore S> void store(std::list<S>& v);
+
+		template<RowContainer S> void store(std::vector<Row<S>>& v);
+		template<RowContainer S> void store(std::list<Row<S>>& v);
+		template<ResultContainer S> void store(std::vector<S>& v);
+		template<ResultContainer S> void store(std::list<S>& v);
 		template<RowContainer S> void store(std::vector<S>& v);
 		template<RowContainer S> void store(std::list<S>& v);
 

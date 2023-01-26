@@ -82,13 +82,63 @@ void v0_schema()
 
 	std::vector<Schema> vector_schema;
 	rest_schema.store(vector_schema);
-	/*for (const Schema& n : vector_schema)
+	std::cout << "rest_schema : \n";
+	for (const Schema& n : vector_schema)
 	{
-		std::cout << "Database : " << n.name << "\n";
-	}*/
+		std::cout << "\tDatabase : " << n.name << "\n";
+	}
 	CU_ASSERT(rest_schema.number_rows() == vector_schema.size());
 
 	//>>>
+	driver::Result rest_schema1;
+	CU_ASSERT(not rest_schema1.is_stored());
+	try
+	{
+		rest_schema1 = connection_schema.execute("SELECT SCHEMA_NAME from SCHEMATA;");
+	}
+	catch (const cave::ExceptionQuery&)
+	{
+		CU_ASSERT(false);
+	}
+	catch (...)
+	{
+		CU_ASSERT(false);
+	}
+	CU_ASSERT(rest_schema1.is_stored());
 
-	
+	std::vector<const char**> vector_schema1;
+	rest_schema1.store(vector_schema1);
+	std::cout << "vector_schema1 : \n";
+	for (const char** n : vector_schema1)
+	{
+		std::cout << "\tDatabase : " << n[0] << "\n";
+	}
+	CU_ASSERT(rest_schema1.number_rows() == vector_schema1.size());
+
+
+	//>>>
+	driver::Result rest_schema2;
+	CU_ASSERT(not rest_schema2.is_stored());
+	try
+	{
+		rest_schema2 = connection_schema.execute("SELECT SCHEMA_NAME from SCHEMATA;");
+	}
+	catch (const cave::ExceptionQuery&)
+	{
+		CU_ASSERT(false);
+	}
+	catch (...)
+	{
+		CU_ASSERT(false);
+	}
+	CU_ASSERT(rest_schema2.is_stored());
+
+	std::vector<cave::Row<const char**>> vector_schema2;
+	rest_schema2.store(vector_schema2);
+	std::cout << "vector_schema2 : \n";
+	for (const cave::Row<const char**>& n : vector_schema2)
+	{
+		std::cout << "Database : " << n[0] << "\n";
+	}
+	CU_ASSERT(rest_schema2.number_rows() == vector_schema2.size());
 }

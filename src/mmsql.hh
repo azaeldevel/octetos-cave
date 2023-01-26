@@ -70,7 +70,7 @@ namespace oct::cave::v0::mmsql
 
 		void operator =(v0::Result<DataMMSQL>&& r) noexcept;
 
-		template<ResultStore R> void store(std::vector<R>& v)
+		template<RowContainer R> void store(std::vector<Row<R>>& v)
 		{
 			v.reserve(number_rows());
 			char** row;
@@ -87,7 +87,42 @@ namespace oct::cave::v0::mmsql
 				}
 			}
 		}
-		template<ResultStore R> void store(std::list<R>& v)
+		template<RowContainer R> void store(std::list<Row<R>>& v)
+		{
+			char** row;
+			for (index i = 0; i < number_rows(); i++)
+			{
+				row = mysql_fetch_row(reinterpret_cast<MYSQL_RES*>(result));
+				if (row)
+				{
+					v.push_back((const char**)row);
+				}
+				else
+				{
+					;//error
+				}
+			}
+		}
+
+
+		template<ResultContainer R> void store(std::vector<R>& v)
+		{
+			v.reserve(number_rows());
+			char** row;
+			for (index i = 0; i < number_rows(); i++)
+			{
+				row = mysql_fetch_row(reinterpret_cast<MYSQL_RES*>(result));
+				if (row)
+				{
+					v.push_back((const char**)row);
+				}
+				else
+				{
+					;//error
+				}
+			}
+		}
+		template<ResultContainer R> void store(std::list<R>& v)
 		{
 			char** row;
 			for (index i = 0; i < number_rows(); i++)
