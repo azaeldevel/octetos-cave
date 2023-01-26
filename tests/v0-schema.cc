@@ -82,11 +82,11 @@ void v0_schema()
 
 	std::vector<Schema> vector_schema;
 	rest_schema.store(vector_schema);
-	std::cout << "rest_schema : \n";
+	/*std::cout << "rest_schema : \n";
 	for (const Schema& n : vector_schema)
 	{
 		std::cout << "\tDatabase : " << n.name << "\n";
-	}
+	}*/
 	CU_ASSERT(rest_schema.number_rows() == vector_schema.size());
 
 	//>>>
@@ -108,11 +108,11 @@ void v0_schema()
 
 	std::vector<const char**> vector_schema1;
 	rest_schema1.store(vector_schema1);
-	std::cout << "vector_schema1 : \n";
+	/*std::cout << "vector_schema1 : \n";
 	for (const char** n : vector_schema1)
 	{
 		std::cout << "\tDatabase : " << n[0] << "\n";
-	}
+	}*/
 	CU_ASSERT(rest_schema1.number_rows() == vector_schema1.size());
 
 
@@ -135,10 +135,10 @@ void v0_schema()
 
 	std::vector<cave::Row<const char**>> vector_schema2;
 	rest_schema2.store(vector_schema2);
-	std::cout << "vector_schema2 : \n";
+	/*std::cout << "vector_schema2 : \n";
 	for (const cave::Row<const char**>& n : vector_schema2)
 	{
 		std::cout << "Database : " << n[0] << "\n";
-	}
+	}*/
 	CU_ASSERT(rest_schema2.number_rows() == vector_schema2.size());
 }
