@@ -51,87 +51,9 @@ private:
 
 
 template<class S>
-concept RowMaria = requires(S s)
+concept RowMMSQL = requires(S s)
 {
-	s = (char**)0;//operator de asignacio para arreglo de c strings
-};
-
-template<> class Result<DataMMSQL>
-{
-public:
-	Result() : result(NULL)
-	{
-		//std::cout << "Result()\n";
-	}
-	Result(Result<DataMMSQL>&& r) noexcept
-	{
-		result = r.result;
-		r.result = NULL;
-		//std::cout << "Result(Result<D>&& " << result << ")\n";
-	}
-	Result(Handle&& h)
-	{		
-		result = h;
-		//std::cout << "Result(Handle&& " << result << ")\n";
-	}
-	~Result()
-	{
-		if(result)
-		{
-			mysql_free_result((MYSQL_RES*)result);
-			result = NULL;
-		}
-	}
-
-	void operator =(Result&& r) noexcept
-	{
-		//std::cout << "Result& operator =(Result&&  " << r.result << ")\n";
-		result = r.result;
-		r.result = NULL;
-	}
-	bool is_stored() const
-	{
-		return (result ? true : false);
-	}
-
-	uint64_t number_rows()const
-	{
-		if(result) return mysql_num_rows((MYSQL_RES*)result);
-		
-		return 0;
-	}
-	void close()
-	{
-		if(result)
-		{
-			mysql_free_result((MYSQL_RES*)result);
-			result = NULL;
-		}
-	}
-	
-	template<RowMaria R> void store(std::vector<R>& v)
-	{
-#ifdef OCTEOTOS_CAVE_ENABLE_DEV
-		//std::cout << "template<typename S> void store(std::vector<S>& v)\n";
-#endif
-		v.resize(number_rows());
-		char** row;
-		for(index i = 0; i < number_rows(); i++)
-		{
-			row = mysql_fetch_row((MYSQL_RES*)result);
-			if(row)
-			{
-				v.at(i) = row;
-			}
-			else
-			{
-				;//error
-			}
-		}	
-	}
-	
-private:
-	Handle result;
+	s = (const char**)0;//operator de asignacio para arreglo de c strings
 };
 
 
@@ -142,7 +64,39 @@ namespace oct::cave::v0::mmsql
 {
 	typedef cave::v0::DataMMSQL Data;
 	typedef cave::v0::Connection<Data> Connection;
-	typedef cave::v0::Result<Data> Result;
+	//typedef cave::v0::Result<Data> Result;
+	class Result : public v0::Result<DataMMSQL>
+	{
+	public:
+		Result() = default;
+		Result(v0::Result<DataMMSQL>&& r) noexcept;
+		//Result(Result&& r) noexcept;
+		//Result(Handle&& h) noexcept;
+		virtual ~Result();
+
+		void operator =(v0::Result<DataMMSQL>&& r) noexcept;
+
+		template<RowMMSQL R> void store(std::vector<R>& v)
+		{
+#ifdef OCTEOTOS_CAVE_ENABLE_DEV
+			//std::cout << "template<typename S> void store(std::vector<S>& v)\n";
+#endif
+			v.resize(number_rows());
+			char** row;
+			for (index i = 0; i < number_rows(); i++)
+			{
+				row = mysql_fetch_row((MYSQL_RES*)result);
+				if (row)
+				{
+					v.at(i) = (const char**)row;
+				}
+				else
+				{
+					;//error
+				}
+			}
+		}
+	};
 }
 
 #endif

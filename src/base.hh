@@ -139,32 +139,31 @@ public:
 	{
 		//std::cout << "Result()\n";
 	}
-	Result(Result<D>&& r) noexcept
+	Result(Result&& r) noexcept
 	{
 		result = r.result;
 		r.result = NULL;
 		//std::cout << "Result(Result<D>&& " << result << ")\n";
-	}
-	Result(const Result<D>&) 
-	{
-		throw ExceptionResult("No puede ser copiado este objeto",__FILE__,__LINE__);
 	}
 	Result(Handle&& h) noexcept
 	{
 		result = h;
 		//std::cout << "Result(Handle&& " << result << ")\n";
 	}
-	~Result();
+	Result(const Result&) 
+	{
+		throw ExceptionResult("No puede ser copiado este objeto",__FILE__,__LINE__);
+	}
+	
+	virtual ~Result();
 
 	void operator =(Result&& r) noexcept
 	{
-		if(result) throw ExceptionResult("El objeto deve estar vacio para realizar esta operacion.",__FILE__,__LINE__);
-
 		result = r.result;
 		//std::cout << "Result& operator =(Result&&  " << result << ")\n";
 		r.result = NULL;
 	}
-	const Result<D>& operator =(const Result<D>&)
+	const Result& operator =(const Result&)
 	{
 		throw ExceptionResult("No puede ser copiado este objeto",__FILE__,__LINE__);
 	}
@@ -172,15 +171,25 @@ public:
 	{
 		return (result ? true : false);
 	}
-	void close();
 
-	unsigned long number_rows()const;
+	void close();
+	size_t number_rows()const;
 		
 	template<Row S> void store(std::vector<S>& v);
 	template<Row S> void store(std::list<S>& v);
+	template<Row S, typename T> void store(const T& v, size_t field);
+	template<Row S, typename T> void store(const T& v, const char* field);
 
 private:
+
+protected:
 	Handle result;
+
+	void move(Result<D>* origin, Result<D>* dest)
+	{
+		dest->result = origin->result;
+		origin->result = NULL;
+	}
 };
 
 typedef std::vector<std::string> fields;

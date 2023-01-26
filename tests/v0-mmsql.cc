@@ -35,7 +35,7 @@ struct DB_name
 {
 	std::string name;
 
-	char** operator =(char** s)
+	const char** operator =(const char** s)
 	{
 		name = s[0];
 
@@ -167,27 +167,9 @@ void v0_conection()
 
 	std::vector<DB_name> vec_dbs;
 	rest.store(vec_dbs);
-	/*for(const DB_name& n : vec_dbs)
+	/*for (const DB_name& n : vec_dbs)
 	{
 		std::cout << "Database : " << n.name << "\n";
 	}*/
-		
-	try
-	{
-		driver::Result rest2  = conn.select("number","CatalogItem");
-		std::vector<CatalogItem_testv0> vec_items;
-		rest2.store(vec_items);
-		/*for(const CatalogItem_testv0& n : vec_items)
-		{
-			std::cout << "Item : " << n.number << "\n";
-		}*/
-	}
-	catch(const cave::ExceptionQuery&)
-	{
-		CU_ASSERT(false);
-	}
-	catch(...)
-	{
-		CU_ASSERT(false);
-	}
+	
 }

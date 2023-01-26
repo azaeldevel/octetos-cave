@@ -90,6 +90,36 @@ namespace oct::cave::v0
 		return flags;
 	}
 	
+
+
+	template<> Result<DataMMSQL>::~Result()
+	{
+		if (result)
+		{
+			mysql_free_result((MYSQL_RES*)result);
+			result = NULL;
+		}
+	}
+		
+	template<> size_t Result<DataMMSQL>::number_rows()const
+	{
+		if (result) return mysql_num_rows((MYSQL_RES*)result);
+
+		return 0;
+	}
+	template<> void Result<DataMMSQL>::close()
+	{
+		if (result)
+		{
+			mysql_free_result((MYSQL_RES*)result);
+			result = NULL;
+		}
+	}
+	
+	
+
+
+
 	
 		
 	
@@ -204,3 +234,30 @@ namespace oct::cave::v0
 		return false;
 	}
 }
+
+namespace oct::cave::v0::mmsql
+{
+	Result::Result(v0::Result<DataMMSQL>&& r) noexcept
+	{	
+	}
+	/*Result::Result(Result&& r) noexcept : v0::Result<DataMMSQL>(r)
+	{
+
+	}*/
+	/*Result::Result(Handle&& h) noexcept : v0::Result<DataMMSQL>(h)
+	{
+
+	}*/
+	Result::~Result()
+	{
+	}
+
+	void Result::operator =(v0::Result<DataMMSQL>&& r) noexcept
+	{
+		move(&r, this);
+	}
+	
+}
+
+
+
