@@ -64,8 +64,6 @@ void v0_schema()
 	}
 	CU_ASSERT(conectfl);
 	
-
-
 	driver::Result rest_schema;
 	CU_ASSERT(not rest_schema.is_stored());
 	try
@@ -89,4 +87,8 @@ void v0_schema()
 		std::cout << "Database : " << n.name << "\n";
 	}*/
 	CU_ASSERT(rest_schema.number_rows() == vector_schema.size());
+
+	//>>>
+
+	
 }

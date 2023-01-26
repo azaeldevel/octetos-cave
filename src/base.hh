@@ -54,241 +54,255 @@
 namespace oct::cave::v0
 {
 
+	template<class R> concept RowContainer = std::is_same<const char**, R>::value;
+	template<class S> concept ResultStore = std::is_constructible_v<S, const char**> && std::is_default_constructible<S>::value && std::is_move_constructible_v<S>;
+
 	typedef void* Handle;
 	typedef unsigned long index;
 
-class ExceptionResult : public core::v3::Exception
-{
-public:
+	class ExceptionResult : public core::v3::Exception
+	{
+	public:
 	
-public:
-	ExceptionResult();
-	ExceptionResult(const ExceptionResult&);
+	public:
+		ExceptionResult();
+		ExceptionResult(const ExceptionResult&);
 
-	ExceptionResult(const char* message);
-	ExceptionResult(const char* message,const char* filename, unsigned int line);
-	virtual ~ExceptionResult();
+		ExceptionResult(const char* message);
+		ExceptionResult(const char* message,const char* filename, unsigned int line);
+		virtual ~ExceptionResult();
 
-private:
-};
+	private:
+	};
 
-class ExceptionQuery : public core::v3::Exception
-{
-public:
+	class ExceptionQuery : public core::v3::Exception
+	{
+	public:
 	
-public:
-	ExceptionQuery();
-	ExceptionQuery(const ExceptionQuery&);
+	public:
+		ExceptionQuery();
+		ExceptionQuery(const ExceptionQuery&);
 
-	ExceptionQuery(const char* message);
-	ExceptionQuery(const char* message,const char* filename, unsigned int line);
-	virtual ~ExceptionQuery();
+		ExceptionQuery(const char* message);
+		ExceptionQuery(const char* message,const char* filename, unsigned int line);
+		virtual ~ExceptionQuery();
 
-private:
-};
+	private:
+	};
 
-class ExceptionSQL : public core::v3::Exception
-{
-public:
+	class ExceptionSQL : public core::v3::Exception
+	{
+	public:
 
-public:
-	ExceptionSQL(Handle);
-	ExceptionSQL(Handle,const char* filename, unsigned int line);
-	ExceptionSQL(const ExceptionQuery&);
+	public:
+		ExceptionSQL(Handle);
+		ExceptionSQL(Handle,const char* filename, unsigned int line);
+		ExceptionSQL(const ExceptionQuery&);
 
-	virtual ~ExceptionSQL();
+		virtual ~ExceptionSQL();
 
-	virtual const char* what() const noexcept;
-private:
-	Handle handle;
-};
+		virtual const char* what() const noexcept;
+	private:
+		Handle handle;
+	};
 
 
-enum class Source
-{
-	none,
-	mmsql,
-	maria,
-	mysql
-};
-class DataSource
-{
-public:
-	DataSource() = default;
-	DataSource(const std::string& database);
+	enum class Source
+	{
+		none,
+		mmsql,
+		maria,
+		mysql
+	};
+
+	class DataSource
+	{
+	public:
+		DataSource() = default;
+		DataSource(const std::string& database);
 	
-	const std::string& get_database()const;
+		const std::string& get_database()const;
 	
-protected:
-	std::string database;
-};
+	protected:
+		std::string database;
+	};
 
-
-
-template<class S>
-concept Row = std::is_constructible_v<S, const char**> && std::is_default_constructible<S>::value && std::is_move_constructible_v<S>;
-
-
-
-template<typename D> class Result
-{
-public:
-	Result() : result(NULL)
+	template<RowContainer R>
+	class Row
 	{
-		//std::cout << "Result()\n";
-	}
-	Result(Result&& r) noexcept
-	{
-		result = r.result;
-		r.result = NULL;
-		//std::cout << "Result(Result<D>&& " << result << ")\n";
-	}
-	Result(Handle&& h) noexcept
-	{
-		result = h;
-		//std::cout << "Result(Handle&& " << result << ")\n";
-	}
-	Result(const Result&) 
-	{
-		throw ExceptionResult("No puede ser copiado este objeto",__FILE__,__LINE__);
-	}
-	
-	virtual ~Result();
-
-	void operator =(Result&& r) noexcept
-	{
-		result = r.result;
-		//std::cout << "Result& operator =(Result&&  " << result << ")\n";
-		r.result = NULL;
-	}
-	const Result& operator =(const Result&)
-	{
-		throw ExceptionResult("No puede ser copiado este objeto",__FILE__,__LINE__);
-	}
-	bool is_stored() const
-	{
-		return (result ? true : false);
-	}
-
-	void close();
-	size_t number_rows()const;
-		
-	template<Row S> void store(std::vector<S>& v);
-	template<Row S> void store(std::list<S>& v);
-	template<Row S, typename T> void store(const T& v, size_t field);
-	template<Row S, typename T> void store(const T& v, const char* field);
-
-private:
-
-protected:
-	Handle result;
-
-	void move(Result<D>* origin, Result<D>* dest)
-	{
-		dest->result = origin->result;
-		origin->result = NULL;
-	}
-};
-
-typedef std::vector<std::string> fields;
-
-template<typename Data> class Connection
-{
-public:
-	Connection();
-	Connection(const Data& data, bool autocommit);	
-	~Connection();
-
-	bool is_connected()const
-	{
-		return connected;
-	}
-	bool is_autocommit()const
-	{
-		return autocommit;
-	}
-	explicit operator Handle()
-	{
-		return connection;
-	}
-	
-	Result<Data> execute(const std::string&);
-	Result<Data> select(const std::string& fields,const std::string& table)
-	{
-		std::string srtsql;
-		srtsql.reserve(20 + fields.size() + table.size());
-		srtsql = "SELECT ";
-		srtsql += fields;
-		srtsql += " FROM ";
-		srtsql += table;
-		srtsql += ";";
-		//std::cout << srtsql << "\n";
-
-		return execute(srtsql);
-	}
-	Result<Data> select(const std::string& fields,const std::string& table,const std::string& where)
-	{
-		std::string srtsql;
-		srtsql.reserve(30 + fields.size() + table.size() + where.size());
-		srtsql = "SELECT ";
-		srtsql += fields;
-		srtsql += " FROM ";
-		srtsql += table;
-		srtsql += " WHERE ";
-		srtsql += where;
-		srtsql += ";";
-		//std::cout << srtsql << "\n";
-
-		return execute(srtsql);
-	}
-	Result<Data> select(const fields& list,const std::string& table,const std::string& where)
-	{
-		std::string srtsql;
-		size_t reserved = 30 + table.size() + where.size();
-		for(const std::string& s : list)
+	public:
+		Row(R r)
 		{
-			reserved += s.size() + 1;//el tamaño del estring mas una coma
+			this->r = r;
 		}
-		srtsql.reserve(reserved);
-		
-		srtsql = "SELECT ";
-		if(list.size() > 1)
+
+		template<typename T> T store(size_t field);
+		template<typename T> T store(const char* field);
+		template<typename T> T store(const std::string& field);
+
+	protected:
+		R r;
+	};
+
+	template<typename D> class Result
+	{
+	public:
+		Result() : result(NULL)
 		{
-			for(size_t i = 0; i < list.size() - 2; i++)
+			//std::cout << "Result()\n";
+		}
+		Result(Result&& r) noexcept
+		{
+			result = r.result;
+			r.result = NULL;
+			//std::cout << "Result(Result<D>&& " << result << ")\n";
+		}
+		Result(Handle&& h) noexcept
+		{
+			result = h;
+			//std::cout << "Result(Handle&& " << result << ")\n";
+		}
+		Result(const Result&) 
+		{
+			throw ExceptionResult("No puede ser copiado este objeto",__FILE__,__LINE__);
+		}
+	
+		virtual ~Result();
+
+		void operator =(Result&& r) noexcept
+		{
+			result = r.result;
+			//std::cout << "Result& operator =(Result&&  " << result << ")\n";
+			r.result = NULL;
+		}
+		const Result& operator =(const Result&)
+		{
+			throw ExceptionResult("No puede ser copiado este objeto",__FILE__,__LINE__);
+		}
+		bool is_stored() const
+		{
+			return (result ? true : false);
+		}
+
+		void close();
+		size_t number_rows()const;
+		
+		template<ResultStore S> void store(std::vector<S>& v);
+		template<ResultStore S> void store(std::list<S>& v);
+		template<RowContainer S> void store(std::vector<S>& v);
+		template<RowContainer S> void store(std::list<S>& v);
+
+	private:
+
+	protected:
+		Handle result;
+
+		void move(Result<D>* origin, Result<D>* dest)
+		{
+			dest->result = origin->result;
+			origin->result = NULL;
+		}
+	};
+
+	typedef std::vector<std::string> fields;
+
+	template<typename Data> class Connection
+	{
+	public:
+		Connection();
+		Connection(const Data& data, bool autocommit);	
+		~Connection();
+
+		bool is_connected()const
+		{
+			return connected;
+		}
+		bool is_autocommit()const
+		{
+			return autocommit;
+		}
+		explicit operator Handle()
+		{
+			return connection;
+		}
+	
+		Result<Data> execute(const std::string&);
+		Result<Data> select(const std::string& fields,const std::string& table)
+		{
+			std::string srtsql;
+			srtsql.reserve(20 + fields.size() + table.size());
+			srtsql = "SELECT ";
+			srtsql += fields;
+			srtsql += " FROM ";
+			srtsql += table;
+			srtsql += ";";
+			//std::cout << srtsql << "\n";
+
+			return execute(srtsql);
+		}
+		Result<Data> select(const std::string& fields,const std::string& table,const std::string& where)
+		{
+			std::string srtsql;
+			srtsql.reserve(30 + fields.size() + table.size() + where.size());
+			srtsql = "SELECT ";
+			srtsql += fields;
+			srtsql += " FROM ";
+			srtsql += table;
+			srtsql += " WHERE ";
+			srtsql += where;
+			srtsql += ";";
+			//std::cout << srtsql << "\n";
+
+			return execute(srtsql);
+		}
+		Result<Data> select(const fields& list,const std::string& table,const std::string& where)
+		{
+			std::string srtsql;
+			size_t reserved = 30 + table.size() + where.size();
+			for(const std::string& s : list)
 			{
-				srtsql += list[i];
+				reserved += s.size() + 1;//el tamaño del estring mas una coma
 			}
-		}
-		else
-		{
-			srtsql += list[0];
-		}
+			srtsql.reserve(reserved);
 		
-		srtsql += " FROM ";
-		srtsql += table;
-		srtsql += " WHERE ";
-		srtsql += where;
-		srtsql += ";";
-		//std::cout << srtsql << "\n";
+			srtsql = "SELECT ";
+			if(list.size() > 1)
+			{
+				for(size_t i = 0; i < list.size() - 2; i++)
+				{
+					srtsql += list[i];
+				}
+			}
+			else
+			{
+				srtsql += list[0];
+			}
+		
+			srtsql += " FROM ";
+			srtsql += table;
+			srtsql += " WHERE ";
+			srtsql += where;
+			srtsql += ";";
+			//std::cout << srtsql << "\n";
 
-		return execute(srtsql);
-	}
+			return execute(srtsql);
+		}
 	
-	bool begin();
-	bool commit();
-	bool rollback();
+		bool begin();
+		bool commit();
+		bool rollback();
 
-	bool connect(const Data&, bool autocommit);
-	void close();
-	bool ping();
+		bool connect(const Data&, bool autocommit);
+		void close();
+		bool ping();
 
-protected:
+	protected:
 
-private:
-	bool connected;
-	void* connection;
-	bool autocommit;
-};
+	private:
+		bool connected;
+		void* connection;
+		bool autocommit;
+	};
 
 
 

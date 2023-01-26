@@ -50,12 +50,6 @@ private:
 };
 
 
-template<class S>
-concept RowMMSQL = requires(S s)
-{
-	s = (const char**)0;//operator de asignacio para arreglo de c strings
-};
-
 
 }
 
@@ -76,13 +70,46 @@ namespace oct::cave::v0::mmsql
 
 		void operator =(v0::Result<DataMMSQL>&& r) noexcept;
 
-		template<Row R> void store(std::vector<R>& v)
+		template<ResultStore R> void store(std::vector<R>& v)
 		{
 			v.reserve(number_rows());
 			char** row;
 			for (index i = 0; i < number_rows(); i++)
 			{
-				row = mysql_fetch_row((MYSQL_RES*)result);
+				row = mysql_fetch_row(reinterpret_cast<MYSQL_RES*>(result));
+				if (row)
+				{
+					v.push_back((const char**)row);
+				}
+				else
+				{
+					;//error
+				}
+			}
+		}
+		template<ResultStore R> void store(std::list<R>& v)
+		{
+			char** row;
+			for (index i = 0; i < number_rows(); i++)
+			{
+				row = mysql_fetch_row(reinterpret_cast<MYSQL_RES*>(result));
+				if (row)
+				{
+					v.push_back((const char**)row);
+				}
+				else
+				{
+					;//error
+				}
+			}
+		}
+		template<RowContainer R> void store(std::vector<R>& v)
+		{
+			v.reserve(number_rows());
+			char** row;
+			for (index i = 0; i < number_rows(); i++)
+			{
+				row = mysql_fetch_row(reinterpret_cast<MYSQL_RES*>(result));
 				if (row)
 				{
 					v.push_back((const char**)row);
@@ -94,26 +121,13 @@ namespace oct::cave::v0::mmsql
 			}
 		}
 
-		template<Row R> void store(std::list<R>& v)
-		{
-			char** row;
-			for (index i = 0; i < number_rows(); i++)
-			{
-				row = mysql_fetch_row((MYSQL_RES*)result);
-				if (row)
-				{
-					v.push_back((const char**)row);
-				}
-				else
-				{
-					;//error
-				}
-			}
-		}
-		template<Row S, typename T> void store(const T& v, size_t field)
+
+		/*
+		template<typename T> void store(T& v, size_t field)
 		{
 			if(std::is_same<char,T>::value)
 			{
+				//std::cout << "Result::store(data,index) detected for char\n";
 			}
 			else if (std::is_same<bool, T>::value)
 			{
@@ -123,7 +137,40 @@ namespace oct::cave::v0::mmsql
 			{
 
 			}
+			else if (std::is_same<const char**, T>::value)
+			{
+
+			}
+			else if (std::is_same<std::string, T>::value)
+			{
+				//std::cout << "Result::store(data,index) detected for std::string\n";
+			}
 		}
+
+		template<typename T> T store(size_t field)
+		{
+			if (std::is_same<char, T>::value)
+			{
+				std::cout << "Result::store(index) detected for char\n";
+			}
+			else if (std::is_same<bool, T>::value)
+			{
+
+			}
+			else if (std::is_same<int8_t, T>::value)
+			{
+
+			}
+			else if (std::is_same<const char**, T>::value)
+			{
+
+			}
+			else if (std::is_same<std::string, T>::value)
+			{
+				std::cout << "Result::store(index) detected for std::string\n";
+				return "";
+			}
+		}*/
 	};
 }
 
