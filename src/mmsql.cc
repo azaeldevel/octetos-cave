@@ -238,12 +238,24 @@ namespace oct::cave::v0
 namespace oct::cave::v0::mmsql
 {
 
-	Row::Row(const char** str) : v0::Row<const char**>(str)
+	Row::Row(const char** s, size_t z) : v0::Row<const char**>(s,z)
 	{
 
 	}
+	Row::Row(const Row& row) : v0::Row<const char**>(row)
+	{
+	}
+	Row::Row(const Row&& row)
+	{
+		v0::Row<const char**>::copy((v0::Row<const char**>*)&row,this);
+	}
 
+	const Row& Row::operator =(const Row& obj)
+	{
+		v0::Row<const char**>::copy((v0::Row<const char**>*) &obj, this);
 
+		return *this;
+	}
 
 
 
@@ -269,7 +281,8 @@ namespace oct::cave::v0::mmsql
 	
 	Row Result::next()
 	{
-		return (const char**)mysql_fetch_row(reinterpret_cast<MYSQL_RES*>(result));
+		Row row((const char**)mysql_fetch_row(reinterpret_cast<MYSQL_RES*>(result)), (size_t)mysql_num_fields(reinterpret_cast<MYSQL_RES*>(result)));
+		return row;
 	}
 }
 

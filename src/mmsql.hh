@@ -63,7 +63,11 @@ namespace oct::cave::v0::mmsql
 	{
 	public:
 		Row() = default;
-		Row(const char**);
+		Row(const char**, size_t z);
+		Row(const Row& row);
+		Row(const Row&& row);
+
+		const Row& operator =(const Row& obj);
 
 		/*template<typename T> T store(size_t field)
 		{
@@ -141,9 +145,10 @@ namespace oct::cave::v0::mmsql
 			for (index i = 0; i < number_rows(); i++)
 			{
 				row = mysql_fetch_row(reinterpret_cast<MYSQL_RES*>(result));
+				size_t size = mysql_num_fields(reinterpret_cast<MYSQL_RES*>(result));
 				if (row)
 				{
-					v.push_back((const char**)row);
+					v.push_back(v0::Row<R>((const char**)row, size));
 				}
 				else
 				{
@@ -157,9 +162,10 @@ namespace oct::cave::v0::mmsql
 			for (index i = 0; i < number_rows(); i++)
 			{
 				row = mysql_fetch_row(reinterpret_cast<MYSQL_RES*>(result));
+				size_t size = mysql_num_fields(reinterpret_cast<MYSQL_RES*>(result));
 				if (row)
 				{
-					v.push_back((const char**)row);
+					v.push_back(v0::Row<R>((const char**)row, size));
 				}
 				else
 				{
@@ -167,6 +173,8 @@ namespace oct::cave::v0::mmsql
 				}
 			}
 		}
+
+
 		void store(std::vector<Row>& v)
 		{
 			v.reserve(number_rows());
@@ -174,9 +182,10 @@ namespace oct::cave::v0::mmsql
 			for (index i = 0; i < number_rows(); i++)
 			{
 				row = mysql_fetch_row(reinterpret_cast<MYSQL_RES*>(result));
+				size_t size = mysql_num_fields(reinterpret_cast<MYSQL_RES*>(result));
 				if (row)
 				{
-					v.push_back((const char**)row);
+					v.push_back(Row((const char**)row,size));
 				}
 				else
 				{
@@ -193,6 +202,7 @@ namespace oct::cave::v0::mmsql
 			for (index i = 0; i < number_rows(); i++)
 			{
 				row = mysql_fetch_row(reinterpret_cast<MYSQL_RES*>(result));
+				//size_t size = mysql_num_fields(reinterpret_cast<MYSQL_RES*>(result));
 				if (row)
 				{
 					v.push_back((const char**)row);
@@ -209,6 +219,7 @@ namespace oct::cave::v0::mmsql
 			for (index i = 0; i < number_rows(); i++)
 			{
 				row = mysql_fetch_row(reinterpret_cast<MYSQL_RES*>(result));
+				//size_t size = mysql_num_fields(reinterpret_cast<MYSQL_RES*>(result));
 				if (row)
 				{
 					v.push_back((const char**)row);
@@ -226,6 +237,7 @@ namespace oct::cave::v0::mmsql
 			for (index i = 0; i < number_rows(); i++)
 			{
 				row = mysql_fetch_row(reinterpret_cast<MYSQL_RES*>(result));
+				size_t size = mysql_num_fields(reinterpret_cast<MYSQL_RES*>(result));
 				if (row)
 				{
 					v.push_back((const char**)row);

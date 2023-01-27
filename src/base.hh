@@ -131,12 +131,23 @@ namespace oct::cave::v0
 	class Row
 	{
 	public:
-		Row() : r(NULL)
+		Row() : r(NULL), size(0)
 		{
 		}
-		Row(R r)
+		Row(R r,size_t z) : size(z)
 		{
 			this->r = r;
+		}
+		Row(const Row& row) : r(row.r),size(row.size)
+		{
+		}
+		Row(const Row&& row) : r(row.r), size(row.size)
+		{
+		}
+		const Row& operator =(const Row& obj)
+		{
+			r = obj.r;
+			size = obj.size;
 		}
 
 		inline const char* operator[] (size_t i)const
@@ -153,6 +164,13 @@ namespace oct::cave::v0
 		
 	protected:
 		R r;
+		size_t size;
+
+		static void copy(Row* origin, Row* dest)
+		{
+			dest->r = origin->r;
+			dest->size = origin->size;
+		}
 	};
 
 	template<typename D> class Result
