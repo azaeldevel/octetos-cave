@@ -28,7 +28,13 @@ liboctetos_cave_maria_la_CXXFLAGS = $(FLAGS)
 liboctetos_cave_maria_la_SOURCES = base.cc maria.cc
 liboctetos_cave_maria_la_LIBADD =  $(LIBS)  
 endif
-
+if DATABASE_ENGINE_MMSQL
+LIBS += $(OCTETOS_CAVE_MMSQL_LIBS)
+lib_LTLIBRARIES += liboctetos-cave-mmsql.la
+liboctetos_cave_mmsql_la_CXXFLAGS = $(FLAGS)
+liboctetos_cave_mmsql_la_SOURCES = base.cc mmsql.cc
+liboctetos_cave_mmsql_la_LIBADD =  $(LIBS)  
+endif
 
 bin_PROGRAMS = devel
 
