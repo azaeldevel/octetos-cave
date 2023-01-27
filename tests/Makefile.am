@@ -18,8 +18,12 @@ endif
 if OCTEOTOS_CAVE_ENABLE_DEV
 FLAGS += -DOCTEOTOS_CAVE_ENABLE_DEV
 endif
+if DATABASE_ENGINE_MMSQL
+FLAGS += -DOCTEOTOS_CAVE_TESTS_DRIVER_MMSQL -DOCTEOTOS_CAVE_TESTS_MMSQL_PORT=3306
+LIBS += $(OCTETOS_CAVE_MMSQL_LIBS) $(top_builddir)/src/liboctetos-cave-mmsql.la
+endif
 
 v0_LDFLAGS =
 v0_LDADD = $(LIBS) 
 v0_CXXFLAGS = $(FLAGS) -I$(top_builddir)  -I$(top_srcdir)
-v0_SOURCES = main.cc v0.cc v0-maria.cc
+v0_SOURCES = main.cc v0.cc v0-mmsql.cc v0-schema.cc
