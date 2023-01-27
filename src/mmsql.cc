@@ -263,7 +263,6 @@ namespace oct::cave::v0::mmsql
 	{
 		v = r[field][0];
 	}
-	/*
 	void Row::store(signed char& v, size_t field)
 	{
 		v = oct::core::atoi<signed char>(r[field]);
@@ -272,7 +271,6 @@ namespace oct::cave::v0::mmsql
 	{
 		v = oct::core::atoi<unsigned char>(r[field]);
 	}
-	*/
 	void Row::store(const char*& v, size_t field)
 	{
 		v = r[field];

@@ -126,8 +126,8 @@ namespace oct::cave::v0::mmsql
 			//throw ExceptionSQL("No se encotro conversion para el objeto.",__FILE__,__LINE__);
 		}
 		void store(char& v, size_t field);
-		//void store(signed char& v, size_t field);
-		//void store(unsigned char& v, size_t field);
+		void store(signed char& v, size_t field);
+		void store(unsigned char& v, size_t field);
 		void store(const char*& v, size_t field);
 		void store(std::string& v, size_t field);
 		//void store(std::wstring& v, size_t field);
