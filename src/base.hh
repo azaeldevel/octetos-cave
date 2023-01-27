@@ -124,6 +124,8 @@ namespace oct::cave::v0
 		std::string database;
 	};
 	
+	typedef const wchar_t** utf8;
+	typedef const char** ascii;
 	
 	template<class R> concept RowContainer = std::is_same<const char**, R>::value || std::is_same<const wchar_t**, R>::value;
 	template<class S> concept ResultContainer = std::is_constructible_v<S, const char**> && std::is_default_constructible<S>::value && std::is_move_constructible_v<S> && !RowContainer<S>;
