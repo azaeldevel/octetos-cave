@@ -161,6 +161,21 @@ void v0_schema()
 
 	driver::Row row1;
 	row1 = rest_schema3.next();
-	//std::cout << "row1 :" << row1[0] << "\n";
+	//std::cout << "row1 : " << row1[0] << "\n";
 	CU_ASSERT(strcmp(row1[0],"information_schema") == 0);
+
+	std::string rest_schema3_str;
+	row1.store(rest_schema3_str,(size_t)0);
+	//std::cout << "rest_schema3_str : " << rest_schema3_str << "\n";
+	CU_ASSERT(rest_schema3_str.compare("information_schema") == 0);
+
+	char rest_schema3_char;
+	row1.store(rest_schema3_char, (size_t)0);
+	//std::cout << "rest_schema3_char : " << rest_schema3_char << "\n";
+	CU_ASSERT(rest_schema3_char = 'i');
+
+	const char* rest_schema3_cstr;
+	row1.store(rest_schema3_cstr, (size_t)0);
+	//std::cout << "rest_schema3_cstr : " << rest_schema3_cstr << "\n";
+	CU_ASSERT(strcmp(rest_schema3_cstr, "information_schema") == 0);
 }

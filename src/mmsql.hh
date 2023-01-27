@@ -116,15 +116,39 @@ namespace oct::cave::v0::mmsql
 				//std::cout << "Result::store(data,index) detected for std::string\n";
 			}
 		}*/
-		template<typename T> void store(T& v, size_t field);
+
+		template<typename T> T store(size_t field)
+		{
+			//throw ExceptionSQL("No se encotro conversion para el objeto.", __FILE__, __LINE__);
+		}
+		template<typename T> void store(T& v, size_t field)
+		{
+			//throw ExceptionSQL("No se encotro conversion para el objeto.",__FILE__,__LINE__);
+		}
+		void store(char& v, size_t field);
+		//void store(signed char& v, size_t field);
+		//void store(unsigned char& v, size_t field);
+		void store(const char*& v, size_t field);
+		void store(std::string& v, size_t field);
+		//void store(std::wstring& v, size_t field);
+		void store(int& v, size_t field);
+		void store(unsigned int& v, size_t field);
+		void store(short& v, size_t field);
+		void store(unsigned short& v, size_t field);
+		void store(long& v, size_t field);
+		void store(unsigned long& v, size_t field);
+		void store(long long& v, size_t field);
+		void store(unsigned long long& v, size_t field);
+		void store(float& v, size_t field);
+		void store(double& v, size_t field);
+		void store(long double& v, size_t field);
+		void store(bool& v, size_t field);
 
 	private:
 		
 	};
 	/*template<> void Row::store<std::string>(std::string& v, size_t field)
 	{
-
-
 	}*/
 	//typedef cave::v0::Result<Data> Result;
 	class Result : public v0::Result<DataMMSQL>

@@ -20,7 +20,7 @@
 #include <iostream>
 
 #include "mmsql.hh"
-
+#include "oct-core.hh"
 
 namespace oct::cave::v0
 {
@@ -257,6 +257,85 @@ namespace oct::cave::v0::mmsql
 		return *this;
 	}
 
+	
+
+	void Row::store(char& v, size_t field)
+	{
+		v = r[field][0];
+	}
+	/*
+	void Row::store(signed char& v, size_t field)
+	{
+		v = oct::core::atoi<signed char>(r[field]);
+	}
+	void Row::store(unsigned char& v, size_t field)
+	{
+		v = oct::core::atoi<unsigned char>(r[field]);
+	}
+	*/
+	void Row::store(const char*& v, size_t field)
+	{
+		v = r[field];
+	}
+	void Row::store(std::string& v, size_t field)
+	{
+		v = r[field];
+	}
+	/*void Row::store(std::wstring& v, size_t field)
+	{
+		v = r[field];
+	}*/
+	void Row::store(int& v, size_t field)
+	{
+		v = oct::core::atoi<int>(r[field]);
+	}
+	
+	void Row::store(unsigned int& v, size_t field)
+	{
+		v = oct::core::atoi<unsigned int>(r[field]);
+	}
+	void Row::store(short& v, size_t field)
+	{
+		v = oct::core::atoi<short>(r[field]);
+	}
+	void Row::store(unsigned short& v, size_t field)
+	{
+		v = oct::core::atoi<unsigned short>(r[field]);
+	}
+	void Row::store(long& v, size_t field)
+	{
+		v = oct::core::atoi<long>(r[field]);
+	}
+	void Row::store(unsigned long& v, size_t field)
+	{
+		v = oct::core::atoi<unsigned long>(r[field]);
+	}
+	void Row::store(long long& v, size_t field)
+	{
+		v = oct::core::atoi<long long>(r[field]);
+	}
+	void Row::store(unsigned long long& v, size_t field)
+	{
+		v = oct::core::atoi<unsigned long long>(r[field]);
+	}
+	void Row::store(float& v, size_t field)
+	{
+		v = std::stof(r[field]);
+	}
+	void Row::store(double& v, size_t field)
+	{
+		v = std::stod(r[field]);
+	}
+	void Row::store(long double& v, size_t field)
+	{
+		v = std::stold(r[field]);
+	}
+	void Row::store(bool& v, size_t field)
+	{
+		v = (bool)oct::core::atoi<unsigned char>(r[field]);
+	}
+	
+
 
 
 	Result::Result(v0::Result<DataMMSQL>&& r) noexcept
@@ -281,7 +360,9 @@ namespace oct::cave::v0::mmsql
 	
 	Row Result::next()
 	{
-		Row row((const char**)mysql_fetch_row(reinterpret_cast<MYSQL_RES*>(result)), (size_t)mysql_num_fields(reinterpret_cast<MYSQL_RES*>(result)));
+		char** str = mysql_fetch_row(reinterpret_cast<MYSQL_RES*>(result));
+		size_t size = mysql_num_fields(reinterpret_cast<MYSQL_RES*>(result));
+		Row row((const char**)str,size);
 		return row;
 	}
 }

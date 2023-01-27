@@ -123,8 +123,9 @@ namespace oct::cave::v0
 	protected:
 		std::string database;
 	};
-
-	template<class R> concept RowContainer = std::is_same<const char**, R>::value;
+	
+	
+	template<class R> concept RowContainer = std::is_same<const char**, R>::value || std::is_same<const wchar_t**, R>::value;
 	template<class S> concept ResultContainer = std::is_constructible_v<S, const char**> && std::is_default_constructible<S>::value && std::is_move_constructible_v<S> && !RowContainer<S>;
 
 	template<RowContainer R>
@@ -155,9 +156,6 @@ namespace oct::cave::v0
 			return r[i];
 		}
 
-		template<typename T> T store(size_t field);
-		template<typename T> T store(const char* field);
-		template<typename T> T store(const std::string& field);
 		template<typename T> void store(T& v, size_t field);
 		template<typename T> void store(T& v, const char* field);
 		template<typename T> void store(T& v, const std::string& field);

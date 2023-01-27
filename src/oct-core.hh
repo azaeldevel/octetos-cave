@@ -172,6 +172,66 @@ namespace oct::core
 		std::chrono::high_resolution_clock::duration duration;
 		double media;	
 	};
+	//https://en.cppreference.com/w/cpp/string/byte/atoi
+	template<std::signed_integral T, typename C> T atoi(const C* str)
+	{
+		while (std::isspace(static_cast<unsigned char>(*str)))
+		{
+			++str;
+		}
+
+		bool negative = false;
+
+		if (*str == '+')
+		{
+			++str;
+		}
+		else if (*str == '-')
+		{
+			++str;
+			negative = true;
+		}
+
+		T result = 0;
+		for (; std::isdigit(static_cast<unsigned char>(*str)); ++str)
+		{
+			T digit = *str - '0';
+			result *= 10;
+			result -= digit; // calculate in negatives to support INT_MIN, LONG_MIN,..
+		}
+		
+		return negative ? result : -result;
+	}
+	template<std::unsigned_integral T,typename C> T atoi(const C* str)
+	{
+		while (std::isspace(static_cast<unsigned char>(*str)))
+		{
+			++str;
+		}
+
+		bool negative = false;
+
+		if (*str == '+')
+		{
+			++str;
+		}
+		else if (*str == '-')
+		{
+			++str;
+			negative = true;
+			//throw error
+		}
+
+		T result = 0;
+		for (; std::isdigit(static_cast<unsigned char>(*str)); ++str)
+		{
+			T digit = *str - '0';
+			result *= 10;
+			result -= digit; // calculate in negatives to support INT_MIN, LONG_MIN,..
+		}
+
+		return result;
+	}
 }
 
 
