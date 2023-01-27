@@ -139,7 +139,7 @@ namespace oct::cave::v0
 			this->r = r;
 		}
 
-		const char* operator[] (size_t i)const
+		inline const char* operator[] (size_t i)const
 		{
 			return r[i];
 		}
@@ -147,7 +147,10 @@ namespace oct::cave::v0
 		template<typename T> T store(size_t field);
 		template<typename T> T store(const char* field);
 		template<typename T> T store(const std::string& field);
-
+		template<typename T> void store(T& v, size_t field);
+		template<typename T> void store(T& v, const char* field);
+		template<typename T> void store(T& v, const std::string& field);
+		
 	protected:
 		R r;
 	};
@@ -194,6 +197,8 @@ namespace oct::cave::v0
 
 		void close();
 		size_t number_rows()const;
+
+		template<RowContainer S> Row<S> next();
 
 		template<RowContainer S> void store(std::vector<Row<S>>& v);
 		template<RowContainer S> void store(std::list<Row<S>>& v);

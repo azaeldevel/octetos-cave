@@ -141,4 +141,26 @@ void v0_schema()
 		std::cout << "Database : " << n[0] << "\n";
 	}*/
 	CU_ASSERT(rest_schema2.number_rows() == vector_schema2.size());
+
+	//>>>
+	driver::Result rest_schema3;
+	CU_ASSERT(not rest_schema3.is_stored());
+	try
+	{
+		rest_schema3 = connection_schema.execute("SELECT SCHEMA_NAME from SCHEMATA WHERE  SCHEMA_NAME = 'INFORMATION_SCHEMA';");
+	}
+	catch (const cave::ExceptionQuery&)
+	{
+		CU_ASSERT(false);
+	}
+	catch (...)
+	{
+		CU_ASSERT(false);
+	}
+	CU_ASSERT(rest_schema3.is_stored());
+
+	driver::Row row1;
+	row1 = rest_schema3.next();
+	//std::cout << "row1 :" << row1[0] << "\n";
+	CU_ASSERT(strcmp(row1[0],"information_schema") == 0);
 }

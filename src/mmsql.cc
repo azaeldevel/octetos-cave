@@ -92,6 +92,7 @@ namespace oct::cave::v0
 	
 
 
+
 	template<> Result<DataMMSQL>::~Result()
 	{
 		if (result)
@@ -236,6 +237,16 @@ namespace oct::cave::v0
 
 namespace oct::cave::v0::mmsql
 {
+
+	Row::Row(const char** str) : v0::Row<const char**>(str)
+	{
+
+	}
+
+
+
+
+
 	Result::Result(v0::Result<DataMMSQL>&& r) noexcept
 	{	
 	}
@@ -256,6 +267,10 @@ namespace oct::cave::v0::mmsql
 		move(&r, this);
 	}
 	
+	Row Result::next()
+	{
+		return (const char**)mysql_fetch_row(reinterpret_cast<MYSQL_RES*>(result));
+	}
 }
 
 
