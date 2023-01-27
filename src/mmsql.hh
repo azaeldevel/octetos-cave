@@ -119,11 +119,11 @@ namespace oct::cave::v0::mmsql
 
 		template<typename T> T store(size_t field)
 		{
-			//throw ExceptionSQL("No se encotro conversion para el objeto.", __FILE__, __LINE__);
+			throw ExceptionSQL("No se encotro conversion para el objeto.", __FILE__, __LINE__);
 		}
 		template<typename T> void store(T& v, size_t field)
 		{
-			//throw ExceptionSQL("No se encotro conversion para el objeto.",__FILE__,__LINE__);
+			throw ExceptionSQL("No se encotro conversion para el objeto.",__FILE__,__LINE__);
 		}
 		void store(char& v, size_t field);
 		void store(signed char& v, size_t field);

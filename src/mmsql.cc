@@ -286,8 +286,7 @@ namespace oct::cave::v0::mmsql
 	void Row::store(int& v, size_t field)
 	{
 		v = oct::core::atoi<int>(r[field]);
-	}
-	
+	}	
 	void Row::store(unsigned int& v, size_t field)
 	{
 		v = oct::core::atoi<unsigned int>(r[field]);
