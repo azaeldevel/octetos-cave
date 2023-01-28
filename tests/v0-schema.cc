@@ -5,6 +5,7 @@
 #if  (defined(_WIN32) || defined(_WIN64)) && COMPILER_VS
 	#include <cave/src/mmsql.hh>
 	#include <cave/src/oct-core.hh>
+#include <cave/src/schema.hh>
 #elif defined __linux__
 	#include <src/mmsql.hh>
 	#include <src/oct-core.hh>
@@ -187,5 +188,5 @@ void v0_schema()
 	//std::cout << "rest_schema3_cstr : " << rest_schema3_cstr << "\n";
 	CU_ASSERT(strcmp(rest_schema3_cstr, "information_schema") == 0);
 
-
+	cave::Builder buider(connection_schema);
 }

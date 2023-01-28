@@ -89,6 +89,21 @@ namespace oct::cave::v0
 	private:
 	};
 
+	class ExceptionConnection : public core::v3::Exception
+	{
+	public:
+
+	public:
+		ExceptionConnection();
+		ExceptionConnection(const ExceptionConnection&);
+
+		ExceptionConnection(const char* message);
+		ExceptionConnection(const char* message, const char* filename, unsigned int line);
+		virtual ~ExceptionConnection();
+
+	private:
+	};
+
 	class ExceptionSQL : public core::v3::Exception
 	{
 	public:
@@ -254,13 +269,13 @@ namespace oct::cave::v0
 		{
 			//std::cout << "Result()\n";
 		}
-		Result(Result&& r) noexcept
+		Result(Result&& r) noexcept : result(NULL)
 		{
 			result = r.result;
 			r.result = NULL;
 			//std::cout << "Result(Result<D>&& " << result << ")\n";
 		}
-		Result(Handle&& h) noexcept
+		Result(Handle&& h) noexcept : result(NULL)
 		{
 			result = h;
 			//std::cout << "Result(Handle&& " << result << ")\n";

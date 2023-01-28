@@ -161,6 +161,7 @@
   <ItemGroup>
     <ClCompile Include="..\src\base.cc" />
     <ClCompile Include="..\src\mmsql.cc" />
+    <ClCompile Include="..\src\schema.cc" />
     <ClCompile Include="..\tests\main.cc" />
     <ClCompile Include="..\tests\v0-mmsql.cc" />
     <ClCompile Include="..\tests\v0-schema.cc" />
@@ -170,6 +171,7 @@
     <ClInclude Include="..\src\base.hh" />
     <ClInclude Include="..\src\mmsql.hh" />
     <ClInclude Include="..\src\oct-core.hh" />
+    <ClInclude Include="..\src\schema.hh" />
     <ClInclude Include="..\tests\v0.hh" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
