@@ -317,6 +317,7 @@ namespace oct::cave::v0
 	{
 	public:
 		Connection();
+		Connection(Connection&&) noexcept;
 		Connection(const D& data, bool autocommit);
 		~Connection();
 

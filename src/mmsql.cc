@@ -162,6 +162,13 @@ namespace oct::cave::v0
 	template<> Connection<const char*,cave_current::mmsql::Data>::Connection() : connection((Handle)mysql_init(NULL)), connected(false), autocommit(false)
 	{
 	}
+	template<> Connection<const char*, cave_current::mmsql::Data>::Connection(Connection<const char*, cave_current::mmsql::Data>&& c) noexcept
+	{
+		connected	= c.connected;
+		connection	= c.connection;
+		autocommit	= c.autocommit;
+		c.connection = NULL;
+	}
 	template<> Connection<const char*,cave_current::mmsql::Data>::Connection(const cave_current::mmsql::Data& d, bool a): connection((Handle)mysql_init(NULL)),connected(false), autocommit(a)
 	{
 		connect(d,a);
