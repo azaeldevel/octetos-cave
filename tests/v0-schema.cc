@@ -135,11 +135,15 @@ void v0_schema()
 
 	std::vector<cave::Row<const char*>> vector_schema2;
 	rest_schema2.store(vector_schema2);
-	/*std::cout << "vector_schema2 : \n";
-	for (const cave::Row<const char**>& n : vector_schema2)
+	std::cout << "vector_schema2 : \n";
+	/*for (const cave::Row<const char*>& n : vector_schema2)
 	{
 		std::cout << "Database : " << n[0] << "\n";
 	}*/
+	for (const cave::Row<const char*>& n : vector_schema2)
+	{
+		CU_ASSERT(n[0] != NULL);
+	}
 	for (const cave::Row<const char*>& n : vector_schema2)
 	{
 		CU_ASSERT(n[100] == NULL);
@@ -163,7 +167,7 @@ void v0_schema()
 	}
 	CU_ASSERT(rest_schema3.is_stored());
 
-	driver::Row row1;
+	cave::Row<const char*> row1;
 	row1 = rest_schema3.next();
 	//std::cout << "row1 : " << row1[0] << "\n";
 	CU_ASSERT(strcmp(row1[0],"information_schema") == 0);
@@ -200,7 +204,7 @@ void v0_schema()
 	}
 	CU_ASSERT(rest_schema4.is_stored());
 
-	driver::Row row2;
+	cave::Row<const char*> row2;
 	row2 = rest_schema4.next();
 	//std::cout << "row2 : " << row2[0] << "\n";
 	//CU_ASSERT(strcmp(row1[0], "information_schema") == 0);

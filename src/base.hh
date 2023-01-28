@@ -247,7 +247,7 @@ namespace oct::cave::v0
 		}
 	};
 
-	template<typename D> class Result
+	template<typename R> class Result
 	{
 	public:
 		Result() : result(NULL)
@@ -304,7 +304,7 @@ namespace oct::cave::v0
 	protected:
 		Handle result;
 
-		void move(Result<D>* origin, Result<D>* dest)
+		void move(Result* origin, Result* dest)
 		{
 			dest->result = origin->result;
 			origin->result = NULL;
@@ -313,11 +313,11 @@ namespace oct::cave::v0
 
 	typedef std::vector<std::string> fields;
 
-	template<typename Data> class Connection
+	template<typename R> class Connection
 	{
 	public:
 		Connection();
-		Connection(const Data& data, bool autocommit);	
+		Connection(const DataSource& data, bool autocommit);
 		~Connection();
 
 		bool is_connected()const
@@ -333,8 +333,8 @@ namespace oct::cave::v0
 			return connection;
 		}
 	
-		Result<Data> execute(const std::string&);
-		Result<Data> select(const std::string& fields,const std::string& table)
+		R execute(const std::string&);
+		R select(const std::string& fields,const std::string& table)
 		{
 			std::string srtsql;
 			srtsql.reserve(20 + fields.size() + table.size());
@@ -347,7 +347,7 @@ namespace oct::cave::v0
 
 			return execute(srtsql);
 		}
-		Result<Data> select(const std::string& fields,const std::string& table,const std::string& where)
+		R select(const std::string& fields,const std::string& table,const std::string& where)
 		{
 			std::string srtsql;
 			srtsql.reserve(30 + fields.size() + table.size() + where.size());
@@ -362,7 +362,7 @@ namespace oct::cave::v0
 
 			return execute(srtsql);
 		}
-		Result<Data> select(const fields& list,const std::string& table,const std::string& where)
+		R select(const fields& list,const std::string& table,const std::string& where)
 		{
 			std::string srtsql;
 			size_t reserved = 30 + table.size() + where.size();
@@ -399,7 +399,7 @@ namespace oct::cave::v0
 		bool commit();
 		bool rollback();
 
-		bool connect(const Data&, bool autocommit);
+		bool connect(const DataSource&, bool autocommit);
 		void close();
 		bool ping();
 

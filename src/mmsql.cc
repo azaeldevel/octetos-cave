@@ -97,7 +97,7 @@ namespace oct::cave::v0
 
 
 
-	template<> Result<mmsql::Data>::~Result()
+	template<> Result<Row<const char*>>::~Result()
 	{
 		if (result)
 		{
@@ -106,13 +106,13 @@ namespace oct::cave::v0
 		}
 	}
 		
-	template<> size_t Result<mmsql::Data>::number_rows()const
+	template<> size_t Result<Row<const char*>>::number_rows()const
 	{
 		if (result) return mysql_num_rows((MYSQL_RES*)result);
 
 		return 0;
 	}
-	template<> void Result<mmsql::Data>::close()
+	template<> void Result<Row<const char*>>::close()
 	{
 		if (result)
 		{
@@ -128,10 +128,11 @@ namespace oct::cave::v0
 		
 	
 	
-	template<> bool Connection<mmsql::Data>::connect(const mmsql::Data& data, bool a)
+	template<> bool Connection<v0::Result<Row<const char*>>>::connect(const DataSource& d, bool a)
 	{
 		//if(connection) return false;//ya esta conectada
-		//if(connected) return false;//ya esta conectada		
+		//if(connected) return false;//ya esta conectada	
+		const mmsql::Data& data = (const mmsql::Data&)d;
 		MYSQL* con = mysql_real_connect(
 						 reinterpret_cast<MYSQL*>(connection), 
 						 data.get_host().empty() ? NULL : data.get_host().c_str(), 
@@ -159,14 +160,14 @@ namespace oct::cave::v0
 
 		return connected;
 	}
-	template<> Connection<mmsql::Data>::Connection() : connection((Handle)mysql_init(NULL)), connected(false), autocommit(false)
+	template<> Connection<v0::Result<Row<const char*>>>::Connection() : connection((Handle)mysql_init(NULL)), connected(false), autocommit(false)
 	{
 	}
-	template<> Connection<mmsql::Data>::Connection(const mmsql::Data& d, bool a): connection((Handle)mysql_init(NULL)),connected(false), autocommit(a)
+	template<> Connection<v0::Result<Row<const char*>>>::Connection(const DataSource& d, bool a): connection((Handle)mysql_init(NULL)),connected(false), autocommit(a)
 	{
 		connect(d,a);
 	}
-	template<> Connection<mmsql::Data>::~Connection()
+	template<> Connection<v0::Result<Row<const char*>>>::~Connection()
 	{
 		if(connection)
 		{
@@ -175,7 +176,7 @@ namespace oct::cave::v0
 		}		
 	}
 
-	template<> Result<mmsql::Data> Connection<mmsql::Data>::execute(const std::string& str)
+	template<> v0::Result<Row<const char*>> Connection<v0::Result<Row<const char*>>>::execute(const std::string& str)
 	{
 		if (not connected) throw ExceptionSQL(connection, __FILE__, __LINE__);
 		if(not connection) throw ExceptionSQL(connection, __FILE__, __LINE__);
@@ -189,7 +190,7 @@ namespace oct::cave::v0
 		}
 		else if (ret_query == 0) 
 		{
-			return Result<mmsql::Data>(mysql_store_result(reinterpret_cast<MYSQL*>(connection)));
+			return v0::Result<Row<const char*>>(mysql_store_result(reinterpret_cast<MYSQL*>(connection)));
 		}
 		else
 		{
@@ -204,13 +205,13 @@ namespace oct::cave::v0
 
 
 	
-	template<> bool Connection<mmsql::Data>::commit()
+	template<> bool Connection<v0::Result<Row<const char*>>>::commit()
 	{
 		if(connection) if(mysql_commit(reinterpret_cast<MYSQL*>(connection)) == 0) return true;
 
 		return false;
 	}
-	template<> bool Connection<mmsql::Data>::rollback()
+	template<> bool Connection<v0::Result<Row<const char*>>>::rollback()
 	{
 		if(connection) if(mysql_rollback(reinterpret_cast<MYSQL*>(connection)) == 0) return true;
 
@@ -218,7 +219,7 @@ namespace oct::cave::v0
 	}
 
 
-	template<> void Connection<mmsql::Data>::close()
+	template<> void Connection<v0::Result<Row<const char*>>>::close()
 	{
 		if(connection)
 		{
@@ -226,7 +227,7 @@ namespace oct::cave::v0
 			connection = NULL;
 		}
 	}
-	template<> bool Connection<mmsql::Data>::ping()
+	template<> bool Connection<v0::Result<Row<const char*>>>::ping()
 	{
 		if(not connected) return false;
 		if(connection)
@@ -242,9 +243,9 @@ namespace oct::cave::v0
 namespace oct::cave::v0::mmsql
 {
 	
-	Result::Result(v0::Result<mmsql::Data>&& r) noexcept
+	/*Result::Result(v0::Result<mmsql::Data>&& r) noexcept
 	{	
-	}
+	}*/
 	/*Result::Result(Result&& r) noexcept : v0::Result<DataMMSQL>(r)
 	{
 
@@ -257,12 +258,12 @@ namespace oct::cave::v0::mmsql
 	{
 	}
 
-	void Result::operator =(v0::Result<mmsql::Data>&& r) noexcept
+	void Result::operator =(v0::Result<Row<const char*>>&& r) noexcept
 	{
 		move(&r, this);
 	}
 	
-	Row Result::next()
+	Row<const char*> Result::next()
 	{
 		char** str = mysql_fetch_row(reinterpret_cast<MYSQL_RES*>(result));
 		size_t size = mysql_num_fields(reinterpret_cast<MYSQL_RES*>(result));
