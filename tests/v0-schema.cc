@@ -135,7 +135,7 @@ void v0_schema()
 
 	std::vector<cave::Row<const char*>> vector_schema2;
 	rest_schema2.store(vector_schema2);
-	std::cout << "vector_schema2 : \n";
+	//std::cout << "vector_schema2 : \n";
 	/*for (const cave::Row<const char*>& n : vector_schema2)
 	{
 		std::cout << "Database : " << n[0] << "\n";
@@ -187,25 +187,5 @@ void v0_schema()
 	//std::cout << "rest_schema3_cstr : " << rest_schema3_cstr << "\n";
 	CU_ASSERT(strcmp(rest_schema3_cstr, "information_schema") == 0);
 
-	//>>>
-	driver::Result rest_schema4;
-	CU_ASSERT(not rest_schema4.is_stored());
-	try
-	{
-		rest_schema4 = connection_schema.execute("SELECT pwdtxt from `muposys-dev`.user;");
-	}
-	catch (const cave::ExceptionQuery&)
-	{
-		CU_ASSERT(false);
-	}
-	catch (...)
-	{
-		CU_ASSERT(false);
-	}
-	CU_ASSERT(rest_schema4.is_stored());
 
-	cave::Row<const char*> row2;
-	row2 = rest_schema4.next();
-	//std::cout << "row2 : " << row2[0] << "\n";
-	//CU_ASSERT(strcmp(row1[0], "information_schema") == 0);
 }

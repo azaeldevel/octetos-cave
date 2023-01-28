@@ -33,7 +33,6 @@ namespace oct::cave::v0
 
 namespace oct::cave::v0::mmsql
 {
-
 	class Data : public DataSource
 	{
 	public:
@@ -58,8 +57,7 @@ namespace oct::cave::v0::mmsql
 		unsigned long flags;
 	};
 
-	//typedef cave::v0::Result<Data> Result;
-	class Result : public v0::Result<Row<const char*>>
+	class Result : public v0::Result<const char*>
 	{
 	public:
 		Result() = default;
@@ -68,7 +66,7 @@ namespace oct::cave::v0::mmsql
 		//Result(Handle&& h) noexcept;
 		virtual ~Result();
 
-		void operator =(v0::Result<Row<const char*>>&& r) noexcept;
+		void operator =(v0::Result<const char*>&& r) noexcept;
 
 		//string to fetched row
 		template<RowContainer R> void store(std::vector<Row<R>>& v)
@@ -152,7 +150,7 @@ namespace oct::cave::v0::mmsql
 	};
 
 
-	typedef cave::v0::Connection<v0::Result<Row<const char*>>> Connection;
+	typedef cave::v0::Connection<const char*> Connection;
 }
 
 #endif
