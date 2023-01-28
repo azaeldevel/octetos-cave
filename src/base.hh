@@ -247,7 +247,7 @@ namespace oct::cave::v0
 		}
 	};
 
-	template<typename R> class Result
+	template<RowContainer R> class Result
 	{
 	public:
 		Result() : result(NULL)
@@ -313,7 +313,7 @@ namespace oct::cave::v0
 
 	typedef std::vector<std::string> fields;
 
-	template<typename R> class Connection
+	template<RowContainer R> class Connection
 	{
 	public:
 		Connection();
@@ -333,8 +333,8 @@ namespace oct::cave::v0
 			return connection;
 		}
 	
-		R execute(const std::string&);
-		R select(const std::string& fields,const std::string& table)
+		Result<R> execute(const std::string&);
+		Result<R> select(const std::string& fields,const std::string& table)
 		{
 			std::string srtsql;
 			srtsql.reserve(20 + fields.size() + table.size());
@@ -347,7 +347,7 @@ namespace oct::cave::v0
 
 			return execute(srtsql);
 		}
-		R select(const std::string& fields,const std::string& table,const std::string& where)
+		Result<R> select(const std::string& fields,const std::string& table,const std::string& where)
 		{
 			std::string srtsql;
 			srtsql.reserve(30 + fields.size() + table.size() + where.size());
@@ -362,7 +362,7 @@ namespace oct::cave::v0
 
 			return execute(srtsql);
 		}
-		R select(const fields& list,const std::string& table,const std::string& where)
+		Result<R> select(const fields& list,const std::string& table,const std::string& where)
 		{
 			std::string srtsql;
 			size_t reserved = 30 + table.size() + where.size();

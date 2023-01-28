@@ -135,7 +135,7 @@ void v0_schema()
 
 	std::vector<cave::Row<const char*>> vector_schema2;
 	rest_schema2.store(vector_schema2);
-	std::cout << "vector_schema2 : \n";
+	//std::cout << "vector_schema2 : \n";
 	/*for (const cave::Row<const char*>& n : vector_schema2)
 	{
 		std::cout << "Database : " << n[0] << "\n";
