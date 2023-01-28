@@ -22,6 +22,60 @@
 #include "mmsql.hh"
 #include "oct-core.hh"
 
+
+namespace oct::cave::v0::mmsql
+{
+	Data::Data(const std::string& h, const std::string& u, const std::string& pwd) : port(3306), flags(0)
+	{
+	}
+	Data::Data(const std::string& h, const std::string& u, const std::string& pwd, const std::string& d) : host(h), user(u), password(pwd), DataSource(d), port(3306), flags(0)
+	{
+	}
+	Data::Data(const std::string& h, const std::string& u, const std::string& pwd, unsigned int p) : host(h), user(u), password(pwd), port(p), flags(0)
+	{
+	}
+	Data::Data(const std::string& h, const std::string& u, const std::string& pwd, const std::string& d, unsigned int p) : host(h), user(u), password(pwd), DataSource(d), port(p), flags(0)
+	{
+	}
+	Data::Data(const std::string& h, const std::string& u, const std::string& pwd, const std::string& d, unsigned int p, const std::string& s) : host(h), user(u), password(pwd), DataSource(d), port(p), socket(s), flags(0)
+	{
+	}
+	Data::Data(const std::string& h, const std::string& u, const std::string& pwd, const std::string& d, unsigned int p, const std::string& s, unsigned long f) : host(h), user(u), password(pwd), DataSource(d), port(p), socket(s), flags(f)
+	{
+	}
+	Data::~Data()
+	{
+	}
+
+
+
+	const std::string& Data::get_host()const
+	{
+		return host;
+	}
+	const std::string& Data::get_user()const
+	{
+		return user;
+	}
+	const std::string& Data::get_password()const
+	{
+		return password;
+	}
+	const std::string& Data::get_socket()const
+	{
+		return socket;
+	}
+	unsigned int Data::get_port()const
+	{
+		return port;
+	}
+	unsigned long Data::get_flags()const
+	{
+		return flags;
+	}
+
+}
+
 namespace oct::cave::v0
 {
 
@@ -41,59 +95,9 @@ namespace oct::cave::v0
 
 	
 
-	DataMMSQL::DataMMSQL(const std::string& h,const std::string& u,const std::string& pwd) : port(3306),flags(0)
-	{
-	}
-	DataMMSQL::DataMMSQL(const std::string& h,const std::string& u,const std::string& pwd,const std::string& d) : host(h),user(u),password(pwd),DataSource(d),port(3306),flags(0)
-	{
-	}
-	DataMMSQL::DataMMSQL(const std::string& h,const std::string& u,const std::string& pwd,unsigned int p) : host(h),user(u),password(pwd),port(p),flags(0)
-	{
-	}
-	DataMMSQL::DataMMSQL(const std::string& h,const std::string& u,const std::string& pwd,const std::string& d,unsigned int p) : host(h),user(u),password(pwd),DataSource(d),port(p),flags(0)
-	{
-	}
-	DataMMSQL::DataMMSQL(const std::string& h,const std::string& u,const std::string& pwd,const std::string& d,unsigned int p,const std::string& s) : host(h),user(u),password(pwd),DataSource(d),port(p),socket(s),flags(0)
-	{
-	}
-	DataMMSQL::DataMMSQL(const std::string& h,const std::string& u,const std::string& pwd,const std::string& d,unsigned int p,const std::string& s,unsigned long f) : host(h),user(u),password(pwd),DataSource(d),port(p),socket(s),flags(f)
-	{
-	}
-	DataMMSQL::~DataMMSQL()
-	{
-	}
-	
-	
-
-	const std::string& DataMMSQL::get_host()const
-	{
-		return host;
-	}
-	const std::string& DataMMSQL::get_user()const
-	{
-		return user;
-	}
-	const std::string& DataMMSQL::get_password()const
-	{
-		return password;
-	}
-	const std::string& DataMMSQL::get_socket()const
-	{
-		return socket;
-	}
-	unsigned int DataMMSQL::get_port()const
-	{
-		return port;
-	}
-	unsigned long DataMMSQL::get_flags()const
-	{
-		return flags;
-	}
-	
 
 
-
-	template<> Result<DataMMSQL>::~Result()
+	template<> Result<mmsql::Data>::~Result()
 	{
 		if (result)
 		{
@@ -102,13 +106,13 @@ namespace oct::cave::v0
 		}
 	}
 		
-	template<> size_t Result<DataMMSQL>::number_rows()const
+	template<> size_t Result<mmsql::Data>::number_rows()const
 	{
 		if (result) return mysql_num_rows((MYSQL_RES*)result);
 
 		return 0;
 	}
-	template<> void Result<DataMMSQL>::close()
+	template<> void Result<mmsql::Data>::close()
 	{
 		if (result)
 		{
@@ -124,7 +128,7 @@ namespace oct::cave::v0
 		
 	
 	
-	template<> bool Connection<DataMMSQL>::connect(const DataMMSQL& data, bool a)
+	template<> bool Connection<mmsql::Data>::connect(const mmsql::Data& data, bool a)
 	{
 		//if(connection) return false;//ya esta conectada
 		//if(connected) return false;//ya esta conectada		
@@ -155,14 +159,14 @@ namespace oct::cave::v0
 
 		return connected;
 	}
-	template<> Connection<DataMMSQL>::Connection() : connection((Handle)mysql_init(NULL)), connected(false), autocommit(false)
+	template<> Connection<mmsql::Data>::Connection() : connection((Handle)mysql_init(NULL)), connected(false), autocommit(false)
 	{
 	}
-	template<> Connection<DataMMSQL>::Connection(const DataMMSQL& d, bool a): connection((Handle)mysql_init(NULL)),connected(false), autocommit(a)
+	template<> Connection<mmsql::Data>::Connection(const mmsql::Data& d, bool a): connection((Handle)mysql_init(NULL)),connected(false), autocommit(a)
 	{
 		connect(d,a);
 	}
-	template<> Connection<DataMMSQL>::~Connection()
+	template<> Connection<mmsql::Data>::~Connection()
 	{
 		if(connection)
 		{
@@ -171,7 +175,7 @@ namespace oct::cave::v0
 		}		
 	}
 
-	template<> Result<DataMMSQL> Connection<DataMMSQL>::execute(const std::string& str)
+	template<> Result<mmsql::Data> Connection<mmsql::Data>::execute(const std::string& str)
 	{
 		if (not connected) throw ExceptionSQL(connection, __FILE__, __LINE__);
 		if(not connection) throw ExceptionSQL(connection, __FILE__, __LINE__);
@@ -185,7 +189,7 @@ namespace oct::cave::v0
 		}
 		else if (ret_query == 0) 
 		{
-			return Result<DataMMSQL>(mysql_store_result(reinterpret_cast<MYSQL*>(connection)));
+			return Result<mmsql::Data>(mysql_store_result(reinterpret_cast<MYSQL*>(connection)));
 		}
 		else
 		{
@@ -200,13 +204,13 @@ namespace oct::cave::v0
 
 
 	
-	template<> bool Connection<DataMMSQL>::commit()
+	template<> bool Connection<mmsql::Data>::commit()
 	{
 		if(connection) if(mysql_commit(reinterpret_cast<MYSQL*>(connection)) == 0) return true;
 
 		return false;
 	}
-	template<> bool Connection<DataMMSQL>::rollback()
+	template<> bool Connection<mmsql::Data>::rollback()
 	{
 		if(connection) if(mysql_rollback(reinterpret_cast<MYSQL*>(connection)) == 0) return true;
 
@@ -214,7 +218,7 @@ namespace oct::cave::v0
 	}
 
 
-	template<> void Connection<DataMMSQL>::close()
+	template<> void Connection<mmsql::Data>::close()
 	{
 		if(connection)
 		{
@@ -222,7 +226,7 @@ namespace oct::cave::v0
 			connection = NULL;
 		}
 	}
-	template<> bool Connection<DataMMSQL>::ping()
+	template<> bool Connection<mmsql::Data>::ping()
 	{
 		if(not connected) return false;
 		if(connection)
@@ -238,7 +242,7 @@ namespace oct::cave::v0
 namespace oct::cave::v0::mmsql
 {
 	
-	Result::Result(v0::Result<DataMMSQL>&& r) noexcept
+	Result::Result(v0::Result<mmsql::Data>&& r) noexcept
 	{	
 	}
 	/*Result::Result(Result&& r) noexcept : v0::Result<DataMMSQL>(r)
@@ -253,7 +257,7 @@ namespace oct::cave::v0::mmsql
 	{
 	}
 
-	void Result::operator =(v0::Result<DataMMSQL>&& r) noexcept
+	void Result::operator =(v0::Result<mmsql::Data>&& r) noexcept
 	{
 		move(&r, this);
 	}

@@ -25,29 +25,6 @@
 namespace oct::cave::v0
 {
 
-class DataMMSQL : public DataSource
-{
-public:
-	DataMMSQL(const std::string& host,const std::string& user,const std::string& password);
-	DataMMSQL(const std::string& host,const std::string& user,const std::string& password,const std::string& database);
-	DataMMSQL(const std::string& host,const std::string& user,const std::string& password,unsigned int port);
-	DataMMSQL(const std::string& host,const std::string& user,const std::string& password,const std::string& database,unsigned int port);
-	DataMMSQL(const std::string& host,const std::string& user,const std::string& password,const std::string& database,unsigned int port,const std::string& socket);
-	DataMMSQL(const std::string& host,const std::string& user,const std::string& password,const std::string& database,unsigned int port,const std::string& socket,unsigned long flags);
-	~DataMMSQL();
-		
-	const std::string& get_host()const;
-	const std::string& get_user()const;
-	const std::string& get_password()const;
-	const std::string& get_socket()const;
-	unsigned int get_port()const;
-	unsigned long get_flags()const;
-	
-private:
-	std::string host,user,password,socket;
-	unsigned int port;
-	unsigned long flags;	
-};
 
 
 
@@ -56,21 +33,44 @@ private:
 
 namespace oct::cave::v0::mmsql
 {
-	typedef cave::v0::DataMMSQL Data;
+	class Data : public DataSource
+	{
+	public:
+		Data(const std::string& host, const std::string& user, const std::string& password);
+		Data(const std::string& host, const std::string& user, const std::string& password, const std::string& database);
+		Data(const std::string& host, const std::string& user, const std::string& password, unsigned int port);
+		Data(const std::string& host, const std::string& user, const std::string& password, const std::string& database, unsigned int port);
+		Data(const std::string& host, const std::string& user, const std::string& password, const std::string& database, unsigned int port, const std::string& socket);
+		Data(const std::string& host, const std::string& user, const std::string& password, const std::string& database, unsigned int port, const std::string& socket, unsigned long flags);
+		~Data();
+
+		const std::string& get_host()const;
+		const std::string& get_user()const;
+		const std::string& get_password()const;
+		const std::string& get_socket()const;
+		unsigned int get_port()const;
+		unsigned long get_flags()const;
+
+	private:
+		std::string host, user, password, socket;
+		unsigned int port;
+		unsigned long flags;
+	};
+
 	typedef cave::v0::Connection<Data> Connection;
 	typedef cave::v0::Row<const char*> Row;
 	
 	//typedef cave::v0::Result<Data> Result;
-	class Result : public v0::Result<DataMMSQL>
+	class Result : public v0::Result<Data>
 	{
 	public:
 		Result() = default;
-		Result(v0::Result<DataMMSQL>&& r) noexcept;
+		Result(v0::Result<Data>&& r) noexcept;
 		//Result(Result&& r) noexcept;
 		//Result(Handle&& h) noexcept;
 		virtual ~Result();
 
-		void operator =(v0::Result<DataMMSQL>&& r) noexcept;
+		void operator =(v0::Result<Data>&& r) noexcept;
 
 		template<RowContainer R> void store(std::vector<v0::Row<R>>& v)
 		{
