@@ -313,11 +313,11 @@ namespace oct::cave::v0
 
 	typedef std::vector<std::string> fields;
 
-	template<RowContainer R> class Connection
+	template<RowContainer R,typename D> class Connection
 	{
 	public:
 		Connection();
-		Connection(const DataSource& data, bool autocommit);
+		Connection(const D& data, bool autocommit);
 		~Connection();
 
 		bool is_connected()const
@@ -399,7 +399,7 @@ namespace oct::cave::v0
 		bool commit();
 		bool rollback();
 
-		bool connect(const DataSource&, bool autocommit);
+		bool connect(const D&, bool autocommit);
 		void close();
 		bool ping();
 
@@ -414,5 +414,6 @@ namespace oct::cave::v0
 
 
 }
+namespace cave_current = oct::cave::v0;
 
 #endif

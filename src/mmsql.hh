@@ -20,16 +20,9 @@
 
 #include "base.hh"
 
-
-
 namespace oct::cave::v0
 {
-
-
-
-
 }
-
 
 namespace oct::cave::v0::mmsql
 {
@@ -57,16 +50,13 @@ namespace oct::cave::v0::mmsql
 		unsigned long flags;
 	};
 
-	class Result : public v0::Result<const char*>
+	class Result : public cave_current::Result<const char*>
 	{
 	public:
 		Result() = default;
-		//Result(v0::Result<Row<const char*>>&& r) noexcept;
-		//Result(Result&& r) noexcept;
-		//Result(Handle&& h) noexcept;
 		virtual ~Result();
 
-		void operator =(v0::Result<const char*>&& r) noexcept;
+		void operator =(cave_current::Result<const char*>&& r) noexcept;
 
 		//string to fetched row
 		template<RowContainer R> void store(std::vector<Row<R>>& v)
@@ -79,7 +69,7 @@ namespace oct::cave::v0::mmsql
 				size_t size = mysql_num_fields(reinterpret_cast<MYSQL_RES*>(result));
 				if (row)
 				{
-					v.push_back(v0::Row<const char*>((const char**)row, size));
+					v.push_back(cave_current::Row<const char*>((const char**)row, size));
 				}
 				else
 				{
@@ -97,7 +87,7 @@ namespace oct::cave::v0::mmsql
 				size_t size = mysql_num_fields(reinterpret_cast<MYSQL_RES*>(result));
 				if (row)
 				{
-					v.push_back(v0::Row<R>((const char**)row, size));
+					v.push_back(cave_current::Row<R>((const char**)row, size));
 				}
 				else
 				{
@@ -150,7 +140,14 @@ namespace oct::cave::v0::mmsql
 	};
 
 
-	typedef cave::v0::Connection<const char*> Connection;
+	typedef cave_current::Connection<const char*,Data> Connection;
+	/*class Connection : public cave_current::Connection<const char*, Data>
+	{
+	public:
+		Connection(const Data& data, bool autocommit);
+
+		bool connect(const Data&, bool autocommit);
+	};*/
 }
 
 #endif

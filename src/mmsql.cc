@@ -128,11 +128,10 @@ namespace oct::cave::v0
 		
 	
 	
-	template<> bool Connection<const char*>::connect(const DataSource& d, bool a)
+	template<> bool Connection<const char*,cave_current::mmsql::Data>::connect(const cave_current::mmsql::Data& data, bool a)
 	{
 		//if(connection) return false;//ya esta conectada
 		//if(connected) return false;//ya esta conectada	
-		const mmsql::Data& data = (const mmsql::Data&)d;
 		MYSQL* con = mysql_real_connect(
 						 reinterpret_cast<MYSQL*>(connection), 
 						 data.get_host().empty() ? NULL : data.get_host().c_str(), 
@@ -160,14 +159,14 @@ namespace oct::cave::v0
 
 		return connected;
 	}
-	template<> Connection<const char*>::Connection() : connection((Handle)mysql_init(NULL)), connected(false), autocommit(false)
+	template<> Connection<const char*,cave_current::mmsql::Data>::Connection() : connection((Handle)mysql_init(NULL)), connected(false), autocommit(false)
 	{
 	}
-	template<> Connection<const char*>::Connection(const DataSource& d, bool a): connection((Handle)mysql_init(NULL)),connected(false), autocommit(a)
+	template<> Connection<const char*,cave_current::mmsql::Data>::Connection(const cave_current::mmsql::Data& d, bool a): connection((Handle)mysql_init(NULL)),connected(false), autocommit(a)
 	{
 		connect(d,a);
 	}
-	template<> Connection<const char*>::~Connection()
+	template<> Connection<const char*,cave_current::mmsql::Data>::~Connection()
 	{
 		if(connection)
 		{
@@ -176,7 +175,7 @@ namespace oct::cave::v0
 		}		
 	}
 
-	template<> v0::Result<const char*> Connection<const char*>::execute(const std::string& str)
+	template<> cave_current::Result<const char*> Connection<const char*,cave_current::mmsql::Data>::execute(const std::string& str)
 	{
 		if (not connected) throw ExceptionSQL(connection, __FILE__, __LINE__);
 		if(not connection) throw ExceptionSQL(connection, __FILE__, __LINE__);
@@ -190,7 +189,7 @@ namespace oct::cave::v0
 		}
 		else if (ret_query == 0) 
 		{
-			return v0::Result<const char*>(mysql_store_result(reinterpret_cast<MYSQL*>(connection)));
+			return cave_current::Result<const char*>(mysql_store_result(reinterpret_cast<MYSQL*>(connection)));
 		}
 		else
 		{
@@ -205,13 +204,13 @@ namespace oct::cave::v0
 
 
 	
-	template<> bool Connection<const char*>::commit()
+	template<> bool Connection<const char*,cave_current::mmsql::Data>::commit()
 	{
 		if(connection) if(mysql_commit(reinterpret_cast<MYSQL*>(connection)) == 0) return true;
 
 		return false;
 	}
-	template<> bool Connection<const char*>::rollback()
+	template<> bool Connection<const char*,cave_current::mmsql::Data>::rollback()
 	{
 		if(connection) if(mysql_rollback(reinterpret_cast<MYSQL*>(connection)) == 0) return true;
 
@@ -219,7 +218,7 @@ namespace oct::cave::v0
 	}
 
 
-	template<> void Connection<const char*>::close()
+	template<> void Connection<const char*,cave_current::mmsql::Data>::close()
 	{
 		if(connection)
 		{
@@ -227,7 +226,7 @@ namespace oct::cave::v0
 			connection = NULL;
 		}
 	}
-	template<> bool Connection<const char*>::ping()
+	template<> bool Connection<const char*,cave_current::mmsql::Data>::ping()
 	{
 		if(not connected) return false;
 		if(connection)
@@ -243,22 +242,12 @@ namespace oct::cave::v0
 namespace oct::cave::v0::mmsql
 {
 	
-	/*Result::Result(v0::Result<mmsql::Data>&& r) noexcept
-	{	
-	}*/
-	/*Result::Result(Result&& r) noexcept : v0::Result<DataMMSQL>(r)
-	{
-
-	}*/
-	/*Result::Result(Handle&& h) noexcept : v0::Result<DataMMSQL>(h)
-	{
-
-	}*/
+	
 	Result::~Result()
 	{
 	}
 
-	void Result::operator =(v0::Result<const char*>&& r) noexcept
+	void Result::operator =(cave_current::Result<const char*>&& r) noexcept
 	{
 		move(&r, this);
 	}
@@ -270,6 +259,8 @@ namespace oct::cave::v0::mmsql
 		Row row((const char**)str,size);
 		return row;
 	}
+
+
 }
 
 
