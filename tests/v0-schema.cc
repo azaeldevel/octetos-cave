@@ -140,6 +140,10 @@ void v0_schema()
 	{
 		std::cout << "Database : " << n[0] << "\n";
 	}*/
+	for (const cave::Row<const char*>& n : vector_schema2)
+	{
+		CU_ASSERT(n[100] == NULL);
+	}
 	CU_ASSERT(rest_schema2.number_rows() == vector_schema2.size());
 
 	//>>>

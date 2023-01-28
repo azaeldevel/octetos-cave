@@ -156,7 +156,7 @@ namespace oct::cave::v0
 
 		inline R operator[] (size_t i)const
 		{
-			return r[i];
+			return i < size ? r[i] : NULL;
 		}
 
 		template<typename T> void store(T& v, size_t field);
