@@ -133,7 +133,7 @@ void v0_schema()
 	}
 	CU_ASSERT(rest_schema2.is_stored());
 
-	std::vector<cave::Row<const char**>> vector_schema2;
+	std::vector<cave::Row<const char*>> vector_schema2;
 	rest_schema2.store(vector_schema2);
 	/*std::cout << "vector_schema2 : \n";
 	for (const cave::Row<const char**>& n : vector_schema2)

@@ -29,9 +29,11 @@
 #include <type_traits>
 #if  (defined(_WIN32) || defined(_WIN64)) && COMPILER_VS
 	#include <core/src/Exception-v3.hh>
+	#include <cave/src/oct-core.hh>
 #elif defined __linux__
 	#include <octetos/core/Exception-v3.hh>
 	#include <glibmm/i18n.h>
+	#include <cave/src/oct-core.hh>
 	#include "config.h"
 #else
 	#error "Plataforma desconocida."
@@ -123,11 +125,8 @@ namespace oct::cave::v0
 	protected:
 		std::string database;
 	};
-	
-	typedef const wchar_t** utf8;
-	typedef const char** ascii;
-	
-	template<class R> concept RowContainer = std::is_same<const char**, R>::value || std::is_same<const wchar_t**, R>::value;
+		
+	template<class R> concept RowContainer = std::is_same<const char*, R>::value || std::is_same<const wchar_t*, R>::value;
 	template<class S> concept ResultContainer = std::is_constructible_v<S, const char**> && std::is_default_constructible<S>::value && std::is_move_constructible_v<S> && !RowContainer<S>;
 
 	template<RowContainer R>
@@ -137,33 +136,108 @@ namespace oct::cave::v0
 		Row() : r(NULL), size(0)
 		{
 		}
-		Row(R r,size_t z) : size(z)
+		Row(R* r,size_t z) : size(z)
 		{
 			this->r = r;
 		}
 		Row(const Row& row) : r(row.r),size(row.size)
 		{
 		}
-		Row(const Row&& row) : r(row.r), size(row.size)
+		Row(Row&& row) : r(row.r), size(row.size)
 		{
 		}
 		const Row& operator =(const Row& obj)
 		{
 			r = obj.r;
 			size = obj.size;
+
+			return *this;
 		}
 
-		inline const char* operator[] (size_t i)const
+		inline R operator[] (size_t i)const
 		{
 			return r[i];
 		}
 
 		template<typename T> void store(T& v, size_t field);
+		void store(char& v, size_t field)
+		{
+			v = r[field][0];
+		}
+		void store(signed char& v, size_t field)
+		{
+			v = oct::core::atoi<signed char>(r[field]);
+		}
+		void store(unsigned char& v, size_t field)
+		{
+			v = oct::core::atoi<unsigned char>(r[field]);
+		}
+		void store(const char*& v, size_t field)
+		{
+			v = r[field];
+		}
+		void store(std::string& v, size_t field)
+		{
+			v = r[field];
+		}
+		/*void store(std::wstring& v, size_t field)
+		{
+			v = r[field];
+		}*/
+		void store(int& v, size_t field)
+		{
+			v = oct::core::atoi<int>(r[field]);
+		}
+		void store(unsigned int& v, size_t field)
+		{
+			v = oct::core::atoi<unsigned int>(r[field]);
+		}
+		void store(short& v, size_t field)
+		{
+			v = oct::core::atoi<short>(r[field]);
+		}
+		void store(unsigned short& v, size_t field)
+		{
+			v = oct::core::atoi<unsigned short>(r[field]);
+		}
+		void store(long& v, size_t field)
+		{
+			v = oct::core::atoi<long>(r[field]);
+		}
+		void tore(unsigned long& v, size_t field)
+		{
+			v = oct::core::atoi<unsigned long>(r[field]);
+		}
+		void store(long long& v, size_t field)
+		{
+			v = oct::core::atoi<long long>(r[field]);
+		}
+		void store(unsigned long long& v, size_t field)
+		{
+			v = oct::core::atoi<unsigned long long>(r[field]);
+		}
+		void store(float& v, size_t field)
+		{
+			v = std::stof(r[field]);
+		}
+		void store(double& v, size_t field)
+		{
+			v = std::stod(r[field]);
+		}
+		void store(long double& v, size_t field)
+		{
+			v = std::stold(r[field]);
+		}
+		void store(bool& v, size_t field)
+		{
+			v = (bool)oct::core::atoi<unsigned char>(r[field]);
+		}
+
 		template<typename T> void store(T& v, const char* field);
 		template<typename T> void store(T& v, const std::string& field);
 		
 	protected:
-		R r;
+		R* r;
 		size_t size;
 
 		static void copy(Row* origin, Row* dest)
