@@ -4,6 +4,11 @@
 #include <string>
 #include <iostream>
 #include <stdio.h>
+#include <codecvt>
+#include <locale>
+#include <xlocale>
+#include <string>
+
 #if  (defined(_WIN32) || defined(_WIN64)) && COMPILER_VS
 	#include <cave/src/mmsql.hh>
 	#include <cave/src/oct-core.hh>
@@ -44,11 +49,20 @@ struct DB_name
 	}
 };
 
-
 void v0_develop()
 {
-	std::cout << "\n";
-	
+	MYSQL* conn = mysql_init(NULL);
+	mysql_options(conn, MYSQL_SET_CHARSET_NAME, "utf8");
+	mysql_options(conn, MYSQL_INIT_COMMAND, "SET NAMES utf8");
+	MYSQL* _conn = mysql_real_connect(conn,"localhost", "develop", "123456", "muposys-dev", OCTEOTOS_CAVE_TESTS_MMSQL_PORT,NULL,0);
+	int ret_query = mysql_query(conn, "SELECT pwdtxt from `muposys-dev`.user;");
+	MYSQL_RES* result = mysql_store_result(conn);
+	MYSQL_ROW row = mysql_fetch_row(result);
+	const wchar_t** row_utf = (const wchar_t**)row;
+		
+
+	mysql_free_result(result);
+	mysql_close(conn);
 }
 
 template<typename T = std::chrono::milliseconds>

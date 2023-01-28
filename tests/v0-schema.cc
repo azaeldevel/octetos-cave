@@ -178,4 +178,26 @@ void v0_schema()
 	row1.store(rest_schema3_cstr, (size_t)0);
 	//std::cout << "rest_schema3_cstr : " << rest_schema3_cstr << "\n";
 	CU_ASSERT(strcmp(rest_schema3_cstr, "information_schema") == 0);
+
+	//>>>
+	driver::Result rest_schema4;
+	CU_ASSERT(not rest_schema4.is_stored());
+	try
+	{
+		rest_schema4 = connection_schema.execute("SELECT pwdtxt from `muposys-dev`.user;");
+	}
+	catch (const cave::ExceptionQuery&)
+	{
+		CU_ASSERT(false);
+	}
+	catch (...)
+	{
+		CU_ASSERT(false);
+	}
+	CU_ASSERT(rest_schema4.is_stored());
+
+	driver::Row row2;
+	row2 = rest_schema4.next();
+	//std::cout << "row2 : " << row2[0] << "\n";
+	//CU_ASSERT(strcmp(row1[0], "information_schema") == 0);
 }
