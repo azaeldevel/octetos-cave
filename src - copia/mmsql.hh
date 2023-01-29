@@ -50,13 +50,13 @@ namespace oct::cave::v0::mmsql
 		unsigned long flags;
 	};
 
-	class Result : public cave_current::Result<const char*, Data>
+	class Result : public cave_current::Result<const char*>
 	{
 	public:
 		Result() = default;
 		virtual ~Result();
 
-		void operator =(cave_current::Result<const char*, cave_current::mmsql::Data>&& r) noexcept;
+		void operator =(cave_current::Result<const char*>&& r) noexcept;
 
 		//string to fetched row
 		template<RowContainer R> void store(std::vector<Row<R>>& v)

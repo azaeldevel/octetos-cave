@@ -262,7 +262,7 @@ namespace oct::cave::v0
 		}
 	};
 
-	template<RowContainer R, typename D> class Result
+	template<RowContainer R> class Result
 	{
 	public:
 		Result() : result(NULL)
@@ -289,6 +289,7 @@ namespace oct::cave::v0
 
 		void operator =(Result&& r) noexcept
 		{
+			if(r) throw ExceptionResult("Deve estar acio el obejto para asignarlo", __FILE__, __LINE__);
 			result = r.result;
 			//std::cout << "Result& operator =(Result&&  " << result << ")\n";
 			r.result = NULL;
@@ -349,8 +350,8 @@ namespace oct::cave::v0
 			return connection;
 		}
 	
-		Result<R,D> execute(const std::string&);
-		Result<R,D> select(const std::string& fields,const std::string& table)
+		Result<R> execute(const std::string&);
+		Result<R> select(const std::string& fields,const std::string& table)
 		{
 			std::string srtsql;
 			srtsql.reserve(20 + fields.size() + table.size());
@@ -363,7 +364,7 @@ namespace oct::cave::v0
 
 			return execute(srtsql);
 		}
-		Result<R,D> select(const std::string& fields,const std::string& table,const std::string& where)
+		Result<R> select(const std::string& fields,const std::string& table,const std::string& where)
 		{
 			std::string srtsql;
 			srtsql.reserve(30 + fields.size() + table.size() + where.size());
@@ -378,7 +379,7 @@ namespace oct::cave::v0
 
 			return execute(srtsql);
 		}
-		Result<R, D> select(const fields& list,const std::string& table,const std::string& where)
+		Result<R> select(const fields& list,const std::string& table,const std::string& where)
 		{
 			std::string srtsql;
 			size_t reserved = 30 + table.size() + where.size();

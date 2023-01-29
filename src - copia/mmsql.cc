@@ -97,7 +97,7 @@ namespace oct::cave::v0
 
 
 
-	template<> Result<const char*, cave_current::mmsql::Data>::~Result()
+	template<> Result<const char*>::~Result()
 	{
 		if (result)
 		{
@@ -106,13 +106,13 @@ namespace oct::cave::v0
 		}
 	}
 		
-	template<> size_t Result<const char*, cave_current::mmsql::Data>::number_rows()const
+	template<> size_t Result<const char*>::number_rows()const
 	{
 		if (result) return mysql_num_rows((MYSQL_RES*)result);
 
 		return 0;
 	}
-	template<> void Result<const char*, cave_current::mmsql::Data>::close()
+	template<> void Result<const char*>::close()
 	{
 		if (result)
 		{
@@ -182,7 +182,7 @@ namespace oct::cave::v0
 		}		
 	}
 
-	template<> cave_current::Result<const char*, cave_current::mmsql::Data> Connection<const char*,cave_current::mmsql::Data>::execute(const std::string& str)
+	template<> cave_current::Result<const char*> Connection<const char*,cave_current::mmsql::Data>::execute(const std::string& str)
 	{
 		if (not connected) throw ExceptionSQL(connection, __FILE__, __LINE__);
 		if(not connection) throw ExceptionSQL(connection, __FILE__, __LINE__);
@@ -196,7 +196,7 @@ namespace oct::cave::v0
 		}
 		else if (ret_query == 0) 
 		{
-			return cave_current::Result<const char*, cave_current::mmsql::Data>(mysql_store_result(reinterpret_cast<MYSQL*>(connection)));
+			return cave_current::Result<const char*>(mysql_store_result(reinterpret_cast<MYSQL*>(connection)));
 		}
 		else
 		{
@@ -254,8 +254,9 @@ namespace oct::cave::v0::mmsql
 	{
 	}
 
-	void Result::operator =(cave_current::Result<const char*, cave_current::mmsql::Data>&& r) noexcept
+	void Result::operator =(cave_current::Result<const char*>&& r) noexcept
 	{
+		if(result) throw ExceptionResult("Deve estar vacio el objeto para asignarlo", __FILE__, __LINE__);
 		move(&r, this);
 	}
 	
