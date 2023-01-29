@@ -144,9 +144,9 @@ namespace oct::cave::v0
 	template<class T> concept char_base = std::is_same<char, T>::value || std::is_same<wchar_t, T>::value;
 	template<class R> concept row_string = std::is_same<const char*, R>::value || std::is_same<const wchar_t*, R>::value;
 	template<class S> concept ResultContainer = std::is_constructible_v<S, const char**> && std::is_default_constructible<S>::value && std::is_move_constructible_v<S> && !row_string<S>;
-	
+	template<class T> concept datasource = std::derived_from<T, DataSource> || std::is_same<T, DataSource>::value;
 
-	template<char_base CB, typename D>
+	template<char_base CB, datasource D>
 	class Row
 	{
 	public:
@@ -264,7 +264,7 @@ namespace oct::cave::v0
 		}
 	};
 
-	template<char_base CB, typename D> class Result
+	template<char_base CB, datasource D> class Result
 	{
 	public:
 		Result() : result(NULL)
@@ -282,10 +282,7 @@ namespace oct::cave::v0
 			result = h;
 			//std::cout << "Result(Handle&& " << result << ")\n";
 		}
-		Result(const Result&) 
-		{
-			throw ExceptionResult("No puede ser copiado este objeto",__FILE__,__LINE__);
-		}	
+		Result(const Result&) = delete;
 		virtual ~Result();
 
 		void operator =(Result&& r) noexcept
@@ -294,10 +291,7 @@ namespace oct::cave::v0
 			//std::cout << "Result& operator =(Result&&  " << result << ")\n";
 			r.result = NULL;
 		}
-		const Result& operator =(const Result&)
-		{
-			throw ExceptionResult("No puede ser copiado este objeto",__FILE__,__LINE__);
-		}
+		const Result& operator =(const Result&) = delete;
 		bool is_stored() const
 		{
 			return (result ? true : false);
@@ -333,12 +327,12 @@ namespace oct::cave::v0
 
 	typedef std::vector<std::string> fields;
 
-	template<char_base CB,typename D, typename RS> class Connection
+	template<char_base CB, datasource DS, typename RS> class Connection
 	{
 	public:
 		Connection();
 		Connection(Connection&&) noexcept;
-		Connection(const D& data, bool autocommit);
+		Connection(const DS& data, bool autocommit);
 		~Connection();
 
 		bool is_connected()const
@@ -420,7 +414,7 @@ namespace oct::cave::v0
 		bool commit();
 		bool rollback();
 
-		bool connect(const D&, bool autocommit);
+		bool connect(const DS&, bool autocommit);
 		void close();
 		bool ping();
 

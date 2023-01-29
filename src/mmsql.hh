@@ -61,6 +61,7 @@ namespace oct::cave::v0::mmsql
 
 		void operator =(cave_current::Result<char, cave_current::mmsql::Data>&& r) noexcept;
 		void operator =(Result&& r) noexcept;
+		const Result& operator =(const Result& r) = delete;
 
 		//string to fetched row
 		void store(std::vector<Row<char, Data>>& v);
