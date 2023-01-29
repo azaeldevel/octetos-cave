@@ -105,7 +105,7 @@ namespace oct::cave::v0
 			result = NULL;
 		}
 	}
-		
+	
 	template<> size_t Result<const char*, cave_current::mmsql::Data>::number_rows()const
 	{
 		if (result) return mysql_num_rows((MYSQL_RES*)result);
