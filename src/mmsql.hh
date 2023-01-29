@@ -59,45 +59,12 @@ namespace oct::cave::v0::mmsql
 		void operator =(cave_current::Result<char, cave_current::mmsql::Data>&& r) noexcept;
 
 		//string to fetched row
-		void store(std::vector<Row<char, Data>>& v)
-		{
-			v.reserve(number_rows());
-			char** row;
-			for (index i = 0; i < number_rows(); i++)
-			{
-				row = mysql_fetch_row(reinterpret_cast<MYSQL_RES*>(result));
-				size_t size = mysql_num_fields(reinterpret_cast<MYSQL_RES*>(result));
-				if (row)
-				{
-					v.push_back(cave_current::Row<char, Data>((const char**)row, size));
-				}
-				else
-				{
-					;//error
-				}
-			}
-		}
+		void store(std::vector<Row<char, Data>>& v);
 		//string to fetched row
-		void store(std::list<Row<char, Data>>& v)
-		{
-			char** row;
-			for (index i = 0; i < number_rows(); i++)
-			{
-				row = mysql_fetch_row(reinterpret_cast<MYSQL_RES*>(result));
-				size_t size = mysql_num_fields(reinterpret_cast<MYSQL_RES*>(result));
-				if (row)
-				{
-					v.push_back(cave_current::Row<char,Data>((const char**)row, size));
-				}
-				else
-				{
-					;//error
-				}
-			}
-		}
+		void store(std::list<Row<char, Data>>& v);
 
 		//struct to load data in c++ format
-		template<ResultContainer R> void store(std::vector<R>& v)
+		template<ResultContainer R> void store(std::vector<vR>& v)
 		{
 			v.reserve(number_rows());
 			char** row;
@@ -132,9 +99,10 @@ namespace oct::cave::v0::mmsql
 					;//error
 				}
 			}
-		}
-		
+		}	
 
+		void store(std::vector<const char**>& v);
+		void store(std::list<const char**>& v);
 
 		Row<char,Data> next();
 	};

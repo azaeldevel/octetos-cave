@@ -15,13 +15,11 @@ namespace oct::cave::v0
 		{
 			result = connection.execute("SELECT SCHEMA_NAME from INFORMATION_SCHEMA.SCHEMATA;");
 		}
-		catch (const oct::core::v3::Exception&)
-		{
-
-		}
 		catch (const ExceptionQuery&)
 		{
-
+		}
+		catch (const oct::core::v3::Exception&)
+		{
 		}
 		catch (...)
 		{
@@ -29,7 +27,6 @@ namespace oct::cave::v0
 		}
 		if (not result.is_stored()) throw ExceptionQuery("Fallo la solicitud de informacion.", __FILE__, __LINE__);
 		result.store(schemas);
-
 
 		mmsql::Result result_tables;
 		for (Schema& s : schemas)
@@ -39,17 +36,14 @@ namespace oct::cave::v0
 				std::cout << "Reading schema : " << s.name << "\n";
 				//result_tables = connection_schema.execute("SELECT SCHEMA_NAME from INFORMATION_SCHEMA.SCHEMATA;");
 			}
-			catch (const oct::core::v3::Exception&)
-			{
-
-			}
 			catch (const ExceptionQuery&)
 			{
-
+			}
+			catch (const oct::core::v3::Exception&)
+			{
 			}
 			catch (...)
 			{
-
 			}
 		}
 	}

@@ -141,10 +141,10 @@ namespace oct::cave::v0
 		std::string database;
 	};
 
-		
-	template<class R> concept RowContainer = std::is_same<const char*, R>::value || std::is_same<const wchar_t*, R>::value;
-	template<class S> concept ResultContainer = std::is_constructible_v<S, const char**> && std::is_default_constructible<S>::value && std::is_move_constructible_v<S> && !RowContainer<S>;
 	template<class T> concept char_base = std::is_same<char, T>::value || std::is_same<wchar_t, T>::value;
+	template<class R> concept row_string = std::is_same<const char*, R>::value || std::is_same<const wchar_t*, R>::value;
+	template<class S> concept ResultContainer = std::is_constructible_v<S, const char**> && std::is_default_constructible<S>::value && std::is_move_constructible_v<S> && !row_string<S>;
+	
 
 	template<char_base CB, typename D>
 	class Row
@@ -307,14 +307,14 @@ namespace oct::cave::v0
 		void close();
 		size_t number_rows()const;
 
-		template<RowContainer S> Row<S,D> next();
+		Row<CB,D> next();
 
-		template<RowContainer S> void store(std::vector<Row<S, D>>& v);
-		template<RowContainer S> void store(std::list<Row<S, D>>& v);
+		void store(std::vector<Row<CB, D>>& v);
+		void store(std::list<Row<CB, D>>& v);
 		template<ResultContainer S> void store(std::vector<S>& v);
 		template<ResultContainer S> void store(std::list<S>& v);
-		template<RowContainer S> void store(std::vector<S>& v);
-		template<RowContainer S> void store(std::list<S>& v);
+		void store(std::vector<const CB**>& v);
+		void store(std::list<const CB**>& v);
 
 	private:
 

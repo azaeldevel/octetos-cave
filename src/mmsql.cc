@@ -267,7 +267,77 @@ namespace oct::cave::v0::mmsql
 		return row;
 	}
 
-
+	void Result::store(std::vector<Row<char, Data>>& v)
+	{
+		v.reserve(number_rows());
+		char** row;
+		for (index i = 0; i < number_rows(); i++)
+		{
+			row = mysql_fetch_row(reinterpret_cast<MYSQL_RES*>(result));
+			size_t size = mysql_num_fields(reinterpret_cast<MYSQL_RES*>(result));
+			if (row)
+			{
+				v.push_back(cave_current::Row<char, Data>((const char**)row, size));
+			}
+			else
+			{
+				;//error
+			}
+		}
+	}
+	//string to fetched row
+	void Result::store(std::list<Row<char, Data>>& v)
+	{
+		char** row;
+		for (index i = 0; i < number_rows(); i++)
+		{
+			row = mysql_fetch_row(reinterpret_cast<MYSQL_RES*>(result));
+			size_t size = mysql_num_fields(reinterpret_cast<MYSQL_RES*>(result));
+			if (row)
+			{
+				v.push_back(cave_current::Row<char, Data>((const char**)row, size));
+			}
+			else
+			{
+				;//error
+			}
+		}
+	}
+	void Result::store(std::vector<const char**>& v)
+	{
+		v.reserve(number_rows());
+		char** row;
+		for (index i = 0; i < number_rows(); i++)
+		{
+			row = mysql_fetch_row(reinterpret_cast<MYSQL_RES*>(result));
+			//size_t size = mysql_num_fields(reinterpret_cast<MYSQL_RES*>(result));
+			if (row)
+			{
+				v.push_back((const char**)row);
+			}
+			else
+			{
+				;//error
+			}
+		}
+	}
+	void Result::store(std::list<const char**>& v)
+	{
+		char** row;
+		for (index i = 0; i < number_rows(); i++)
+		{
+			row = mysql_fetch_row(reinterpret_cast<MYSQL_RES*>(result));
+			//size_t size = mysql_num_fields(reinterpret_cast<MYSQL_RES*>(result));
+			if (row)
+			{
+				v.push_back((const char**)row);
+			}
+			else
+			{
+				;//error
+			}
+		}
+	}
 }
 
 
