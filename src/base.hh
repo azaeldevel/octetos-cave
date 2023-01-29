@@ -147,12 +147,12 @@ namespace oct::cave::v0
 	template<class T> concept datasource = std::derived_from<T, DataSource> || std::is_same<T, DataSource>::value;
 	
 
-	template<char_base CB, datasource D>
+	template<char_base CB, datasource DS>
 	class Row
 	{
 	public:
 		using char_type = CB;
-		using data_type = D;
+		using data_type = DS;
 
 	public:
 		Row() : r(NULL), size(0)
@@ -275,11 +275,11 @@ namespace oct::cave::v0
 	template <typename T> concept is_Row_derived = std::derived_from<std::remove_const_t<T>, Row<typename T::char_type, typename T::data_type>>;
 	template <typename T> concept row = is_Row_instation<T> || is_Row_derived<T>;
 
-	template<char_base CB, datasource D> class Result
+	template<char_base CB, datasource DS> class Result
 	{
 	public:
 		using char_type = CB;
-		using data_type = D;
+		using data_type = DS;
 
 	public:
 		Result() : result(NULL)
@@ -315,10 +315,10 @@ namespace oct::cave::v0
 		void close();
 		size_t number_rows()const;
 
-		Row<CB,D> next();
+		Row<CB,DS> next();
 
-		void store(std::vector<Row<CB, D>>& v);
-		void store(std::list<Row<CB, D>>& v);
+		void store(std::vector<Row<CB, DS>>& v);
+		void store(std::list<Row<CB, DS>>& v);
 		template<ResultContainer S> void store(std::vector<S>& v);
 		template<ResultContainer S> void store(std::list<S>& v);
 		void store(std::vector<const CB**>& v);
@@ -350,6 +350,11 @@ namespace oct::cave::v0
 
 	template<char_base CB, datasource DS, result RS> class Connection
 	{
+	public:
+		using char_type = CB;
+		using data_type = DS;
+		using result_type = RS;
+
 	public:
 		Connection();
 		Connection(Connection&&) noexcept;
