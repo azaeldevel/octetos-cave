@@ -285,8 +285,7 @@ namespace oct::cave::v0
 		Result(const Result&) 
 		{
 			throw ExceptionResult("No puede ser copiado este objeto",__FILE__,__LINE__);
-		}
-	
+		}	
 		virtual ~Result();
 
 		void operator =(Result&& r) noexcept
@@ -321,16 +320,20 @@ namespace oct::cave::v0
 	protected:
 		Handle result;
 
-		void move(Result* origin, Result* dest)
+		static void move(Result* origin, Result* dest)
 		{
 			dest->result = origin->result;
 			origin->result = NULL;
+		}
+		static void set(Result* dest, Handle r)
+		{
+			dest->result = r;
 		}
 	};
 
 	typedef std::vector<std::string> fields;
 
-	template<char_base CB,typename D> class Connection
+	template<char_base CB,typename D, typename RS> class Connection
 	{
 	public:
 		Connection();
@@ -351,8 +354,8 @@ namespace oct::cave::v0
 			return connection;
 		}
 	
-		Result<CB,D> execute(const std::string&);
-		Result<CB,D> select(const std::string& fields,const std::string& table)
+		RS execute(const std::string&);
+		RS select(const std::string& fields,const std::string& table)
 		{
 			std::string srtsql;
 			srtsql.reserve(20 + fields.size() + table.size());
@@ -365,7 +368,7 @@ namespace oct::cave::v0
 
 			return execute(srtsql);
 		}
-		Result<CB,D> select(const std::string& fields,const std::string& table,const std::string& where)
+		RS select(const std::string& fields,const std::string& table,const std::string& where)
 		{
 			std::string srtsql;
 			srtsql.reserve(30 + fields.size() + table.size() + where.size());
@@ -380,7 +383,7 @@ namespace oct::cave::v0
 
 			return execute(srtsql);
 		}
-		Result<CB, D> select(const fields& list,const std::string& table,const std::string& where)
+		RS select(const fields& list,const std::string& table,const std::string& where)
 		{
 			std::string srtsql;
 			size_t reserved = 30 + table.size() + where.size();

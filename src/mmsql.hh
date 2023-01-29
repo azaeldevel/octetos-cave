@@ -54,9 +54,13 @@ namespace oct::cave::v0::mmsql
 	{
 	public:
 		Result() = default;
+		Result(Result&& r) noexcept;
+		Result(Handle&& h) noexcept;
+		Result(const Result&) = delete;
 		virtual ~Result();
 
 		void operator =(cave_current::Result<char, cave_current::mmsql::Data>&& r) noexcept;
+		void operator =(Result&& r) noexcept;
 
 		//string to fetched row
 		void store(std::vector<Row<char, Data>>& v);
@@ -108,7 +112,7 @@ namespace oct::cave::v0::mmsql
 	};
 
 
-	typedef cave_current::Connection<char,Data> Connection;
+	typedef cave_current::Connection<char,Data,Result> Connection;
 	/*class Connection : public cave_current::Connection<const char*, Data>
 	{
 	public:
