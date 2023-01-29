@@ -97,7 +97,7 @@ namespace oct::cave::v0
 
 
 
-	template<> Result<const char*, cave_current::mmsql::Data>::~Result()
+	template<> Result<char, cave_current::mmsql::Data>::~Result()
 	{
 		if (result)
 		{
@@ -106,13 +106,13 @@ namespace oct::cave::v0
 		}
 	}
 	
-	template<> size_t Result<const char*, cave_current::mmsql::Data>::number_rows()const
+	template<> size_t Result<char, cave_current::mmsql::Data>::number_rows()const
 	{
 		if (result) return mysql_num_rows((MYSQL_RES*)result);
 
 		return 0;
 	}
-	template<> void Result<const char*, cave_current::mmsql::Data>::close()
+	template<> void Result<char, cave_current::mmsql::Data>::close()
 	{
 		if (result)
 		{
@@ -182,7 +182,7 @@ namespace oct::cave::v0
 		}		
 	}
 
-	template<> cave_current::Result<const char*,cave_current::mmsql::Data> Connection<char,cave_current::mmsql::Data>::execute(const std::string& str)
+	template<> cave_current::Result<char,cave_current::mmsql::Data> Connection<char,cave_current::mmsql::Data>::execute(const std::string& str)
 	{
 		if(not connected) throw ExceptionSQL(connection, __FILE__, __LINE__);
 		if(not connection) throw ExceptionSQL(connection, __FILE__, __LINE__);
@@ -196,7 +196,7 @@ namespace oct::cave::v0
 		}
 		else if (ret_query == 0) 
 		{
-			return cave_current::Result<const char*, cave_current::mmsql::Data>(mysql_store_result(reinterpret_cast<MYSQL*>(connection)));
+			return cave_current::Result<char, cave_current::mmsql::Data>(mysql_store_result(reinterpret_cast<MYSQL*>(connection)));
 		}
 		else
 		{
@@ -254,16 +254,16 @@ namespace oct::cave::v0::mmsql
 	{
 	}
 
-	void Result::operator =(cave_current::Result<const char*, cave_current::mmsql::Data>&& r) noexcept
+	void Result::operator =(cave_current::Result<char, cave_current::mmsql::Data>&& r) noexcept
 	{
 		move(&r, this);
 	}
 	
-	Row<const char*,cave_current::mmsql::Data> Result::next()
+	Row<char,cave_current::mmsql::Data> Result::next()
 	{
 		char** str = mysql_fetch_row(reinterpret_cast<MYSQL_RES*>(result));
 		size_t size = mysql_num_fields(reinterpret_cast<MYSQL_RES*>(result));
-		Row<const char*, cave_current::mmsql::Data> row((const char**)str,size);
+		Row<char, cave_current::mmsql::Data> row((const char**)str,size);
 		return row;
 	}
 

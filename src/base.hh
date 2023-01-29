@@ -146,14 +146,14 @@ namespace oct::cave::v0
 	template<class S> concept ResultContainer = std::is_constructible_v<S, const char**> && std::is_default_constructible<S>::value && std::is_move_constructible_v<S> && !RowContainer<S>;
 	template<class T> concept char_base = std::is_same<char, T>::value || std::is_same<wchar_t, T>::value;
 
-	template<RowContainer R, typename D>
+	template<char_base CB, typename D>
 	class Row
 	{
 	public:
 		Row() : r(NULL), size(0)
 		{
 		}
-		Row(R* r,size_t z) : size(z)
+		Row(const CB** r,size_t z) : size(z)
 		{
 			this->r = r;
 		}
@@ -171,7 +171,7 @@ namespace oct::cave::v0
 			return *this;
 		}
 
-		inline R operator[] (size_t i)const
+		inline const CB* operator[] (size_t i)const
 		{
 			return i < size ? r[i] : NULL;
 		}
@@ -254,7 +254,7 @@ namespace oct::cave::v0
 		template<typename T> void store(T& v, const std::string& field);
 		
 	protected:
-		R* r;
+		const CB** r;
 		size_t size;
 
 		static void copy(Row* origin, Row* dest)
@@ -264,7 +264,7 @@ namespace oct::cave::v0
 		}
 	};
 
-	template<RowContainer R, typename D> class Result
+	template<char_base CB, typename D> class Result
 	{
 	public:
 		Result() : result(NULL)
@@ -351,8 +351,8 @@ namespace oct::cave::v0
 			return connection;
 		}
 	
-		Result<const CB*,D> execute(const std::string&);
-		Result<const CB*,D> select(const std::string& fields,const std::string& table)
+		Result<CB,D> execute(const std::string&);
+		Result<CB,D> select(const std::string& fields,const std::string& table)
 		{
 			std::string srtsql;
 			srtsql.reserve(20 + fields.size() + table.size());
@@ -365,7 +365,7 @@ namespace oct::cave::v0
 
 			return execute(srtsql);
 		}
-		Result<const CB*,D> select(const std::string& fields,const std::string& table,const std::string& where)
+		Result<CB,D> select(const std::string& fields,const std::string& table,const std::string& where)
 		{
 			std::string srtsql;
 			srtsql.reserve(30 + fields.size() + table.size() + where.size());
@@ -380,7 +380,7 @@ namespace oct::cave::v0
 
 			return execute(srtsql);
 		}
-		Result<const CB*, D> select(const fields& list,const std::string& table,const std::string& where)
+		Result<CB, D> select(const fields& list,const std::string& table,const std::string& where)
 		{
 			std::string srtsql;
 			size_t reserved = 30 + table.size() + where.size();
