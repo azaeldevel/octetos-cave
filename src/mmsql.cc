@@ -259,11 +259,11 @@ namespace oct::cave::v0::mmsql
 		move(&r, this);
 	}
 	
-	Row<const char*> Result::next()
+	Row<const char*,cave_current::mmsql::Data> Result::next()
 	{
 		char** str = mysql_fetch_row(reinterpret_cast<MYSQL_RES*>(result));
 		size_t size = mysql_num_fields(reinterpret_cast<MYSQL_RES*>(result));
-		Row row((const char**)str,size);
+		Row<const char*, cave_current::mmsql::Data> row((const char**)str,size);
 		return row;
 	}
 

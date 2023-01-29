@@ -59,7 +59,7 @@ namespace oct::cave::v0::mmsql
 		void operator =(cave_current::Result<const char*, cave_current::mmsql::Data>&& r) noexcept;
 
 		//string to fetched row
-		template<RowContainer R> void store(std::vector<Row<R>>& v)
+		template<RowContainer R> void store(std::vector<Row<R, Data>>& v)
 		{
 			v.reserve(number_rows());
 			char** row;
@@ -69,7 +69,7 @@ namespace oct::cave::v0::mmsql
 				size_t size = mysql_num_fields(reinterpret_cast<MYSQL_RES*>(result));
 				if (row)
 				{
-					v.push_back(cave_current::Row<const char*>((const char**)row, size));
+					v.push_back(cave_current::Row<const char*, Data>((const char**)row, size));
 				}
 				else
 				{
@@ -78,7 +78,7 @@ namespace oct::cave::v0::mmsql
 			}
 		}
 		//string to fetched row
-		template<RowContainer R> void store(std::list<Row<R>>& v)
+		template<RowContainer R> void store(std::list<Row<R, Data>>& v)
 		{
 			char** row;
 			for (index i = 0; i < number_rows(); i++)
@@ -136,7 +136,7 @@ namespace oct::cave::v0::mmsql
 		
 
 
-		Row<const char*> next();
+		Row<const char*,Data> next();
 	};
 
 
