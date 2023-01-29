@@ -140,7 +140,7 @@ namespace oct::cave::v0::mmsql
 	};
 
 
-	typedef cave_current::Connection<const char*,Data> Connection;
+	typedef cave_current::Connection<char,Data> Connection;
 	/*class Connection : public cave_current::Connection<const char*, Data>
 	{
 	public:

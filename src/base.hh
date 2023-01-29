@@ -140,9 +140,11 @@ namespace oct::cave::v0
 	protected:
 		std::string database;
 	};
+
 		
 	template<class R> concept RowContainer = std::is_same<const char*, R>::value || std::is_same<const wchar_t*, R>::value;
 	template<class S> concept ResultContainer = std::is_constructible_v<S, const char**> && std::is_default_constructible<S>::value && std::is_move_constructible_v<S> && !RowContainer<S>;
+	template<class T> concept char_base = std::is_same<char, T>::value || std::is_same<wchar_t, T>::value;
 
 	template<RowContainer R, typename D>
 	class Row
@@ -328,7 +330,7 @@ namespace oct::cave::v0
 
 	typedef std::vector<std::string> fields;
 
-	template<RowContainer R,typename D> class Connection
+	template<char_base CB,typename D> class Connection
 	{
 	public:
 		Connection();
@@ -349,8 +351,8 @@ namespace oct::cave::v0
 			return connection;
 		}
 	
-		Result<R,D> execute(const std::string&);
-		Result<R,D> select(const std::string& fields,const std::string& table)
+		Result<const CB*,D> execute(const std::string&);
+		Result<const CB*,D> select(const std::string& fields,const std::string& table)
 		{
 			std::string srtsql;
 			srtsql.reserve(20 + fields.size() + table.size());
@@ -363,7 +365,7 @@ namespace oct::cave::v0
 
 			return execute(srtsql);
 		}
-		Result<R,D> select(const std::string& fields,const std::string& table,const std::string& where)
+		Result<const CB*,D> select(const std::string& fields,const std::string& table,const std::string& where)
 		{
 			std::string srtsql;
 			srtsql.reserve(30 + fields.size() + table.size() + where.size());
@@ -378,7 +380,7 @@ namespace oct::cave::v0
 
 			return execute(srtsql);
 		}
-		Result<R, D> select(const fields& list,const std::string& table,const std::string& where)
+		Result<const CB*, D> select(const fields& list,const std::string& table,const std::string& where)
 		{
 			std::string srtsql;
 			size_t reserved = 30 + table.size() + where.size();
