@@ -145,10 +145,15 @@ namespace oct::cave::v0
 	template<class R> concept row_string = std::is_same<const char*, R>::value || std::is_same<const wchar_t*, R>::value;
 	template<class S> concept ResultContainer = std::is_constructible_v<S, const char**> && std::is_default_constructible<S>::value && std::is_move_constructible_v<S> && !row_string<S>;
 	template<class T> concept datasource = std::derived_from<T, DataSource> || std::is_same<T, DataSource>::value;
+	
 
 	template<char_base CB, datasource D>
 	class Row
 	{
+	public:
+		using char_type = CB;
+		using data_type = D;
+
 	public:
 		Row() : r(NULL), size(0)
 		{
@@ -263,9 +268,19 @@ namespace oct::cave::v0
 			dest->size = origin->size;
 		}
 	};
+	template <typename T> concept is_Row_instation =
+		std::is_same_v<
+		std::remove_const_t<T>,
+		Row<typename T::char_type, typename T::data_type>>;
+	template <typename T> concept is_Row_derived = std::derived_from<std::remove_const_t<T>, Row<typename T::char_type, typename T::data_type>>;
+	template <typename T> concept row = is_Row_instation<T> || is_Row_derived<T>;
 
 	template<char_base CB, datasource D> class Result
 	{
+	public:
+		using char_type = CB;
+		using data_type = D;
+
 	public:
 		Result() : result(NULL)
 		{
@@ -324,10 +339,16 @@ namespace oct::cave::v0
 			dest->result = r;
 		}
 	};
+	template <typename T> concept is_Result_instation =
+		std::is_same_v<
+		std::remove_const_t<T>,
+		Result<typename T::char_type, typename T::data_type>>;
+	template <typename T> concept is_Result_derived = std::derived_from<std::remove_const_t<T>, Result<typename T::char_type, typename T::data_type>>;
+	template <typename T> concept result = is_Result_instation<T> || is_Result_derived<T>;
 
 	typedef std::vector<std::string> fields;
 
-	template<char_base CB, datasource DS, typename RS> class Connection
+	template<char_base CB, datasource DS, result RS> class Connection
 	{
 	public:
 		Connection();
