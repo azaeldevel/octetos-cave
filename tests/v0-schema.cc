@@ -189,5 +189,5 @@ void v0_schema()
 	CU_ASSERT(strcmp(rest_schema3_cstr, "information_schema") == 0);
 
 	cave::Builder buider1(connection_schema);
-	CU_ASSERT(buider1.get_schema().size() > 0);
+	CU_ASSERT(buider1.get_schemas().size() > 0);
 }

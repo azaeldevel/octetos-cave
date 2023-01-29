@@ -143,7 +143,8 @@ namespace oct::cave::v0
 
 	template<class T> concept char_base = std::is_same<char, T>::value || std::is_same<wchar_t, T>::value;
 	template<class R> concept row_string = std::is_same<const char*, R>::value || std::is_same<const wchar_t*, R>::value;
-	template<class S> concept ResultContainer = std::is_constructible_v<S, const char**> && std::is_default_constructible<S>::value && std::is_move_constructible_v<S> && !row_string<S>;
+	//Contenmedr tipo A, rquiere un contructor para el array de c-string
+	template<class S> concept container_A = std::is_constructible_v<S, const char**> && std::is_default_constructible<S>::value && std::is_move_constructible_v<S> && !row_string<S>;
 	template<class T> concept datasource = std::derived_from<T, DataSource> || std::is_same<T, DataSource>::value;
 	
 
@@ -181,6 +182,10 @@ namespace oct::cave::v0
 			return i < size ? r[i] : NULL;
 		}
 
+		/**
+		*\brief convierte el datos desde la represenacion de BD hacia un valor C++ elegido
+		* \param v referencia modificable donde se corocalo el valor 
+		*/
 		template<typename T> void store(T& v, size_t field);
 		void store(CB& v, size_t field)
 		{
@@ -257,11 +262,24 @@ namespace oct::cave::v0
 
 		template<typename T> void store(T& v, const char* field);
 		template<typename T> void store(T& v, const std::string& field);
+
+		/**
+		*\brief conveierte el campo al tipo de dato correspondiente
+		*/
+		template<typename T> T store(size_t field);
+
+		/**
+		*\brief Determina el type de datos del campo
+		*/
+		template<typename T> T get_type(size_t field);
 		
 	protected:
 		const CB** r;
 		size_t size;
 
+		/**
+		*\brief usado para operacion de elision
+		*/
 		static void copy(Row* origin, Row* dest)
 		{
 			dest->r = origin->r;
@@ -319,8 +337,8 @@ namespace oct::cave::v0
 
 		void store(std::vector<Row<CB, DS>>& v);
 		void store(std::list<Row<CB, DS>>& v);
-		template<ResultContainer S> void store(std::vector<S>& v);
-		template<ResultContainer S> void store(std::list<S>& v);
+		template<container_A S> void store(std::vector<S>& v);
+		template<container_A S> void store(std::list<S>& v);
 		void store(std::vector<const CB**>& v);
 		void store(std::list<const CB**>& v);
 

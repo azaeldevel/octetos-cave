@@ -69,7 +69,7 @@ namespace oct::cave::v0::mmsql
 		void store(std::list<Row<char, Data>>& v);
 
 		//struct to load data in c++ format
-		template<ResultContainer R> void store(std::vector<R>& v)
+		template<container_A R> void store(std::vector<R>& v)
 		{
 			v.reserve(number_rows());
 			char** row;
@@ -88,7 +88,7 @@ namespace oct::cave::v0::mmsql
 			}
 		}
 		//struct to load data in c++ format
-		template<ResultContainer R> void store(std::list<R>& v)
+		template<container_A R> void store(std::list<R>& v)
 		{
 			char** row;
 			for (index i = 0; i < number_rows(); i++)

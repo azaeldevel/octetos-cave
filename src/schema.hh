@@ -34,7 +34,7 @@ namespace oct::cave::v0
 	class Builder
 	{
 	public:
-		Builder(C& connection,const std::string&)
+		Builder(C& connection,const std::string& name = "")
 		{
 			load(connection);
 		}
