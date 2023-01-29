@@ -177,7 +177,7 @@ namespace oct::cave::v0
 		}
 
 		template<typename T> void store(T& v, size_t field);
-		void store(char& v, size_t field)
+		void store(CB& v, size_t field)
 		{
 			v = r[field][0];
 		}
@@ -189,7 +189,7 @@ namespace oct::cave::v0
 		{
 			v = oct::core::atoi<unsigned char>(r[field]);
 		}
-		void store(const char*& v, size_t field)
+		void store(const CB*& v, size_t field)
 		{
 			v = r[field];
 		}
