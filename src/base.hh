@@ -27,7 +27,7 @@
 #include <vector>
 #include <list>
 #include <type_traits>
-#if  (defined(_WIN32) || defined(_WIN64)) && COMPILER_VS
+#if  (defined(_WIN32) || defined(_WIN64))
 	#include <core/src/Exception-v3.hh>
 	#include <cave/src/oct-core.hh>
 #elif defined __linux__
@@ -45,10 +45,10 @@
 	#include <mariadb/mysql.h>
 #elif defined LINUX_DEBIAN
 	#include <mariadb/mysql.h>
-#elif (defined(_WIN32) || defined(_WIN64)) && COMPILER_VS
-    #include <mysql/mysql.h>
 #elif MSYS2
     #include <mariadb/mysql.h>
+#elif (defined(_WIN32) || defined(_WIN64))
+    #include <mysql/mysql.h>
 #else
 	#error "Plataforma desconocida."
 #endif
@@ -62,7 +62,7 @@ namespace oct::cave::v0
 	class ExceptionResult : public core::v3::Exception
 	{
 	public:
-	
+
 	public:
 		ExceptionResult();
 		ExceptionResult(const ExceptionResult&);
@@ -77,7 +77,7 @@ namespace oct::cave::v0
 	class ExceptionQuery : public core::v3::Exception
 	{
 	public:
-	
+
 	public:
 		ExceptionQuery();
 		ExceptionQuery(const ExceptionQuery&);
@@ -134,9 +134,9 @@ namespace oct::cave::v0
 	public:
 		DataSource() = default;
 		DataSource(const std::string& database);
-	
+
 		const std::string& get_database()const;
-	
+
 	protected:
 		std::string database;
 	};
@@ -146,7 +146,7 @@ namespace oct::cave::v0
 	//Contenmedr tipo A, rquiere un contructor para el array de c-string
 	template<class S> concept container_A = std::is_constructible_v<S, const char**> && std::is_default_constructible<S>::value && std::is_move_constructible_v<S> && !row_string<S>;
 	template<class T> concept datasource = std::derived_from<T, DataSource> || std::is_same<T, DataSource>::value;
-	
+
 
 	template<char_base CB, datasource DS>
 	class Row
@@ -184,7 +184,7 @@ namespace oct::cave::v0
 
 		/**
 		*\brief convierte el datos desde la represenacion de BD hacia un valor C++ elegido
-		* \param v referencia modificable donde se corocalo el valor 
+		* \param v referencia modificable donde se corocalo el valor
 		*/
 		template<typename T> void store(T& v, size_t field);
 		void store(CB& v, size_t field)
@@ -272,7 +272,7 @@ namespace oct::cave::v0
 		*\brief Determina el type de datos del campo
 		*/
 		template<typename T> T get_type(size_t field);
-		
+
 	protected:
 		const CB** r;
 		size_t size;
@@ -391,7 +391,7 @@ namespace oct::cave::v0
 		{
 			return connection;
 		}
-	
+
 		RS execute(const std::string&);
 		RS select(const std::string& fields,const std::string& table)
 		{
@@ -430,7 +430,7 @@ namespace oct::cave::v0
 				reserved += s.size() + 1;//el tamaño del estring mas una coma
 			}
 			srtsql.reserve(reserved);
-		
+
 			srtsql = "SELECT ";
 			if(list.size() > 1)
 			{
@@ -443,7 +443,7 @@ namespace oct::cave::v0
 			{
 				srtsql += list[0];
 			}
-		
+
 			srtsql += " FROM ";
 			srtsql += table;
 			srtsql += " WHERE ";
@@ -453,7 +453,7 @@ namespace oct::cave::v0
 
 			return execute(srtsql);
 		}
-	
+
 		bool begin();
 		bool commit();
 		bool rollback();
