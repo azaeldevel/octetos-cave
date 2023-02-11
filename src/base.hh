@@ -293,6 +293,7 @@ namespace oct::cave::v0
 	template <typename T> concept is_Row_derived = std::derived_from<std::remove_const_t<T>, Row<typename T::char_type, typename T::data_type>>;
 	template <typename T> concept row = is_Row_instation<T> || is_Row_derived<T>;
 
+
 	template<char_base CB, datasource DS> class Result
 	{
 	public:
@@ -328,6 +329,10 @@ namespace oct::cave::v0
 		bool is_stored() const
 		{
 			return (result ? true : false);
+		}
+		explicit operator bool() const
+		{
+		    return is_stored();
 		}
 
 		void close();
@@ -365,6 +370,20 @@ namespace oct::cave::v0
 	template <typename T> concept result = is_Result_instation<T> || is_Result_derived<T>;
 
 	typedef std::vector<std::string> fields;
+	template <typename T> concept ContainerSelection = requires(T t)
+	{
+	    T::fields();
+	};
+	template <typename T> concept ContainerSelectionStorable = requires(T t)
+	{
+	    T::fields();
+	    t = (const char**)0;
+	};
+	template <typename T> concept ContainerInsertion = requires(T t)
+	{
+	    T::fields();
+	    t.values();
+	};
 
 	template<char_base CB, datasource DS, result RS> class Connection
 	{
@@ -453,13 +472,41 @@ namespace oct::cave::v0
 
 			return execute(srtsql);
 		}
-		RS insert(const std::string& fields,const std::string& values,const std::string& table)
+
+		template<ContainerSelection CS> RS select(const CS& c,const std::string& table)
+		{
+		    std::string srtsql = "SELECT " + CS::fileds() + " FROM " + table;
+		    return execute(srtsql);
+		}
+		template<ContainerSelection CS> RS select(const CS& c,const std::string& table,const std::string& where)
+		{
+		    std::string srtsql = "SELECT " + CS::fileds() + " FROM " + table  + " WHERE " + where;
+		    return execute(srtsql);
+		}
+
+		template<ContainerSelectionStorable CS> bool select(std::vector<CS>& c,const std::string& table)
 		{
 
 		}
-		RS insert(const std::string& fields,const std::string& values,const std::string& table,const std::string& where)
+		template<ContainerSelectionStorable CS> bool select(std::vector<CS>& c,const std::string& table,const std::string& where)
 		{
 
+		}
+
+		RS insert(const std::string& fields,const std::string& values,const std::string& table)
+		{
+            std::string srtsql = "INSERT INTO " + table + "(" + fields + ")" + " VALUES(" + values + ")";
+            return execute(srtsql);
+		}
+		template<ContainerInsertion CI> RS insert(const CI& c,const std::string& table)
+		{
+            std::string srtsql = "INSERT INTO " + table + "(" + CI::fileds() + ")" + " VALUES(" + c.values() + ")";
+            return execute(srtsql);
+		}
+		template<ContainerInsertion CI> RS insert(const CI& c,const std::string& table,const std::string& where)
+		{
+            std::string srtsql = "INSERT INTO " + table + "(" + CI::fileds() + ")" + " VALUES(" + c.values() + ") WHERE " + where;
+            return execute(srtsql);
 		}
 
 		bool begin();
