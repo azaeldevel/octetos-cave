@@ -6,10 +6,10 @@
 #include <stdio.h>
 #include <codecvt>
 #include <locale>
-#include <xlocale>
+#include <locale>
 #include <string>
 
-#if  (defined(_WIN32) || defined(_WIN64)) && COMPILER_VS
+#if  (defined(_WIN32) || defined(_WIN64))
 	#include <cave/src/mmsql.hh>
 #elif defined __linux__
 	#include <src/mmsql.hh>
@@ -23,7 +23,7 @@
 
 
 namespace core = oct::core::v3;
-#if defined OCTEOTOS_CAVE_TESTS_DRIVER_MMSQL
+/*#if defined OCTEOTOS_CAVE_TESTS_DRIVER_MMSQL
 namespace cave = oct::cave::v0;
 namespace driver = oct::cave::v0::mmsql;
 #elif defined  OCTEOTOS_CAVE_TESTS_DRIVER_MARIA
@@ -34,7 +34,7 @@ namespace cave = oct::cave::v0;
 namespace driver = oct::cave::v0::mysql;
 #else
 	#error "Driver Desconocido."
-#endif
+#endif*/
 
 
 struct DB_name
@@ -58,17 +58,17 @@ void v0_develop()
 	MYSQL_RES* result = mysql_store_result(conn);
 	MYSQL_ROW row = mysql_fetch_row(result);
 	const wchar_t** row_utf = (const wchar_t**)row;
-		
+
 
 	mysql_free_result(result);
 	mysql_close(conn);
 }
 
 template<typename T = std::chrono::milliseconds>
-void mesure_query(size_t base_length,oct::core::MesureExecution& mesure, driver::Connection& conn,const char* str)
+void mesure_query(size_t base_length,oct::core::MesureExecution& mesure, cave_current::mmsql::Connection& conn,const char* str)
 {
 	mesure.start = std::chrono::high_resolution_clock::now();
-	driver::Result rest1[base_length];//TODO: usar base_length
+	cave_current::mmsql::Result rest1[base_length];//TODO: usar base_length
 	for(size_t i = 0; i < base_length; i++)
 	{
 		rest1[i] = conn.execute(str);
@@ -77,13 +77,13 @@ void mesure_query(size_t base_length,oct::core::MesureExecution& mesure, driver:
 	mesure.duration = duration_cast<T>(mesure.end - mesure.start);
   	//std::cout << "Ejecucion : took " << time_1/std::chrono::milliseconds(1) << "ns to run.\n";
 	mesure.media = double(mesure.duration.count()) / double(base_length);
-	
+
 }
 void v0_mesures()
 {
 	std::cout << "\n";
-	driver::Data dtm("localhost","develop","123456","INFORMATION_SCHEMA", OCTEOTOS_CAVE_TESTS_MMSQL_PORT);
-	driver::Connection conn;
+	cave_current::mmsql::Data dtm("localhost","develop","123456","INFORMATION_SCHEMA", OCTEOTOS_CAVE_TESTS_MMSQL_PORT);
+	cave_current::mmsql::Connection conn;
 	bool conectfl = false;
 	try
 	{
@@ -106,13 +106,13 @@ void v0_mesures()
 
 	const size_t base_length = 1000;
 	const size_t base_test = 10;
-	
+
 	oct::core::MesureExecution mesures[base_test];
 	/*for (size_t i = 0; i < base_test; i++)
 	{
-		mesure_query(base_length,mesures[i],conn,"show databases;");	
+		mesure_query(base_length,mesures[i],conn,"show databases;");
 	}*/
-	
+
 	/*double media = oct::core::media(base_test, (oct::core::MesureExecution*)mesures, &oct::core::MesureExecution::media);
 	double desv = oct::core::desv(base_test,(oct::core::MesureExecution*)mesures,&oct::core::MesureExecution::media);
 	double time = desv/1000.0;
@@ -125,9 +125,9 @@ void v0_conection()
 {
 	//std::cout << "Testing cave component..\n";
 
-	driver::Data dtm("localhost","develop","123456", "INFORMATION_SCHEMA", OCTEOTOS_CAVE_TESTS_MMSQL_PORT);
+	cave_current::mmsql::Data dtm("localhost","develop","123456", "INFORMATION_SCHEMA", OCTEOTOS_CAVE_TESTS_MMSQL_PORT);
 	bool conectfl = false;
-	driver::Connection conn;
+	cave_current::mmsql::Connection conn;
 	try
 	{
 		conectfl = conn.connect(dtm, true);
@@ -146,14 +146,14 @@ void v0_conection()
 
 	CU_ASSERT(conn.is_connected());
 	CU_ASSERT(conn.ping());
-	
-	driver::Result rest;
+
+	cave_current::mmsql::Result rest;
 	CU_ASSERT(not rest.is_stored());
 	try
 	{
 		rest = conn.execute("show databases;");
 	}
-	catch(const cave::ExceptionQuery&)
+	catch(const cave_current::ExceptionQuery&)
 	{
 		CU_ASSERT(false);
 	}
@@ -173,13 +173,13 @@ void v0_conection()
 	}*/
 	CU_ASSERT(rest.number_rows() == vec_dbs.size());
 
-	driver::Result rest2;
+	cave_current::mmsql::Result rest2;
 	CU_ASSERT(not rest2.is_stored());
 	try
 	{
 		rest2 = conn.execute("show databases;");
 	}
-	catch (const cave::ExceptionQuery&)
+	catch (const cave_current::ExceptionQuery&)
 	{
 		CU_ASSERT(false);
 	}

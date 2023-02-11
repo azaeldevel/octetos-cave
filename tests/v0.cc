@@ -21,14 +21,14 @@
 
 #include <string>
 #include <iostream>
-#if  (defined(_WIN32) || defined(_WIN64)) && COMPILER_VS
+#if  (defined(_WIN32) || defined(_WIN64))
 	#include <cave/src/base.hh>
 	#include <cave/src/oct-core.hh>
 #elif defined __linux__
 	#include <src/base.hh>
 	#include <src/oct-core.hh>
 #else
-	#error "Plataforma desconocida."
+ 	#error "Plataforma desconocida."
 #endif
 
 
@@ -45,12 +45,12 @@ int v0_clean(void)
 void v0_core_core()
 {
 	std::cout << "\n";
-	
+
 	double media = oct::core::media<int,double>(1,2,3,4,5,6,7,8,9,0);
 	//std::cout << "media2 : " <<  media2 << "\n";
 	double desv = oct::core::desv<int,double>(1,2,3,4,5,6,7,8,9,0);
 	//std::cout << "desv2 : " <<  desv2 << "\n";
-	
+
 	double media1 = oct::core::media<double>(1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,0.0);
 	//std::cout << "media1 : " <<  media1 << "\n";
 	double desv1 = oct::core::desv<double>(1.0,2.0,3.0,4.0,5.0,6.0,7.0,8.0,9.0,0.0);

@@ -2,7 +2,7 @@
 #include <string>
 #include <iostream>
 #include <stdio.h>
-#if  (defined(_WIN32) || defined(_WIN64)) && COMPILER_VS
+#if  (defined(_WIN32) || defined(_WIN64))
 	#include <cave/src/mmsql.hh>
 	#include <cave/src/oct-core.hh>
 #include <cave/src/schema.hh>
@@ -18,7 +18,7 @@
 
 
 namespace core = oct::core::v3;
-#if defined OCTEOTOS_CAVE_TESTS_DRIVER_MMSQL
+/*#if defined OCTEOTOS_CAVE_TESTS_DRIVER_MMSQL
 namespace cave = oct::cave::v0;
 namespace driver = oct::cave::v0::mmsql;
 #elif defined  OCTEOTOS_CAVE_TESTS_DRIVER_MARIA
@@ -29,7 +29,7 @@ namespace cave = oct::cave::v0;
 namespace driver = oct::cave::v0::mysql;
 #else
 	#error "Driver Desconocido."
-#endif
+#endif*/
 
 
 struct Schema
@@ -46,9 +46,9 @@ struct Schema
 
 void v0_schema()
 {
-	driver::Data dtm("localhost", "develop", "123456", "INFORMATION_SCHEMA", OCTEOTOS_CAVE_TESTS_MMSQL_PORT);
+	cave_current::mmsql::Data dtm("localhost", "develop", "123456", "INFORMATION_SCHEMA", OCTEOTOS_CAVE_TESTS_MMSQL_PORT);
 	bool conectfl = false;
-	driver::Connection connection_schema;
+	cave_current::mmsql::Connection connection_schema;
 	try
 	{
 		conectfl = connection_schema.connect(dtm, true);
@@ -64,14 +64,14 @@ void v0_schema()
 		CU_ASSERT(false);
 	}
 	CU_ASSERT(conectfl);
-	
-	driver::Result rest_schema;
+
+	cave_current::mmsql::Result rest_schema;
 	CU_ASSERT(not rest_schema.is_stored());
 	try
 	{
 		rest_schema = connection_schema.execute("SELECT SCHEMA_NAME from SCHEMATA;");
 	}
-	catch (const cave::ExceptionQuery&)
+	catch (const cave_current::ExceptionQuery&)
 	{
 		CU_ASSERT(false);
 	}
@@ -91,13 +91,13 @@ void v0_schema()
 	CU_ASSERT(rest_schema.number_rows() == vector_schema.size());
 
 	//>>>
-	driver::Result rest_schema1;
+	cave_current::mmsql::Result rest_schema1;
 	CU_ASSERT(not rest_schema1.is_stored());
 	try
 	{
 		rest_schema1 = connection_schema.execute("SELECT SCHEMA_NAME from SCHEMATA;");
 	}
-	catch (const cave::ExceptionQuery&)
+	catch (const cave_current::ExceptionQuery&)
 	{
 		CU_ASSERT(false);
 	}
@@ -118,13 +118,13 @@ void v0_schema()
 
 
 	//>>>
-	driver::Result rest_schema2;
+	cave_current::mmsql::Result rest_schema2;
 	CU_ASSERT(not rest_schema2.is_stored());
 	try
 	{
 		rest_schema2 = connection_schema.execute("SELECT SCHEMA_NAME from SCHEMATA;");
 	}
-	catch (const cave::ExceptionQuery&)
+	catch (const cave_current::ExceptionQuery&)
 	{
 		CU_ASSERT(false);
 	}
@@ -134,31 +134,31 @@ void v0_schema()
 	}
 	CU_ASSERT(rest_schema2.is_stored());
 
-	std::vector<cave::Row<char,cave::mmsql::Data>> vector_schema2;
+	std::vector<cave_current::Row<char,cave_current::mmsql::Data>> vector_schema2;
 	rest_schema2.store(vector_schema2);
 	//std::cout << "vector_schema2 : \n";
 	/*for (const cave::Row<const char*>& n : vector_schema2)
 	{
 		std::cout << "Database : " << n[0] << "\n";
 	}*/
-	for (const cave::Row<char, cave::mmsql::Data>& n : vector_schema2)
+	for (const cave_current::Row<char, cave_current::mmsql::Data>& n : vector_schema2)
 	{
 		CU_ASSERT(n[0] != NULL);
 	}
-	for (const cave::Row<char, cave::mmsql::Data>& n : vector_schema2)
+	for (const cave_current::Row<char, cave_current::mmsql::Data>& n : vector_schema2)
 	{
 		CU_ASSERT(n[100] == NULL);
 	}
 	CU_ASSERT(rest_schema2.number_rows() == vector_schema2.size());
 
 	//>>>
-	driver::Result rest_schema3;
+	cave_current::mmsql::Result rest_schema3;
 	CU_ASSERT(not rest_schema3.is_stored());
 	try
 	{
 		rest_schema3 = connection_schema.execute("SELECT SCHEMA_NAME from SCHEMATA WHERE  SCHEMA_NAME = 'INFORMATION_SCHEMA';");
 	}
-	catch (const cave::ExceptionQuery&)
+	catch (const cave_current::ExceptionQuery&)
 	{
 		CU_ASSERT(false);
 	}
@@ -168,7 +168,7 @@ void v0_schema()
 	}
 	CU_ASSERT(rest_schema3.is_stored());
 
-	cave::Row<char, cave::mmsql::Data> row1;
+	cave_current::Row<char, cave_current::mmsql::Data> row1;
 	row1 = rest_schema3.next();
 	//std::cout << "row1 : " << row1[0] << "\n";
 	CU_ASSERT(strcmp(row1[0],"information_schema") == 0);
@@ -188,6 +188,6 @@ void v0_schema()
 	//std::cout << "rest_schema3_cstr : " << rest_schema3_cstr << "\n";
 	CU_ASSERT(strcmp(rest_schema3_cstr, "information_schema") == 0);
 
-	cave::Builder buider1(connection_schema);
+	cave_current::Builder buider1(connection_schema);
 	CU_ASSERT(buider1.get_schemas().size() > 0);
 }

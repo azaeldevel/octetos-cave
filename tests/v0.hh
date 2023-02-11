@@ -22,7 +22,7 @@
 #include <CUnit/Basic.h>
 
 
-#if  (defined(_WIN32) || defined(_WIN64)) && COMPILER_VS
+#if  (defined(_WIN32) || defined(_WIN64))
 
 #elif defined __linux__
 
