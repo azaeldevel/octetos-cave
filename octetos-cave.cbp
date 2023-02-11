@@ -8,7 +8,7 @@
 		<Build>
 			<Target title="Debug">
 				<Option output="bin/Debug/octetos-cave" prefix_auto="1" extension_auto="1" />
-				<Option object_output="obj/Debug/" />
+				<Option object_output="bin/obj/Debug/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
@@ -17,7 +17,7 @@
 			</Target>
 			<Target title="Release">
 				<Option output="bin/Release/octetos-cave" prefix_auto="1" extension_auto="1" />
-				<Option object_output="obj/Release/" />
+				<Option object_output="bin/obj/Release/" />
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
@@ -27,12 +27,35 @@
 					<Add option="-s" />
 				</Linker>
 			</Target>
+			<Target title="liboctetos-cave-mmsql-dbg">
+				<Option output="bin/Debug/octetos-cave-mmsql" imp_lib="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).a" def_file="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).def" prefix_auto="1" extension_auto="1" />
+				<Option object_output="bin/obj/Debug/" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Linker>
+					<Add library="octetos-core" />
+					<Add library="libmariadb" />
+					<Add directory="../core/bin/Debug" />
+				</Linker>
+			</Target>
 		</Build>
 		<Compiler>
-			<Add option="-Wall" />
+			<Add option="-Wall -g -std=c++20" />
+			<Add option="-DMSYS2" />
+			<Add directory="../../octetos" />
 		</Compiler>
+		<Linker>
+			<Add option="`pkg-config --lib libmariadb`" />
+		</Linker>
+		<Unit filename="src/base.cc" />
+		<Unit filename="src/base.hh" />
+		<Unit filename="src/maria.hh" />
+		<Unit filename="src/mmsql.cc" />
+		<Unit filename="src/mmsql.hh" />
 		<Extensions>
-			<lib_finder disable_auto="1" />
+			<lib_finder disable_auto="1">
+				<lib name="libmariadb" />
+			</lib_finder>
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

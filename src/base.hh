@@ -453,6 +453,14 @@ namespace oct::cave::v0
 
 			return execute(srtsql);
 		}
+		RS insert(const std::string& fields,const std::string& values,const std::string& table)
+		{
+
+		}
+		RS insert(const std::string& fields,const std::string& values,const std::string& table,const std::string& where)
+		{
+
+		}
 
 		bool begin();
 		bool commit();
