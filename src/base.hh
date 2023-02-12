@@ -181,6 +181,10 @@ namespace oct::cave::v0
 		{
 			return i < size ? r[i] : NULL;
 		}
+		explicit operator const CB** ()const
+		{
+			return r;
+		}
 
 		/**
 		*\brief convierte el datos desde la represenacion de BD hacia un valor C++ elegido
@@ -338,12 +342,59 @@ namespace oct::cave::v0
 
 		Row<CB,DS> next();
 
-		void store(std::vector<Row<CB, DS>>& v);
-		void store(std::list<Row<CB, DS>>& v);
-		template<container_A S> void store(std::vector<S>& v);
-		template<container_A S> void store(std::list<S>& v);
-		void store(std::vector<const CB**>& v);
-		void store(std::list<const CB**>& v);
+		void store(std::vector<Row<CB, DS>>& v)
+		{
+			v.reserve(size());
+			for (size_t i = 0; i < size(); i++)
+			{
+				v.push_back(next());
+			}
+		}
+		void store(std::list<Row<CB, DS>>& v)
+		{
+			for (size_t i = 0; i < size(); i++)
+			{
+				v.push_back(next());
+			}
+		}
+		template<container_A S> void store(std::vector<S>& v)
+		{
+			v.reserve(size());
+			Row<CB, DS> row;
+			for (size_t i = 0; i < size(); i++)
+			{
+				row = next();
+				v.push_back((const CB**)row);
+			}
+		}
+		template<container_A S> void store(std::list<S>& v)
+		{
+			Row<CB, DS> row;
+			for (size_t i = 0; i < size(); i++)
+			{
+				row = next();
+				v.push_back((const CB**)row);
+			}
+		}
+		void store(std::vector<const CB**>& v)
+		{
+			v.reserve(size());
+			Row<CB, DS> row;
+			for (size_t i = 0; i < size(); i++)
+			{
+				row = next();
+				v.push_back((const CB**)row);
+			}
+		}
+		void store(std::list<const CB**>& v)
+		{
+			Row<CB, DS> row;
+			for (size_t i = 0; i < size(); i++)
+			{
+				row = next();
+				v.push_back((const CB**)row);
+			}
+		}
 
 	private:
 

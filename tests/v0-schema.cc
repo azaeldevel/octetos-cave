@@ -65,7 +65,7 @@ void v0_schema()
 	}
 	CU_ASSERT(conectfl);
 
-	cave_current::mmsql::Result rest_schema;
+	cave_current::Result<char, cave_current::mmsql::Data> rest_schema;
 	CU_ASSERT(not rest_schema.is_stored());
 	try
 	{
@@ -91,7 +91,7 @@ void v0_schema()
 	CU_ASSERT(rest_schema.size() == vector_schema.size());
 
 	//>>>
-	cave_current::mmsql::Result rest_schema1;
+	cave_current::Result<char, cave_current::mmsql::Data> rest_schema1;
 	CU_ASSERT(not rest_schema1.is_stored());
 	try
 	{
@@ -118,7 +118,7 @@ void v0_schema()
 
 
 	//>>>
-	cave_current::mmsql::Result rest_schema2;
+	cave_current::Result<char, cave_current::mmsql::Data> rest_schema2;
 	CU_ASSERT(not rest_schema2.is_stored());
 	try
 	{
@@ -152,7 +152,7 @@ void v0_schema()
 	CU_ASSERT(rest_schema2.size() == vector_schema2.size());
 
 	//>>>
-	cave_current::mmsql::Result rest_schema3;
+	cave_current::Result<char, cave_current::mmsql::Data> rest_schema3;
 	CU_ASSERT(not rest_schema3.is_stored());
 	try
 	{

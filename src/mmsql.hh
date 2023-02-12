@@ -49,78 +49,8 @@ namespace oct::cave::v0::mmsql
 		unsigned int port;
 		unsigned long flags;
 	};
-
-	class Result : public cave_current::Result<char, Data>
-	{
-	public:
-		Result() = default;
-		Result(Result&& r) noexcept;
-		Result(Handle&& h) noexcept;
-		Result(const Result&) = delete;
-		virtual ~Result();
-
-		void operator =(cave_current::Result<char, cave_current::mmsql::Data>&& r) noexcept;
-		void operator =(Result&& r) noexcept;
-		const Result& operator =(const Result& r) = delete;
-
-		//string to fetched row
-		void store(std::vector<Row<char, Data>>& v);
-		//string to fetched row
-		void store(std::list<Row<char, Data>>& v);
-
-		//struct to load data in c++ format
-		template<container_A R> void store(std::vector<R>& v)
-		{
-			v.reserve(size());
-			char** row;
-			for (index i = 0; i < size(); i++)
-			{
-				row = mysql_fetch_row(reinterpret_cast<MYSQL_RES*>(result));
-				//size_t size = mysql_num_fields(reinterpret_cast<MYSQL_RES*>(result));
-				if (row)
-				{
-					v.push_back((const char**)row);
-				}
-				else
-				{
-					;//error
-				}
-			}
-		}
-		//struct to load data in c++ format
-		template<container_A R> void store(std::list<R>& v)
-		{
-			char** row;
-			for (index i = 0; i < size(); i++)
-			{
-				row = mysql_fetch_row(reinterpret_cast<MYSQL_RES*>(result));
-				//size_t size = mysql_num_fields(reinterpret_cast<MYSQL_RES*>(result));
-				if (row)
-				{
-					v.push_back((const char**)row);
-				}
-				else
-				{
-					;//error
-				}
-			}
-		}
-
-		void store(std::vector<const char**>& v);
-		void store(std::list<const char**>& v);
-
-		Row<char,Data> next();
-	};
-
-
-	typedef cave_current::Connection<char,Data,Result> Connection;
-	/*class Connection : public cave_current::Connection<const char*, Data>
-	{
-	public:
-		Connection(const Data& data, bool autocommit);
-
-		bool connect(const Data&, bool autocommit);
-	};*/
+		
+	typedef cave_current::Connection<char,Data> Connection;
 }
 
 #endif

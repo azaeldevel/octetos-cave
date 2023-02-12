@@ -89,7 +89,7 @@ template<typename T = std::chrono::milliseconds>
 void mesure_query(size_t base_length,oct::core::MesureExecution& mesure, cave_current::mmsql::Connection& conn,const char* str)
 {
 	mesure.start = std::chrono::high_resolution_clock::now();
-	cave_current::mmsql::Result rest1[base_length];//TODO: usar base_length
+	cave_current::Result<char, cave_current::mmsql::Data> rest1[base_length];//TODO: usar base_length
 	for(size_t i = 0; i < base_length; i++)
 	{
 		rest1[i] = conn.execute(str);
@@ -168,7 +168,7 @@ void v0_conection()
 	CU_ASSERT(conn.is_connected());
 	CU_ASSERT(conn.ping());
 
-	cave_current::mmsql::Result rest;
+	cave_current::Result<char, cave_current::mmsql::Data> rest;
 	CU_ASSERT(not rest.is_stored());
 	try
 	{
@@ -194,7 +194,7 @@ void v0_conection()
 	}*/
 	CU_ASSERT(rest.size() == vec_dbs.size());
 
-	cave_current::mmsql::Result rest2;
+	cave_current::Result<char, cave_current::mmsql::Data> rest2;
 	CU_ASSERT(not rest2.is_stored());
 	try
 	{
@@ -223,7 +223,7 @@ void v0_driver_pure()
 {
     cave_current::mmsql::Data dtm("localhost","develop","123456", "INFORMATION_SCHEMA", OCTEOTOS_CAVE_TESTS_MMSQL_PORT);
 	bool conectfl = false;
-	cave_current::Connection<char,cave_current::mmsql::Data> conn;
+	cave_current::mmsql::Connection conn;
 	try
 	{
 		conectfl = conn.connect(dtm, true);
