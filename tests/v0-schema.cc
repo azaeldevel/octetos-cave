@@ -88,7 +88,7 @@ void v0_schema()
 	{
 		std::cout << "\tDatabase : " << n.name << "\n";
 	}*/
-	CU_ASSERT(rest_schema.number_rows() == vector_schema.size());
+	CU_ASSERT(rest_schema.size() == vector_schema.size());
 
 	//>>>
 	cave_current::mmsql::Result rest_schema1;
@@ -114,7 +114,7 @@ void v0_schema()
 	{
 		std::cout << "\tDatabase : " << n[0] << "\n";
 	}*/
-	CU_ASSERT(rest_schema1.number_rows() == vector_schema1.size());
+	CU_ASSERT(rest_schema1.size() == vector_schema1.size());
 
 
 	//>>>
@@ -149,7 +149,7 @@ void v0_schema()
 	{
 		CU_ASSERT(n[100] == NULL);
 	}
-	CU_ASSERT(rest_schema2.number_rows() == vector_schema2.size());
+	CU_ASSERT(rest_schema2.size() == vector_schema2.size());
 
 	//>>>
 	cave_current::mmsql::Result rest_schema3;

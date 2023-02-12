@@ -48,6 +48,27 @@ struct DB_name
 	}
 };
 
+
+struct Table
+{
+	std::string name;
+
+	Table() = default;
+	Table(cave_current::Row<char,cave_current::mmsql::Data> s)
+	{
+		name = s[0];
+	}
+
+	static std::string fields()
+	{
+        return "SCHEMA_NAME";
+	}
+
+	static std::string table()
+	{
+        return "INFORMATION_SCHEMA.SCHEMATA";
+	}
+};
 void v0_develop()
 {
 	MYSQL* conn = mysql_init(NULL);
@@ -171,7 +192,7 @@ void v0_conection()
 	{
 		std::cout << "Database : " << n.name << "\n";
 	}*/
-	CU_ASSERT(rest.number_rows() == vec_dbs.size());
+	CU_ASSERT(rest.size() == vec_dbs.size());
 
 	cave_current::mmsql::Result rest2;
 	CU_ASSERT(not rest2.is_stored());
@@ -194,5 +215,43 @@ void v0_conection()
 	{
 		std::cout << "Database : " << n.name << "\n";
 	}*/
-	CU_ASSERT(rest2.number_rows() == lst_dbs.size());
+	CU_ASSERT(rest2.size() == lst_dbs.size());
+
+}
+
+void v0_driver_pure()
+{
+    cave_current::mmsql::Data dtm("localhost","develop","123456", "INFORMATION_SCHEMA", OCTEOTOS_CAVE_TESTS_MMSQL_PORT);
+	bool conectfl = false;
+	cave_current::Connection<char,cave_current::mmsql::Data> conn;
+	try
+	{
+		conectfl = conn.connect(dtm, true);
+	}
+	catch (const oct::core::v3::Exception& e)
+	{
+		CU_ASSERT(false);
+		std::cout << "Exception (cave testing) : " << e.describe() << "\n";
+		return;
+	}
+	catch (...)
+	{
+		CU_ASSERT(false);
+	}
+	CU_ASSERT(conectfl);
+
+    std::vector<Table> lst_dbs2;
+    bool lst_dbs2flag;
+    try
+    {
+		 lst_dbs2flag = conn.select(lst_dbs2);
+	}
+	catch (const cave_current::ExceptionQuery&)
+	{
+		CU_ASSERT(false);
+	}
+	catch (...)
+	{
+		CU_ASSERT(false);
+	}
 }

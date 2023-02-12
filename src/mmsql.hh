@@ -71,9 +71,9 @@ namespace oct::cave::v0::mmsql
 		//struct to load data in c++ format
 		template<container_A R> void store(std::vector<R>& v)
 		{
-			v.reserve(number_rows());
+			v.reserve(size());
 			char** row;
-			for (index i = 0; i < number_rows(); i++)
+			for (index i = 0; i < size(); i++)
 			{
 				row = mysql_fetch_row(reinterpret_cast<MYSQL_RES*>(result));
 				//size_t size = mysql_num_fields(reinterpret_cast<MYSQL_RES*>(result));
@@ -91,7 +91,7 @@ namespace oct::cave::v0::mmsql
 		template<container_A R> void store(std::list<R>& v)
 		{
 			char** row;
-			for (index i = 0; i < number_rows(); i++)
+			for (index i = 0; i < size(); i++)
 			{
 				row = mysql_fetch_row(reinterpret_cast<MYSQL_RES*>(result));
 				//size_t size = mysql_num_fields(reinterpret_cast<MYSQL_RES*>(result));
@@ -104,7 +104,7 @@ namespace oct::cave::v0::mmsql
 					;//error
 				}
 			}
-		}	
+		}
 
 		void store(std::vector<const char**>& v);
 		void store(std::list<const char**>& v);

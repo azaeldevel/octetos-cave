@@ -34,6 +34,7 @@ int v0_init(void);
 int v0_clean(void);
 void v0_develop();
 void v0_conection();
+void v0_driver_pure();
 void v0_mesures();
 void v0_schema();
 

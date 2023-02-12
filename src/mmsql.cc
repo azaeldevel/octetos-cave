@@ -93,7 +93,7 @@ namespace oct::cave::v0
 		return mysql_error(reinterpret_cast<MYSQL*>(handle));
 	}
 
-	
+
 
 
 
@@ -105,8 +105,8 @@ namespace oct::cave::v0
 			result = NULL;
 		}
 	}
-	
-	template<> size_t Result<char, cave_current::mmsql::Data>::number_rows()const
+
+	template<> size_t Result<char, cave_current::mmsql::Data>::size()const
 	{
 		if (result) return mysql_num_rows((MYSQL_RES*)result);
 
@@ -120,26 +120,179 @@ namespace oct::cave::v0
 			result = NULL;
 		}
 	}
-	
+	template<> Row<char,cave_current::mmsql::Data> Result<char, cave_current::mmsql::Data>::next()
+	{
+		char** str = mysql_fetch_row(reinterpret_cast<MYSQL_RES*>(result));
+		size_t size = mysql_num_fields(reinterpret_cast<MYSQL_RES*>(result));
+		Row<char, cave_current::mmsql::Data> row((const char**)str,size);
+		return row;
+	}
 
 
 
-	
-		
-	
-	
+
+
+
+
+	//Connection<char, mmsql::Data, cave_current::Result<char,mmsql::Data>>
+	template<> bool Connection<char, mmsql::Data>::connect(const cave_current::mmsql::Data& data, bool a)
+	{
+		//if(connection) return false;//ya esta conectada
+		//if(connected) return false;//ya esta conectada
+		MYSQL* con = mysql_real_connect(
+						 reinterpret_cast<MYSQL*>(connection),
+						 data.get_host().empty() ? NULL : data.get_host().c_str(),
+						 data.get_user().empty() ? NULL : data.get_user().c_str(),
+						 data.get_password().empty() ? NULL : data.get_password().c_str(),
+						 data.get_database().empty() ? NULL : data.get_database().c_str(),
+						 data.get_port(),
+						 data.get_socket().empty() ? NULL : data.get_socket().c_str(),
+						 data.get_flags()
+		                             	);
+		if(con)
+		{
+			connected = true;
+		}
+		else
+		{
+			//std::cout << "Error : " << mysql_errno(reinterpret_cast<MYSQL*>(connection)) << " : " << mysql_error(reinterpret_cast<MYSQL*>(connection)) << "\n";
+			//mysql_close(con);
+			connected = false;
+			//connection = NULL;
+			throw ExceptionSQL(connection, __FILE__, __LINE__);
+		}
+
+		if(mysql_autocommit(con,a) == 0) autocommit = a;
+
+		return connected;
+	}
+	template<> Connection<char, mmsql::Data>::Connection() : connection((Handle)mysql_init(NULL)), connected(false), autocommit(false)
+	{
+	}
+	template<> Connection<char, mmsql::Data>::Connection(Connection&& c) noexcept
+	{
+		connected	= c.connected;
+		connection	= c.connection;
+		autocommit	= c.autocommit;
+		c.connection = NULL;
+	}
+	template<> Connection<char, mmsql::Data>::Connection(const mmsql::Data& d, bool a): connection((Handle)mysql_init(NULL)),connected(false), autocommit(a)
+	{
+		connect(d,a);
+	}
+	template<> Connection<char, mmsql::Data>::~Connection()
+	{
+		if(connection)
+		{
+			mysql_close(reinterpret_cast<MYSQL*>(connection));
+			connection = NULL;
+		}
+	}
+
+	template<> Result<char,mmsql::Data> Connection<char, mmsql::Data>::execute(const std::string& str)
+	{
+		if(not connected) throw ExceptionSQL(connection, __FILE__, __LINE__);
+		if(not connection) throw ExceptionSQL(connection, __FILE__, __LINE__);
+
+		int ret_query = mysql_query(reinterpret_cast<MYSQL*>(connection), str.c_str());
+
+		if (ret_query == -1 and mysql_errno(reinterpret_cast<MYSQL*>(connection)) == 2000)
+		{
+			//throw ExceptionQuery("Se genero error desconocido como respuesta, este error podria deverse a un bug",__FILE__,__LINE__);
+			throw ExceptionSQL(connection, __FILE__, __LINE__);
+		}
+		else if (ret_query == 0)
+		{
+			return Result<char,mmsql::Data>(mysql_store_result(reinterpret_cast<MYSQL*>(connection)));
+		}
+		else
+		{
+			//std::cout << "Error Maria : " << mysql_errno(reinterpret_cast<MYSQL*>(connection)) << "  " << mysql_error(reinterpret_cast<MYSQL*>(connection)) << "\n";
+			//std::cout << "ret_query : " << ret_query << "\n";
+			//std::cout << "SQL String : " << str << "\n";
+			//return Result<DataMaria>();
+			//throw ExceptionQuery("Fallo la ejecucion de la consulta",__FILE__,__LINE__);
+			throw ExceptionSQL(connection, __FILE__, __LINE__);
+		}
+	}
+
+
+
+	template<> bool Connection<char, mmsql::Data>::commit()
+	{
+		if(connection) if(mysql_commit(reinterpret_cast<MYSQL*>(connection)) == 0) return true;
+
+		return false;
+	}
+	template<> bool Connection<char, mmsql::Data>::rollback()
+	{
+		if(connection) if(mysql_rollback(reinterpret_cast<MYSQL*>(connection)) == 0) return true;
+
+		return false;
+	}
+
+
+	template<> void Connection<char, mmsql::Data>::close()
+	{
+		if(connection)
+		{
+			mysql_close(reinterpret_cast<MYSQL*>(connection));
+			connection = NULL;
+		}
+	}
+	template<> bool Connection<char, mmsql::Data>::ping()
+	{
+		if(not connected) return false;
+		if(connection)
+		{
+			if(mysql_ping(reinterpret_cast<MYSQL*>(connection))) return false;
+			return true;
+		}
+
+		return false;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	template<> bool Connection<char, cave_current::mmsql::Data, cave_current::mmsql::Result>::connect(const cave_current::mmsql::Data& data, bool a)
 	{
 		//if(connection) return false;//ya esta conectada
-		//if(connected) return false;//ya esta conectada	
+		//if(connected) return false;//ya esta conectada
 		MYSQL* con = mysql_real_connect(
-						 reinterpret_cast<MYSQL*>(connection), 
-						 data.get_host().empty() ? NULL : data.get_host().c_str(), 
-						 data.get_user().empty() ? NULL : data.get_user().c_str(), 
-						 data.get_password().empty() ? NULL : data.get_password().c_str(), 
-						 data.get_database().empty() ? NULL : data.get_database().c_str(), 
-						 data.get_port(), 
-						 data.get_socket().empty() ? NULL : data.get_socket().c_str(), 
+						 reinterpret_cast<MYSQL*>(connection),
+						 data.get_host().empty() ? NULL : data.get_host().c_str(),
+						 data.get_user().empty() ? NULL : data.get_user().c_str(),
+						 data.get_password().empty() ? NULL : data.get_password().c_str(),
+						 data.get_database().empty() ? NULL : data.get_database().c_str(),
+						 data.get_port(),
+						 data.get_socket().empty() ? NULL : data.get_socket().c_str(),
 						 data.get_flags()
 		                             	);
 		if(con)
@@ -179,7 +332,7 @@ namespace oct::cave::v0
 		{
 			mysql_close(reinterpret_cast<MYSQL*>(connection));
 			connection = NULL;
-		}		
+		}
 	}
 
 	template<> cave_current::mmsql::Result Connection<char, cave_current::mmsql::Data, cave_current::mmsql::Result>::execute(const std::string& str)
@@ -188,13 +341,13 @@ namespace oct::cave::v0
 		if(not connection) throw ExceptionSQL(connection, __FILE__, __LINE__);
 
 		int ret_query = mysql_query(reinterpret_cast<MYSQL*>(connection), str.c_str());
-		
-		if (ret_query == -1 and mysql_errno(reinterpret_cast<MYSQL*>(connection)) == 2000) 
+
+		if (ret_query == -1 and mysql_errno(reinterpret_cast<MYSQL*>(connection)) == 2000)
 		{
 			//throw ExceptionQuery("Se genero error desconocido como respuesta, este error podria deverse a un bug",__FILE__,__LINE__);
 			throw ExceptionSQL(connection, __FILE__, __LINE__);
 		}
-		else if (ret_query == 0) 
+		else if (ret_query == 0)
 		{
 			return cave_current::mmsql::Result(mysql_store_result(reinterpret_cast<MYSQL*>(connection)));
 		}
@@ -210,7 +363,7 @@ namespace oct::cave::v0
 	}
 
 
-	
+
 	template<> bool Connection<char, cave_current::mmsql::Data, cave_current::mmsql::Result>::commit()
 	{
 		if(connection) if(mysql_commit(reinterpret_cast<MYSQL*>(connection)) == 0) return true;
@@ -248,7 +401,7 @@ namespace oct::cave::v0
 
 namespace oct::cave::v0::mmsql
 {
-	
+
 	Result::Result(Result&& r) noexcept
 	{
 		move(&r,this);
@@ -280,9 +433,9 @@ namespace oct::cave::v0::mmsql
 
 	void Result::store(std::vector<Row<char, Data>>& v)
 	{
-		v.reserve(number_rows());
+		v.reserve(size());
 		char** row;
-		for (index i = 0; i < number_rows(); i++)
+		for (index i = 0; i < size(); i++)
 		{
 			row = mysql_fetch_row(reinterpret_cast<MYSQL_RES*>(result));
 			size_t size = mysql_num_fields(reinterpret_cast<MYSQL_RES*>(result));
@@ -300,7 +453,7 @@ namespace oct::cave::v0::mmsql
 	void Result::store(std::list<Row<char, Data>>& v)
 	{
 		char** row;
-		for (index i = 0; i < number_rows(); i++)
+		for (index i = 0; i < size(); i++)
 		{
 			row = mysql_fetch_row(reinterpret_cast<MYSQL_RES*>(result));
 			size_t size = mysql_num_fields(reinterpret_cast<MYSQL_RES*>(result));
@@ -316,9 +469,9 @@ namespace oct::cave::v0::mmsql
 	}
 	void Result::store(std::vector<const char**>& v)
 	{
-		v.reserve(number_rows());
+		v.reserve(size());
 		char** row;
-		for (index i = 0; i < number_rows(); i++)
+		for (index i = 0; i < size(); i++)
 		{
 			row = mysql_fetch_row(reinterpret_cast<MYSQL_RES*>(result));
 			//size_t size = mysql_num_fields(reinterpret_cast<MYSQL_RES*>(result));
@@ -335,7 +488,7 @@ namespace oct::cave::v0::mmsql
 	void Result::store(std::list<const char**>& v)
 	{
 		char** row;
-		for (index i = 0; i < number_rows(); i++)
+		for (index i = 0; i < size(); i++)
 		{
 			row = mysql_fetch_row(reinterpret_cast<MYSQL_RES*>(result));
 			//size_t size = mysql_num_fields(reinterpret_cast<MYSQL_RES*>(result));

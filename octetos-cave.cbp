@@ -34,24 +34,54 @@
 				<Option compiler="gcc" />
 				<Linker>
 					<Add library="octetos-core" />
-					<Add library="libmariadb" />
+					<Add directory="../core/bin/Debug" />
+				</Linker>
+			</Target>
+			<Target title="testing-v0">
+				<Option output="bin/Debug/tesint-v0" prefix_auto="1" extension_auto="1" />
+				<Option object_output="bin/obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="`pkg-config --cflags cunit`" />
+					<Add option="-DOCTEOTOS_CAVE_ENABLE_TDD_V0" />
+					<Add option="-DOCTEOTOS_CAVE_TESTS_MMSQL_PORT=3306" />
+				</Compiler>
+				<Linker>
+					<Add option="`pkg-config --libs cunit`" />
+					<Add library="octetos-core" />
+					<Add library="cunit" />
 					<Add directory="../core/bin/Debug" />
 				</Linker>
 			</Target>
 		</Build>
 		<Compiler>
-			<Add option="-Wall -g -std=c++20" />
-			<Add option="-DMSYS2" />
+			<Add option="-Wall -g -std=c++20 `pkg-config --cflags libmariadb`" />
 			<Add directory="../../octetos" />
 		</Compiler>
 		<Linker>
-			<Add option="`pkg-config --lib libmariadb`" />
+			<Add option="`pkg-config --libs libmariadb`" />
 		</Linker>
 		<Unit filename="src/base.cc" />
 		<Unit filename="src/base.hh" />
 		<Unit filename="src/maria.hh" />
 		<Unit filename="src/mmsql.cc" />
 		<Unit filename="src/mmsql.hh" />
+		<Unit filename="tests/main.cc">
+			<Option target="testing-v0" />
+		</Unit>
+		<Unit filename="tests/v0-mmsql.cc">
+			<Option target="testing-v0" />
+		</Unit>
+		<Unit filename="tests/v0-schema.cc">
+			<Option target="testing-v0" />
+		</Unit>
+		<Unit filename="tests/v0.cc">
+			<Option target="testing-v0" />
+		</Unit>
+		<Unit filename="tests/v0.hh">
+			<Option target="testing-v0" />
+		</Unit>
 		<Extensions>
 			<lib_finder disable_auto="1">
 				<lib name="libmariadb" />
