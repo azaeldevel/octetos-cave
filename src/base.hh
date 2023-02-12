@@ -378,7 +378,6 @@ namespace oct::cave::v0
 	template <typename T> concept ContainerSelectionStorable = requires(T t)
 	{
 	    T::fields();
-	    t(Row());
 	};
 	template <typename T> concept ContainerInsertion = requires(T t)
 	{
@@ -489,15 +488,41 @@ namespace oct::cave::v0
 		template<ContainerSelectionStorable CS> bool select(std::vector<CS>& c,const std::string& where)
 		{
 		    std::string srtsql = "SELECT " + CS::fields() + " FROM " + CS::table()  + " WHERE " + where;
-            RS result = execute(srtsql);
-            if(not result) return false;
-            c.reserve(result.size());
-            for(size_t i = 0; i < result.size(); i++)
-            {
-                c.push_back(result.next());
-            }
+			RS result = execute(srtsql);
+			if (not result) return false;
+			c.reserve(result.size());
+			for (size_t i = 0; i < result.size(); i++)
+			{
+				c.push_back(result.next());
+			}
 
-		    return true;
+			return true;
+		}
+		template<ContainerSelectionStorable CS> bool select(std::list<CS>& c)
+		{
+			std::string srtsql = "SELECT " + CS::fields() + " FROM " + CS::table();
+			RS result = execute(srtsql);
+			if (not result) return false;
+			
+			for (size_t i = 0; i < result.size(); i++)
+			{
+				c.push_back(result.next());
+			}
+
+			return true;
+		}
+		template<ContainerSelectionStorable CS> bool select(std::list<CS>& c, const std::string& where)
+		{
+			std::string srtsql = "SELECT " + CS::fields() + " FROM " + CS::table() + " WHERE " + where;
+			RS result = execute(srtsql);
+			if (not result) return false;
+			
+			for (size_t i = 0; i < result.size(); i++)
+			{
+				c.push_back(result.next());
+			}
+
+			return true;
 		}
 
 		RS insert(const std::string& fields,const std::string& values,const std::string& table)

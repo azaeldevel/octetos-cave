@@ -254,4 +254,28 @@ void v0_driver_pure()
 	{
 		CU_ASSERT(false);
 	}
+	/*for (const Table& t : lst_dbs2)
+	{
+		std::cout << "Name : " << t.name << "\n";
+	}*/
+
+
+	std::list<Table> lst_dbs3;
+	bool lst_dbs3flag;
+	try
+	{
+		lst_dbs3flag = conn.select(lst_dbs3);
+	}
+	catch (const cave_current::ExceptionQuery&)
+	{
+		CU_ASSERT(false);
+	}
+	catch (...)
+	{
+		CU_ASSERT(false);
+	}
+	for (const Table& t : lst_dbs3)
+	{
+		std::cout << "Name : " << t.name << "\n";
+	}
 }
