@@ -127,7 +127,63 @@ namespace oct::cave::v0
 		Row<char, cave_current::mmsql::Data> row((const char**)str,size);
 		return row;
 	}
-
+	void Result<char, cave_current::mmsql::Data>::load_fields_info()
+	{
+		MYSQL_FIELD* field;
+		size_t i = 0;
+		FieldInfo info;
+		fields.reserve(size());
+		while(field = mysql_fetch_field(reinterpret_cast<MYSQL_RES*>(result)))
+		{
+			switch(field->type)
+			{
+			case MYSQL_TYPE_TINY:
+				info.type = Result<char, cave_current::mmsql::Data>::Types::SCHAR;
+				if (field->length != sizeof(unsigned char)) throw ExceptionDriver("La longitud del campo no coincide con la conocida.",__FILE__,__LINE__);
+				break;
+			case MYSQL_TYPE_SHORT:
+				info.type = Result<char, cave_current::mmsql::Data>::Types::SHORT;
+				if (field->length != sizeof(short)) throw ExceptionDriver("La longitud del campo no coincide con la conocida.", __FILE__, __LINE__);
+				break;
+			case MYSQL_TYPE_LONG:
+				info.type = Result<char, cave_current::mmsql::Data>::Types::LONG;
+				if (field->length != sizeof(long)) throw ExceptionDriver("La longitud del campo no coincide con la conocida.", __FILE__, __LINE__);
+				break;
+			case MYSQL_TYPE_LONGLONG:
+				info.type = Result<char, cave_current::mmsql::Data>::Types::LONGLONG;
+				if (field->length != sizeof(long long)) throw ExceptionDriver("La longitud del campo no coincide con la conocida.", __FILE__, __LINE__);
+				break;
+			case MYSQL_TYPE_FLOAT:
+				info.type = Result<char, cave_current::mmsql::Data>::Types::FLOAT;
+				if (field->length != sizeof(float)) throw ExceptionDriver("La longitud del campo no coincide con la conocida.", __FILE__, __LINE__);
+				break;
+			case MYSQL_TYPE_DECIMAL:
+			case MYSQL_TYPE_DOUBLE:
+				info.type = Result<char, cave_current::mmsql::Data>::Types::DOUBLE;
+				if (field->length != sizeof(double)) throw ExceptionDriver("La longitud del campo no coincide con la conocida.", __FILE__, __LINE__);
+				break;
+			case MYSQL_TYPE_TIMESTAMP:
+			case MYSQL_TYPE_DATE:
+			case MYSQL_TYPE_TIME:
+			case MYSQL_TYPE_DATETIME:
+			case MYSQL_TYPE_TIMESTAMP2:
+				info.type = Result<char, cave_current::mmsql::Data>::Types::STRING;
+				break;
+			case MYSQL_TYPE_VARCHAR:
+			case MYSQL_TYPE_STRING:
+				info.type = Result<char, cave_current::mmsql::Data>::Types::STRING;
+				break;
+			case MYSQL_TYPE_ENUM:
+			case MYSQL_TYPE_SET:
+				info.type = Result<char, cave_current::mmsql::Data>::Types::SELECTION;
+				break;
+			default:
+				info.type = Result<char, cave_current::mmsql::Data>::Types::NONE;
+			}
+			fields.push_back(info);
+			i++;
+		}
+	}
 
 
 

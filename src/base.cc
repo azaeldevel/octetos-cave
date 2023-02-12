@@ -73,6 +73,15 @@ ExceptionSQL::~ExceptionSQL()
 
 
 
+
+ExceptionDriver::ExceptionDriver(const ExceptionDriver& e) : core::v3::Exception(e)
+{
+}
+ExceptionDriver::ExceptionDriver(const char* m, const char* f, unsigned int l) : core::v3::Exception(m, f, l)
+{
+}
+
+
 DataSource::DataSource(const std::string& d) : database(d)
 {
 }

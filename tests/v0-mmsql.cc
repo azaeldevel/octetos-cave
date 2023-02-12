@@ -277,5 +277,25 @@ void v0_driver_pure()
 	/*for (const Table& t : lst_dbs3)
 	{
 		std::cout << "Name : " << t.name << "\n";
-	}*/
+	*/
+
+	cave_current::Result<char, cave_current::mmsql::Data> rest_schema;
+	CU_ASSERT(not rest_schema.is_stored());
+	try
+	{
+		rest_schema = conn.execute("SELECT SCHEMA_NAME from SCHEMATA;");
+	}
+	catch (const cave_current::ExceptionQuery&)
+	{
+		CU_ASSERT(false);
+	}
+	catch (...)
+	{
+		CU_ASSERT(false);
+	}
+	CU_ASSERT(rest_schema.is_stored());
+	for (const cave_current::Result<char, cave_current::mmsql::Data>::FieldInfo& f : rest_schema.fields_info())
+	{
+		std::cout << "Type : " << (int)f.type << "\n";
+	}
 }

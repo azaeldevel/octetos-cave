@@ -141,6 +141,19 @@ namespace oct::cave::v0
 		std::string database;
 	};
 
+
+	class ExceptionDriver : public core::v3::Exception
+	{
+	public:
+
+	public:
+		ExceptionDriver(const char* message, const char* filename, unsigned int line);
+		ExceptionDriver(const ExceptionDriver&);
+
+	private:
+		Handle handle;
+	};
+
 	template<class T> concept char_base = std::is_same<char, T>::value || std::is_same<wchar_t, T>::value;
 	template<class R> concept row_string = std::is_same<const char*, R>::value || std::is_same<const wchar_t*, R>::value;
 	//Contenmedr tipo A, rquiere un contructor para el array de c-string
@@ -156,22 +169,21 @@ namespace oct::cave::v0
 		using data_type = DS;
 
 	public:
-		Row() : r(NULL), size(0)
+		Row() : row(NULL), size(0)
 		{
 		}
-		Row(const CB** r,size_t z) : size(z)
-		{
-			this->r = r;
-		}
-		Row(const Row& row) : r(row.r),size(row.size)
+		Row(const CB** r,size_t z) : row(r), size(z)
 		{
 		}
-		Row(Row&& row) noexcept : r(row.r), size(row.size)
+		Row(const Row& r) : row(r.row),size(r.size)
+		{
+		}
+		Row(Row&& r) noexcept : row(r.row), size(r.size)
 		{
 		}
 		const Row& operator =(const Row& obj)
 		{
-			r = obj.r;
+			row = obj.row;
 			size = obj.size;
 
 			return *this;
@@ -179,11 +191,11 @@ namespace oct::cave::v0
 
 		inline const CB* operator[] (size_t i)const
 		{
-			return i < size ? r[i] : NULL;
+			return i < size ? row[i] : NULL;
 		}
 		explicit operator const CB** ()const
 		{
-			return r;
+			return row;
 		}
 
 		/**
@@ -193,23 +205,23 @@ namespace oct::cave::v0
 		template<typename T> void store(T& v, size_t field);
 		void store(CB& v, size_t field)
 		{
-			v = r[field][0];
+			v = row[field][0];
 		}
 		void store(signed char& v, size_t field)
 		{
-			v = oct::core::atoi<signed char>(r[field]);
+			v = oct::core::atoi<signed char>(row[field]);
 		}
 		void store(unsigned char& v, size_t field)
 		{
-			v = oct::core::atoi<unsigned char>(r[field]);
+			v = oct::core::atoi<unsigned char>(row[field]);
 		}
 		void store(const CB*& v, size_t field)
 		{
-			v = r[field];
+			v = row[field];
 		}
 		void store(std::string& v, size_t field)
 		{
-			v = r[field];
+			v = row[field];
 		}
 		/*void store(std::wstring& v, size_t field)
 		{
@@ -217,51 +229,51 @@ namespace oct::cave::v0
 		}*/
 		void store(int& v, size_t field)
 		{
-			v = oct::core::atoi<int>(r[field]);
+			v = oct::core::atoi<int>(row[field]);
 		}
 		void store(unsigned int& v, size_t field)
 		{
-			v = oct::core::atoi<unsigned int>(r[field]);
+			v = oct::core::atoi<unsigned int>(row[field]);
 		}
 		void store(short& v, size_t field)
 		{
-			v = oct::core::atoi<short>(r[field]);
+			v = oct::core::atoi<short>(row[field]);
 		}
 		void store(unsigned short& v, size_t field)
 		{
-			v = oct::core::atoi<unsigned short>(r[field]);
+			v = oct::core::atoi<unsigned short>(row[field]);
 		}
 		void store(long& v, size_t field)
 		{
-			v = oct::core::atoi<long>(r[field]);
+			v = oct::core::atoi<long>(row[field]);
 		}
 		void tore(unsigned long& v, size_t field)
 		{
-			v = oct::core::atoi<unsigned long>(r[field]);
+			v = oct::core::atoi<unsigned long>(row[field]);
 		}
 		void store(long long& v, size_t field)
 		{
-			v = oct::core::atoi<long long>(r[field]);
+			v = oct::core::atoi<long long>(row[field]);
 		}
 		void store(unsigned long long& v, size_t field)
 		{
-			v = oct::core::atoi<unsigned long long>(r[field]);
+			v = oct::core::atoi<unsigned long long>(row[field]);
 		}
 		void store(float& v, size_t field)
 		{
-			v = std::stof(r[field]);
+			v = std::stof(row[field]);
 		}
 		void store(double& v, size_t field)
 		{
-			v = std::stod(r[field]);
+			v = std::stod(row[field]);
 		}
 		void store(long double& v, size_t field)
 		{
-			v = std::stold(r[field]);
+			v = std::stold(row[field]);
 		}
 		void store(bool& v, size_t field)
 		{
-			v = (bool)oct::core::atoi<unsigned char>(r[field]);
+			v = (bool)oct::core::atoi<unsigned char>(row[field]);
 		}
 
 		template<typename T> void store(T& v, const char* field);
@@ -272,13 +284,9 @@ namespace oct::cave::v0
 		*/
 		template<typename T> T store(size_t field);
 
-		/**
-		*\brief Determina el type de datos del campo
-		*/
-		template<typename T> T get_type(size_t field);
 
 	protected:
-		const CB** r;
+		const CB** row;
 		size_t size;
 
 		/**
@@ -286,7 +294,7 @@ namespace oct::cave::v0
 		*/
 		static void copy(Row* origin, Row* dest)
 		{
-			dest->r = origin->r;
+			dest->row = origin->row;
 			dest->size = origin->size;
 		}
 	};
@@ -302,6 +310,35 @@ namespace oct::cave::v0
 		using char_type = CB;
 		using data_type = DS;
 
+		enum class Types
+		{
+			NONE,
+			BOOL,
+			CHAR,
+			SCHAR,
+			UCHAR,
+			CSTRING,
+			STRING,
+			INTEGER,
+			UINTEGER,
+			SHORT,
+			USHORT,
+			LONG,
+			ULONG,
+			LONGLONG,
+			ULONGLONG,
+			FLOAT,
+			DOUBLE,
+			LONGDOUBLE,
+			SELECTION,
+
+		};
+
+		struct FieldInfo
+		{
+			Types type;
+		};
+
 	public:
 		Result() : result(NULL)
 		{
@@ -312,11 +349,13 @@ namespace oct::cave::v0
 			result = r.result;
 			r.result = NULL;
 			//std::cout << "Result(Result<D>&& " << result << ")\n";
+			load_fields_info();
 		}
 		Result(Handle&& h) noexcept : result(NULL)
 		{
 			result = h;
 			//std::cout << "Result(Handle&& " << result << ")\n";
+			load_fields_info();
 		}
 		Result(const Result&) = delete;
 		virtual ~Result();
@@ -326,6 +365,7 @@ namespace oct::cave::v0
 			result = r.result;
 			//std::cout << "Result& operator =(Result&&  " << result << ")\n";
 			r.result = NULL;
+			load_fields_info();
 		}
 		const Result& operator =(const Result&) = delete;
 		bool is_stored() const
@@ -395,8 +435,24 @@ namespace oct::cave::v0
 				v.push_back((const CB**)row);
 			}
 		}
+;
+		/**
+		*\brief Determina el type de datos del campo
+		*/
+		Types get_type(size_t field) const
+		{
+			if (field < size()) return fields[field].type;
 
+			return Types::NONE;
+		}
+
+		const std::vector<FieldInfo>& fields_info() const
+		{
+			return fields;
+		}
 	private:
+		std::vector<FieldInfo> fields;
+		void load_fields_info();
 
 	protected:
 		Handle result;
@@ -411,6 +467,29 @@ namespace oct::cave::v0
 			dest->result = r;
 		}
 	};
+
+	template<char_base CB, datasource DS> const char * to_string(typename Result<CB,DS>::Types const type)
+	{
+		switch (type)
+		{
+		case Result<CB, DS>::Types::CHAR: return "char";
+		case Result<CB, DS>::Types::UCHAR: return "unsigned char";
+		case Result<CB, DS>::Types::SCHAR: return "signed char";
+		case Result<CB, DS>::Types::SHORT: return "short";
+		case Result<CB, DS>::Types::USHORT: return "unsigned short";
+		case Result<CB, DS>::Types::INTEGER: return "int";
+		case Result<CB, DS>::Types::UINTEGER: return "unsigned int";
+		case Result<CB, DS>::Types::LONG: return "long";
+		case Result<CB, DS>::Types::ULONG: return "unsigned long";
+		case Result<CB, DS>::Types::LONGLONG: return "long long";
+		case Result<CB, DS>::Types::ULONGLONG: return "unsigned long long";
+		case Result<CB, DS>::Types::FLOAT: return "float";
+		case Result<CB, DS>::Types::DOUBLE: return "double";
+		case Result<CB, DS>::Types::LONGDOUBLE: return "long double";
+		case Result<CB, DS>::Types::SELECTION: return "std::vector<std::string>";
+		}
+	}
+
 	template <typename T> concept is_Result_instation =
 		std::is_same_v<
 		std::remove_const_t<T>,
