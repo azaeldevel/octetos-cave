@@ -286,10 +286,8 @@ namespace oct::cave::v0
 			dest->size = origin->size;
 		}
 	};
-	template <typename T> concept is_Row_instation =
-		std::is_same_v<
-		std::remove_const_t<T>,
-		Row<typename T::char_type, typename T::data_type>>;
+	
+	template <typename T> concept is_Row_instation = std::is_same_v<std::remove_const_t<T>, Row<typename T::char_type, typename T::data_type>>;
 	template <typename T> concept is_Row_derived = std::derived_from<std::remove_const_t<T>, Row<typename T::char_type, typename T::data_type>>;
 	template <typename T> concept row = is_Row_instation<T> || is_Row_derived<T>;
 
@@ -368,20 +366,17 @@ namespace oct::cave::v0
 		Result<typename T::char_type, typename T::data_type>>;
 	template <typename T> concept is_Result_derived = std::derived_from<std::remove_const_t<T>, Result<typename T::char_type, typename T::data_type>>;
 	template <typename T> concept result = is_Result_instation<T> || is_Result_derived<T>;
-
-	typedef std::vector<std::string> fields;
-	template <typename T> concept ContainerSelection = requires(T t)
-	{
-	    T::fields();
-	    T::table();
-	};
+		
 	template <typename T> concept ContainerSelectionStorable = requires(T t)
 	{
 	    T::fields();
+		T::table();
+		//TODO: verificar que el contenerdor tenga contructor para row
 	};
-	template <typename T> concept ContainerInsertion = requires(T t)
+	template <typename T> concept ContainerInsertable = requires(T t)
 	{
 	    T::fields();
+		T::table();
 	    t.values();
 	};
 
@@ -440,7 +435,7 @@ namespace oct::cave::v0
 
 			return execute(srtsql);
 		}
-		RS select(const fields& list,const std::string& table,const std::string& where)
+		RS select(const std::vector<std::string>& list,const std::string& table,const std::string& where)
 		{
 			std::string srtsql;
 			size_t reserved = 30 + table.size() + where.size();
@@ -530,15 +525,26 @@ namespace oct::cave::v0
             std::string srtsql = "INSERT INTO " + table + "(" + fields + ")" + " VALUES(" + values + ")";
             return execute(srtsql);
 		}
-		template<ContainerInsertion CI> RS insert(const CI& c,const std::string& table)
+		template<ContainerInsertable CI> RS insert(const CI& c)
 		{
-            std::string srtsql = "INSERT INTO " + table + "(" + CI::fields() + ")" + " VALUES(" + c.values() + ")";
+            std::string srtsql = "INSERT INTO " + CI::table() + "(" + CI::fields() + ")" + " VALUES(" + c.values() + ")";
             return execute(srtsql);
 		}
-		template<ContainerInsertion CI> RS insert(const CI& c,const std::string& table,const std::string& where)
+
+
+		RS update(const std::vector<std::string>& sets, const std::string& table);
+		RS update(const std::vector<std::string>& sets, const std::string& table, const std::string& where)
 		{
-            std::string srtsql = "INSERT INTO " + table + "(" + CI::fields() + ")" + " VALUES(" + c.values() + ") WHERE " + where;
-            return execute(srtsql);
+			if (sets.empty()) return RS;
+
+			std::string srtsql = "UPDATE " + table + " SET ";
+			for (size_t i = 0; i < sets.size() - 1; i++)
+			{
+				srtsql += sets[i] + ",";
+			}
+			srtsql += sets.back();
+			srtsql  += " WHERE = " + where;
+			return execute(srtsql);
 		}
 
 		bool begin();

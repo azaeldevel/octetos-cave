@@ -274,8 +274,8 @@ void v0_driver_pure()
 	{
 		CU_ASSERT(false);
 	}
-	for (const Table& t : lst_dbs3)
+	/*for (const Table& t : lst_dbs3)
 	{
 		std::cout << "Name : " << t.name << "\n";
-	}
+	}*/
 }
