@@ -60,66 +60,6 @@ namespace oct::cave::v0
 	typedef void* Handle;
 	typedef unsigned long index;
 
-	/* ExceptionResult: public core::v3::Exception
-	{
-	public:
-
-	public:
-		ExceptionResult();
-		ExceptionResult(const ExceptionResult&);
-
-		ExceptionResult(const char* message);
-		ExceptionResult(const char* message,const char* filename, unsigned int line);
-		virtual ~ExceptionResult();
-
-	private:
-	};
-
-	class ExceptionQuery : public core::v3::Exception
-	{
-	public:
-
-	public:
-		ExceptionQuery();
-		ExceptionQuery(const ExceptionQuery&);
-
-		ExceptionQuery(const char* message);
-		ExceptionQuery(const char* message,const char* filename, unsigned int line);
-		virtual ~ExceptionQuery();
-
-	private:
-	};
-
-	class ExceptionConnection : public core::v3::Exception
-	{
-	public:
-
-	public:
-		ExceptionConnection();
-		ExceptionConnection(const ExceptionConnection&);
-
-		ExceptionConnection(const char* message);
-		ExceptionConnection(const char* message, const char* filename, unsigned int line);
-		virtual ~ExceptionConnection();
-
-	private:
-	};
-
-	class ExceptionSQL : public core::v3::Exception
-	{
-	public:
-
-	public:
-		ExceptionSQL(Handle);
-		ExceptionSQL(Handle,const char* filename, unsigned int line);
-		ExceptionSQL(const ExceptionQuery&);
-
-		virtual ~ExceptionSQL();
-
-		virtual const char* what() const noexcept;
-	private:
-		Handle handle;
-	};*/
 
 
 	enum class Source
@@ -148,12 +88,15 @@ namespace oct::cave::v0
 	public:
 
 	public:
-		ExceptionDriver(const std::string& message, const std::source_location location = std::source_location::current()) noexcept ;
+		ExceptionDriver(const std::string& message, const std::source_location location = std::source_location::current()) noexcept;
+		ExceptionDriver(Handle handle, const std::source_location location = std::source_location::current()) noexcept;
+		ExceptionDriver(Handle handle, const std::string& message, const std::source_location location = std::source_location::current()) noexcept;
 		ExceptionDriver(const ExceptionDriver&) noexcept ;
 
 	private:
 		std::string message;
         const std::source_location location;
+		Handle handle;
 	};
 
 	template<class T> concept char_base = std::is_same<char, T>::value || std::is_same<wchar_t, T>::value;

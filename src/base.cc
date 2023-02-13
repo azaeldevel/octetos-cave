@@ -22,62 +22,19 @@
 namespace oct::cave::v0
 {
 
-	/*
 
 
-ExceptionResult::ExceptionResult()
+
+ExceptionDriver::ExceptionDriver(const ExceptionDriver& e) noexcept : message(e.message),location(e.location), handle(e.handle)
 {
 }
-ExceptionResult::ExceptionResult(const ExceptionResult& e) : core::v3::Exception(e)
+ExceptionDriver::ExceptionDriver(const std::string& m, const std::source_location l) noexcept : message(m),location(l), handle(NULL)
 {
 }
-
-ExceptionResult::ExceptionResult(const char* m) : core::v3::Exception(m)
+ExceptionDriver::ExceptionDriver(Handle h,const std::string& m, const std::source_location l) noexcept : message(m), location(l),handle(h)
 {
 }
-ExceptionResult::ExceptionResult(const char* m,const char* fn, unsigned int l) : core::v3::Exception(m,fn,l)
-{
-}
-
-ExceptionResult::~ExceptionResult()
-{
-}
-
-
-ExceptionQuery::ExceptionQuery()
-{
-}
-ExceptionQuery::ExceptionQuery(const ExceptionQuery& e) : core::v3::Exception(e)
-{
-}
-
-ExceptionQuery::ExceptionQuery(const char* m) : core::v3::Exception(m)
-{
-}
-ExceptionQuery::ExceptionQuery(const char* m,const char* fn, unsigned int l) : core::v3::Exception(m,fn,l)
-{
-}
-
-ExceptionQuery::~ExceptionQuery()
-{
-}
-
-
-ExceptionSQL::ExceptionSQL(const ExceptionQuery& e) : core::v3::Exception(e),handle(NULL)
-{
-}
-ExceptionSQL::~ExceptionSQL()
-{
-}*/
-
-
-
-
-
-ExceptionDriver::ExceptionDriver(const ExceptionDriver& e) noexcept : message(e.message),location(e.location)
-{
-}
-ExceptionDriver::ExceptionDriver(const std::string& m, const std::source_location l) noexcept : message(m),location(l)
+ExceptionDriver::ExceptionDriver(Handle h, const std::source_location l) noexcept : location(l), handle(h)
 {
 }
 
