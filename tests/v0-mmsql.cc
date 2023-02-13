@@ -19,6 +19,21 @@
 #endif
 
 
+#if defined LINUX_ARCH
+	#include <mysql/mysql.h>
+#elif defined LINUX_GENTOO
+	#include <mariadb/mysql.h>
+#elif defined LINUX_DEBIAN
+	#include <mariadb/mysql.h>
+#elif MSYS2
+    #include <mariadb/mysql.h>
+#elif (defined(_WIN32) || defined(_WIN64))
+    #include <mysql/mysql.h>
+#else
+	#error "Plataforma desconocida."
+#endif
+
+
 #include "v0.hh"
 
 

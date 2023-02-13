@@ -23,6 +23,21 @@
 #include "oct-core.hh"
 
 
+#if defined LINUX_ARCH
+	#include <mysql/mysql.h>
+#elif defined LINUX_GENTOO
+	#include <mariadb/mysql.h>
+#elif defined LINUX_DEBIAN
+	#include <mariadb/mysql.h>
+#elif MSYS2
+    #include <mariadb/mysql.h>
+#elif (defined(_WIN32) || defined(_WIN64))
+    #include <mysql/mysql.h>
+#else
+	#error "Plataforma desconocida."
+#endif
+
+
 namespace oct::cave::v0::mmsql
 {
 	Data::Data(const std::string& h, const std::string& u, const std::string& pwd) : port(3306), flags(0)
