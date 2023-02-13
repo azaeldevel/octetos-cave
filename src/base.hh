@@ -609,7 +609,19 @@ namespace oct::cave::v0
 		}
 
 
-		RS update(const std::vector<std::string>& sets, const std::string& table);
+		RS update(const std::vector<std::string>& sets, const std::string& table)
+		{
+			if (sets.empty()) return RS();
+
+			std::string srtsql = "UPDATE " + table + " SET ";
+			for (size_t i = 0; i < sets.size() - 1; i++)
+			{
+				srtsql += sets[i] + ",";
+			}
+			srtsql += sets.back();
+
+			return execute(srtsql);
+		}
 		RS update(const std::vector<std::string>& sets, const std::string& table, const std::string& where)
 		{
 			if (sets.empty()) return RS();
