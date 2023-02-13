@@ -79,20 +79,16 @@ namespace oct::cave::v0::mmsql
 namespace oct::cave::v0
 {
 
-
-	/*ExceptionSQL::ExceptionSQL(Handle h) : handle(h), core::v3::Exception(Code(mysql_errno(reinterpret_cast<MYSQL*>(h))))
+	ExceptionDriver::ExceptionDriver(Handle h, const std::string& m, const std::source_location& l) noexcept : oct::core::v3::exception(mysql_errno(reinterpret_cast<MYSQL*>(h)),m, l), handle(h)
 	{
 	}
-	ExceptionSQL::ExceptionSQL(Handle h, const char* f, unsigned int l) : handle(h), core::v3::Exception(Code(mysql_errno(reinterpret_cast<MYSQL*>(h))),f,l)
+	ExceptionDriver::ExceptionDriver(Handle h, const std::source_location& l) noexcept : oct::core::v3::exception(mysql_errno(reinterpret_cast<MYSQL*>(h)),l), handle(h)
 	{
 	}
-
-
-	const char* ExceptionSQL::what() const noexcept
+	const char* ExceptionDriver::driver_message(Handle) const
 	{
 		return mysql_error(reinterpret_cast<MYSQL*>(handle));
-	}*/
-
+	}
 
 
 
@@ -215,7 +211,7 @@ namespace oct::cave::v0
 			//mysql_close(con);
 			connected = false;
 			//connection = NULL;
-			throw ExceptionDriver("Falló la conexion del driver");
+			throw ExceptionDriver("Fallo la conexion del driver");
 		}
 
 		if(mysql_autocommit(con,a) == 0) autocommit = a;
@@ -248,13 +244,13 @@ namespace oct::cave::v0
 	template<> Result<char,mmsql::Data> Connection<char, mmsql::Data>::execute(const std::string& str)
 	{
 		if (not connected) throw ExceptionDriver("No se harealizado la cionexion.");
-		if (not connection) throw ExceptionDriver("No se re establesido la cionexión");
+		if (not connection) throw ExceptionDriver("No se ha establesido la cionexion");
 
 		int ret_query = mysql_query(reinterpret_cast<MYSQL*>(connection), str.c_str());
 
 		if (ret_query == -1 and mysql_errno(reinterpret_cast<MYSQL*>(connection)) == 2000)
 		{
-			throw ExceptionDriver("Erro desconocido en driver");
+			throw ExceptionDriver("Error desconocido en driver");
 		}
 		else if (ret_query == 0)
 		{
@@ -262,7 +258,7 @@ namespace oct::cave::v0
 		}
 		else
 		{
-			throw ExceptionDriver("La consulta falló");
+			throw ExceptionDriver("La consulta fallo");
 		}
 	}
 

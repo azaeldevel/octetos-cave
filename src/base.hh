@@ -98,6 +98,7 @@ namespace oct::cave::v0
 	private:
 		Handle handle;
 		mutable std::string description;
+		const char* driver_message(Handle)const;
 	};
 
 	template<class T> concept char_base = std::is_same<char, T>::value || std::is_same<wchar_t, T>::value;

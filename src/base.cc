@@ -26,12 +26,6 @@ namespace oct::cave::v0
 ExceptionDriver::ExceptionDriver(const std::string& m, const std::source_location& l) noexcept : oct::core::v3::exception(m,l), handle(NULL)
 {
 }
-ExceptionDriver::ExceptionDriver(Handle h,const std::string& m, const std::source_location& l) noexcept : oct::core::v3::exception(m,l), handle(h)
-{
-}
-ExceptionDriver::ExceptionDriver(Handle h, const std::source_location& l) noexcept : oct::core::v3::exception(l), handle(h)
-{
-}
 
 const char* ExceptionDriver::what() const noexcept
 {
@@ -41,7 +35,8 @@ const char* ExceptionDriver::what() const noexcept
 		description += ":";
 		description += std::to_string(_location.line()) + " ";
 		if (_code_flag) description += "- " + std::to_string(_code);
-		if (not _message.empty()) description += _message;
+		if (not _message.empty()) description += _message + " ";
+		if (handle) description += driver_message(handle);
 	}
 
 	return description.c_str();
