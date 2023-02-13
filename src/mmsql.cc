@@ -211,7 +211,7 @@ namespace oct::cave::v0
 			//mysql_close(con);
 			connected = false;
 			//connection = NULL;
-			throw ExceptionDriver("Fallo la conexion del driver");
+			throw ExceptionDriver((Handle)connection,"Fallo la conexion del driver");
 		}
 
 		if(mysql_autocommit(con,a) == 0) autocommit = a;
