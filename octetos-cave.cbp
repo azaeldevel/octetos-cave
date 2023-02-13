@@ -33,7 +33,6 @@
 				<Option type="3" />
 				<Option compiler="gcc" />
 				<Linker>
-					<Add library="octetos-core" />
 					<Add directory="../core/bin/Debug" />
 				</Linker>
 			</Target>
@@ -49,7 +48,6 @@
 				</Compiler>
 				<Linker>
 					<Add option="`pkg-config --libs cunit`" />
-					<Add library="octetos-core" />
 					<Add library="cunit" />
 					<Add directory="../core/bin/Debug" />
 				</Linker>
