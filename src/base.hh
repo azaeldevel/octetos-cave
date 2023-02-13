@@ -27,6 +27,7 @@
 #include <vector>
 #include <list>
 #include <type_traits>
+#include <source_location>
 #if  (defined(_WIN32) || defined(_WIN64))
 	#include <core/src/Exception-v3.hh>
 	#include <cave/src/oct-core.hh>
@@ -59,7 +60,7 @@ namespace oct::cave::v0
 	typedef void* Handle;
 	typedef unsigned long index;
 
-	class ExceptionResult : public core::v3::Exception
+	/* ExceptionResult: public core::v3::Exception
 	{
 	public:
 
@@ -118,7 +119,7 @@ namespace oct::cave::v0
 		virtual const char* what() const noexcept;
 	private:
 		Handle handle;
-	};
+	};*/
 
 
 	enum class Source
@@ -142,16 +143,17 @@ namespace oct::cave::v0
 	};
 
 
-	class ExceptionDriver : public core::v3::Exception
+	class ExceptionDriver : public std::exception
 	{
 	public:
 
 	public:
-		ExceptionDriver(const char* message, const char* filename, unsigned int line);
-		ExceptionDriver(const ExceptionDriver&);
+		ExceptionDriver(const std::string& message, const std::source_location location = std::source_location::current()) noexcept ;
+		ExceptionDriver(const ExceptionDriver&) noexcept ;
 
 	private:
-		Handle handle;
+		std::string message;
+        const std::source_location location;
 	};
 
 	template<class T> concept char_base = std::is_same<char, T>::value || std::is_same<wchar_t, T>::value;
@@ -298,7 +300,7 @@ namespace oct::cave::v0
 			dest->size = origin->size;
 		}
 	};
-	
+
 	template <typename T> concept is_Row_instation = std::is_same_v<std::remove_const_t<T>, Row<typename T::char_type, typename T::data_type>>;
 	template <typename T> concept is_Row_derived = std::derived_from<std::remove_const_t<T>, Row<typename T::char_type, typename T::data_type>>;
 	template <typename T> concept row = is_Row_instation<T> || is_Row_derived<T>;
@@ -496,7 +498,7 @@ namespace oct::cave::v0
 		Result<typename T::char_type, typename T::data_type>>;
 	template <typename T> concept is_Result_derived = std::derived_from<std::remove_const_t<T>, Result<typename T::char_type, typename T::data_type>>;
 	template <typename T> concept result = is_Result_instation<T> || is_Result_derived<T>;
-		
+
 	template <typename T> concept ContainerSelectionStorable = requires(T t)
 	{
 	    T::fields();
@@ -628,7 +630,7 @@ namespace oct::cave::v0
 			std::string srtsql = "SELECT " + CS::fields() + " FROM " + CS::table();
 			RS result = execute(srtsql);
 			if (not result) return false;
-			
+
 			for (size_t i = 0; i < result.size(); i++)
 			{
 				c.push_back(result.next());
@@ -641,7 +643,7 @@ namespace oct::cave::v0
 			std::string srtsql = "SELECT " + CS::fields() + " FROM " + CS::table() + " WHERE " + where;
 			RS result = execute(srtsql);
 			if (not result) return false;
-			
+
 			for (size_t i = 0; i < result.size(); i++)
 			{
 				c.push_back(result.next());
@@ -662,7 +664,7 @@ namespace oct::cave::v0
 		}
 
 
-		RS update(const std::vector<std::string>& sets, const std::string& table);
+		//RS update(const std::vector<std::string>& sets, const std::string& table);
 		RS update(const std::vector<std::string>& sets, const std::string& table, const std::string& where)
 		{
 			if (sets.empty()) return RS;

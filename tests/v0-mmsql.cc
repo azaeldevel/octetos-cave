@@ -174,7 +174,7 @@ void v0_conection()
 	{
 		rest = conn.execute("show databases;");
 	}
-	catch(const cave_current::ExceptionQuery&)
+	catch(const cave_current::ExceptionDriver&)
 	{
 		CU_ASSERT(false);
 	}
@@ -200,7 +200,7 @@ void v0_conection()
 	{
 		rest2 = conn.execute("show databases;");
 	}
-	catch (const cave_current::ExceptionQuery&)
+	catch (const cave_current::ExceptionDriver&)
 	{
 		CU_ASSERT(false);
 	}
@@ -246,7 +246,7 @@ void v0_driver_pure()
     {
 		 lst_dbs2flag = conn.select(lst_dbs2);
 	}
-	catch (const cave_current::ExceptionQuery&)
+	catch (const cave_current::ExceptionDriver&)
 	{
 		CU_ASSERT(false);
 	}
@@ -266,7 +266,7 @@ void v0_driver_pure()
 	{
 		lst_dbs3flag = conn.select(lst_dbs3);
 	}
-	catch (const cave_current::ExceptionQuery&)
+	catch (const cave_current::ExceptionDriver&)
 	{
 		CU_ASSERT(false);
 	}
@@ -285,7 +285,7 @@ void v0_driver_pure()
 	{
 		rest_schema = conn.execute("SELECT SCHEMA_NAME from SCHEMATA;");
 	}
-	catch (const cave_current::ExceptionQuery&)
+	catch (const cave_current::ExceptionDriver&)
 	{
 		CU_ASSERT(false);
 	}

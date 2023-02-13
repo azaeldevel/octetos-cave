@@ -22,7 +22,7 @@
 namespace oct::cave::v0
 {
 
-
+	/*
 
 
 ExceptionResult::ExceptionResult()
@@ -68,16 +68,16 @@ ExceptionSQL::ExceptionSQL(const ExceptionQuery& e) : core::v3::Exception(e),han
 }
 ExceptionSQL::~ExceptionSQL()
 {
-}
+}*/
 
 
 
 
 
-ExceptionDriver::ExceptionDriver(const ExceptionDriver& e) : core::v3::Exception(e)
+ExceptionDriver::ExceptionDriver(const ExceptionDriver& e) noexcept : message(e.message),location(e.location)
 {
 }
-ExceptionDriver::ExceptionDriver(const char* m, const char* f, unsigned int l) : core::v3::Exception(m, f, l)
+ExceptionDriver::ExceptionDriver(const std::string& m, const std::source_location l) noexcept : message(m),location(l)
 {
 }
 

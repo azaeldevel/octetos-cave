@@ -46,24 +46,24 @@ namespace oct::cave::v0
 	private:
 		void load(C& connection)
 		{
-			if (not connection.is_connected()) throw ExceptionQuery("Se deve de realizar la conection antesde usar eon objeto", __FILE__, __LINE__);
+			if (not connection.is_connected()) throw ExceptionDriver("Se deve de realizar la conection antesde usar eon objeto");
 
 			typename C::result_type result;
 			try
 			{
 				result = connection.execute("SELECT SCHEMA_NAME from INFORMATION_SCHEMA.SCHEMATA;");
 			}
-			catch (const ExceptionQuery&)
+			catch (const ExceptionDriver&)
 			{
 			}
-			catch (const oct::core::v3::Exception&)
+			catch (const std::exception&)
 			{
 			}
 			catch (...)
 			{
 
 			}
-			if (not result.is_stored()) throw ExceptionQuery("Fallo la solicitud de informacion.", __FILE__, __LINE__);
+			if (not result.is_stored()) throw ExceptionDriver("Fallo la solicitud de informacion.");
 			result.store(schemas);
 
 			typename C::result_type result_tables;
@@ -74,10 +74,10 @@ namespace oct::cave::v0
 					//std::cout << "Reading schema : " << s.name << "\n";
 					result_tables = connection.execute("SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA ='" + s.name + "';");
 				}
-				catch (const ExceptionQuery&)
+				catch (const ExceptionDriver&)
 				{
 				}
-				catch (const oct::core::v3::Exception&)
+				catch (const std::exception&)
 				{
 				}
 				catch (...)

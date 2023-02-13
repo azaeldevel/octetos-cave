@@ -80,7 +80,7 @@ namespace oct::cave::v0
 {
 
 
-	ExceptionSQL::ExceptionSQL(Handle h) : handle(h), core::v3::Exception(Code(mysql_errno(reinterpret_cast<MYSQL*>(h))))
+	/*ExceptionSQL::ExceptionSQL(Handle h) : handle(h), core::v3::Exception(Code(mysql_errno(reinterpret_cast<MYSQL*>(h))))
 	{
 	}
 	ExceptionSQL::ExceptionSQL(Handle h, const char* f, unsigned int l) : handle(h), core::v3::Exception(Code(mysql_errno(reinterpret_cast<MYSQL*>(h))),f,l)
@@ -91,7 +91,7 @@ namespace oct::cave::v0
 	const char* ExceptionSQL::what() const noexcept
 	{
 		return mysql_error(reinterpret_cast<MYSQL*>(handle));
-	}
+	}*/
 
 
 
@@ -127,7 +127,7 @@ namespace oct::cave::v0
 		Row<char, cave_current::mmsql::Data> row((const char**)str,size);
 		return row;
 	}
-	void Result<char, cave_current::mmsql::Data>::load_fields_info()
+	template<> void Result<char, cave_current::mmsql::Data>::load_fields_info()
 	{
 		MYSQL_FIELD* field;
 		size_t i = 0;
@@ -139,28 +139,28 @@ namespace oct::cave::v0
 			{
 			case MYSQL_TYPE_TINY:
 				info.type = Result<char, cave_current::mmsql::Data>::Types::SCHAR;
-				if (field->length != sizeof(unsigned char)) throw ExceptionDriver("La longitud del campo no coincide con la conocida.",__FILE__,__LINE__);
+				if (field->length != sizeof(unsigned char)) throw ExceptionDriver("La longitud del campo no coincide con la conocida.");
 				break;
 			case MYSQL_TYPE_SHORT:
 				info.type = Result<char, cave_current::mmsql::Data>::Types::SHORT;
-				if (field->length != sizeof(short)) throw ExceptionDriver("La longitud del campo no coincide con la conocida.", __FILE__, __LINE__);
+				if (field->length != sizeof(short)) throw ExceptionDriver("La longitud del campo no coincide con la conocida.");
 				break;
 			case MYSQL_TYPE_LONG:
 				info.type = Result<char, cave_current::mmsql::Data>::Types::LONG;
-				if (field->length != sizeof(long)) throw ExceptionDriver("La longitud del campo no coincide con la conocida.", __FILE__, __LINE__);
+				if (field->length != sizeof(long)) throw ExceptionDriver("La longitud del campo no coincide con la conocida.");
 				break;
 			case MYSQL_TYPE_LONGLONG:
 				info.type = Result<char, cave_current::mmsql::Data>::Types::LONGLONG;
-				if (field->length != sizeof(long long)) throw ExceptionDriver("La longitud del campo no coincide con la conocida.", __FILE__, __LINE__);
+				if (field->length != sizeof(long long)) throw ExceptionDriver("La longitud del campo no coincide con la conocida.");
 				break;
 			case MYSQL_TYPE_FLOAT:
 				info.type = Result<char, cave_current::mmsql::Data>::Types::FLOAT;
-				if (field->length != sizeof(float)) throw ExceptionDriver("La longitud del campo no coincide con la conocida.", __FILE__, __LINE__);
+				if (field->length != sizeof(float)) throw ExceptionDriver("La longitud del campo no coincide con la conocida.");
 				break;
 			case MYSQL_TYPE_DECIMAL:
 			case MYSQL_TYPE_DOUBLE:
 				info.type = Result<char, cave_current::mmsql::Data>::Types::DOUBLE;
-				if (field->length != sizeof(double)) throw ExceptionDriver("La longitud del campo no coincide con la conocida.", __FILE__, __LINE__);
+				if (field->length != sizeof(double)) throw ExceptionDriver("La longitud del campo no coincide con la conocida.");
 				break;
 			case MYSQL_TYPE_TIMESTAMP:
 			case MYSQL_TYPE_DATE:
@@ -215,7 +215,7 @@ namespace oct::cave::v0
 			//mysql_close(con);
 			connected = false;
 			//connection = NULL;
-			throw ExceptionSQL(connection, __FILE__, __LINE__);
+			throw ExceptionDriver("Falló la conexion del driver");
 		}
 
 		if(mysql_autocommit(con,a) == 0) autocommit = a;
@@ -247,14 +247,14 @@ namespace oct::cave::v0
 
 	template<> Result<char,mmsql::Data> Connection<char, mmsql::Data>::execute(const std::string& str)
 	{
-		if(not connected) throw ExceptionSQL(connection, __FILE__, __LINE__);
-		if(not connection) throw ExceptionSQL(connection, __FILE__, __LINE__);
+		if (not connected) throw ExceptionDriver("No se harealizado la cionexion.");
+		if (not connection) throw ExceptionDriver("No se re establesido la cionexión");
 
 		int ret_query = mysql_query(reinterpret_cast<MYSQL*>(connection), str.c_str());
 
 		if (ret_query == -1 and mysql_errno(reinterpret_cast<MYSQL*>(connection)) == 2000)
 		{
-			throw ExceptionSQL(connection, __FILE__, __LINE__);
+			throw ExceptionDriver("Erro desconocido en driver");
 		}
 		else if (ret_query == 0)
 		{
@@ -262,7 +262,7 @@ namespace oct::cave::v0
 		}
 		else
 		{
-			throw ExceptionSQL(connection, __FILE__, __LINE__);
+			throw ExceptionDriver("La consulta falló");
 		}
 	}
 

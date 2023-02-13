@@ -71,7 +71,7 @@ void v0_schema()
 	{
 		rest_schema = connection_schema.execute("SELECT SCHEMA_NAME from SCHEMATA;");
 	}
-	catch (const cave_current::ExceptionQuery&)
+	catch (const cave_current::ExceptionDriver&)
 	{
 		CU_ASSERT(false);
 	}
@@ -97,7 +97,7 @@ void v0_schema()
 	{
 		rest_schema1 = connection_schema.execute("SELECT SCHEMA_NAME from SCHEMATA;");
 	}
-	catch (const cave_current::ExceptionQuery&)
+	catch (const cave_current::ExceptionDriver&)
 	{
 		CU_ASSERT(false);
 	}
@@ -124,7 +124,7 @@ void v0_schema()
 	{
 		rest_schema2 = connection_schema.execute("SELECT SCHEMA_NAME from SCHEMATA;");
 	}
-	catch (const cave_current::ExceptionQuery&)
+	catch (const cave_current::ExceptionDriver&)
 	{
 		CU_ASSERT(false);
 	}
@@ -158,7 +158,7 @@ void v0_schema()
 	{
 		rest_schema3 = connection_schema.execute("SELECT SCHEMA_NAME from SCHEMATA WHERE  SCHEMA_NAME = 'INFORMATION_SCHEMA';");
 	}
-	catch (const cave_current::ExceptionQuery&)
+	catch (const cave_current::ExceptionDriver&)
 	{
 		CU_ASSERT(false);
 	}
