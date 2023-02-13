@@ -1,6 +1,6 @@
 
-#ifndef OCTETOS_CAVE_CLIENT_HH
-#define OCTETOS_CAVE_CLIENT_HH
+#ifndef OCTETOS_CAVE_BASE_V0_HH
+#define OCTETOS_CAVE_BASE_V0_HH
 
 /*
  * Copyright (C) 2022 Azael R. <azael.devel@gmail.com>
@@ -608,10 +608,10 @@ namespace oct::cave::v0
 		}
 
 
-		//RS update(const std::vector<std::string>& sets, const std::string& table);
+		RS update(const std::vector<std::string>& sets, const std::string& table);
 		RS update(const std::vector<std::string>& sets, const std::string& table, const std::string& where)
 		{
-			if (sets.empty()) return RS;
+			if (sets.empty()) return RS();
 
 			std::string srtsql = "UPDATE " + table + " SET ";
 			for (size_t i = 0; i < sets.size() - 1; i++)

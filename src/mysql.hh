@@ -1,6 +1,7 @@
 #ifndef OCTETOS_COVE_MYSQL_V0_HH
 #define OCTETOS_COVE_MYSQL_V0_HH
 
+
 /*
  * Copyright (C) 2022 Azael R. <azael.devel@gmail.com>
  *
@@ -18,15 +19,14 @@
  * with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
- 
+
 #include "base.hh"
 #include "mmsql.hh"
 
 namespace oct::cave::v0::mysql
 {
-	typedef cave::v0::DataMMSQL Data;
-	typedef cave::v0::Connection<Data> Connection;
-	typedef cave::v0::Result<Data> Result;
+	typedef cave_current::mmsql::Data Data;
+	typedef cave_current::mmsql::Connection Connection;
 }
 
 #endif
