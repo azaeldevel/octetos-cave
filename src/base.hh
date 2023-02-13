@@ -83,20 +83,21 @@ namespace oct::cave::v0
 	};
 
 
-	class ExceptionDriver : public std::exception
+	class ExceptionDriver : public oct::core::v3::exception
 	{
 	public:
 
 	public:
-		ExceptionDriver(const std::string& message, const std::source_location location = std::source_location::current()) noexcept;
-		ExceptionDriver(Handle handle, const std::source_location location = std::source_location::current()) noexcept;
-		ExceptionDriver(Handle handle, const std::string& message, const std::source_location location = std::source_location::current()) noexcept;
-		ExceptionDriver(const ExceptionDriver&) noexcept ;
+		ExceptionDriver(const ExceptionDriver&) noexcept = default;
 
+		ExceptionDriver(Handle handle, const std::source_location& location = std::source_location::current()) noexcept;
+		ExceptionDriver(Handle handle, const std::string& message, const std::source_location& location = std::source_location::current()) noexcept;
+		ExceptionDriver(const std::string& message, const std::source_location& location = std::source_location::current()) noexcept;
+
+		virtual const char* what() const noexcept;
 	private:
-		std::string message;
-        const std::source_location location;
 		Handle handle;
+		mutable std::string description;
 	};
 
 	template<class T> concept char_base = std::is_same<char, T>::value || std::is_same<wchar_t, T>::value;

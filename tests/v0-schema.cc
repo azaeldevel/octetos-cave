@@ -53,10 +53,16 @@ void v0_schema()
 	{
 		conectfl = connection_schema.connect(dtm, true);
 	}
-	catch (const oct::core::v3::Exception& e)
+	catch (const cave_current::ExceptionDriver& e)
 	{
 		CU_ASSERT(false);
-		std::cout << "Exception (cave testing) : " << e.describe() << "\n";
+		std::cout << "Exception (cave testing) : " << e.what() << "\n";
+		return;
+	}
+	catch (const std::exception& e)
+	{
+		CU_ASSERT(false);
+		std::cout << "Exception (cave testing) : " << e.what() << "\n";
 		return;
 	}
 	catch (...)
@@ -97,9 +103,17 @@ void v0_schema()
 	{
 		rest_schema1 = connection_schema.execute("SELECT SCHEMA_NAME from SCHEMATA;");
 	}
-	catch (const cave_current::ExceptionDriver&)
+	catch (const cave_current::ExceptionDriver& e)
 	{
 		CU_ASSERT(false);
+		std::cout << "Exception (cave testing) : " << e.what() << "\n";
+		return;
+	}
+	catch (const std::exception& e)
+	{
+		CU_ASSERT(false);
+		std::cout << "Exception (cave testing) : " << e.what() << "\n";
+		return;
 	}
 	catch (...)
 	{

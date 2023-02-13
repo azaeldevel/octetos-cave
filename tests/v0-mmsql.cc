@@ -110,10 +110,16 @@ void v0_mesures()
 	{
 		conectfl = conn.connect(dtm, true);
 	}
-	catch (const oct::core::v3::Exception& e)
+	catch (const cave_current::ExceptionDriver& e)
 	{
 		CU_ASSERT(false);
-		std::cout << "Exception (cave testing) : " << e.describe() << "\n";
+		std::cout << "Exception (cave testing) : " << e.what() << "\n";
+		return;
+	}
+	catch (const std::exception& e)
+	{
+		CU_ASSERT(false);
+		std::cout << "Exception (cave testing) : " << e.what() << "\n";
 		return;
 	}
 	catch (...)
@@ -153,10 +159,16 @@ void v0_conection()
 	{
 		conectfl = conn.connect(dtm, true);
 	}
-	catch (const oct::core::v3::Exception& e)
+	catch (const cave_current::ExceptionDriver& e)
 	{
 		CU_ASSERT(false);
-		std::cout << "Exception (cave testing) : " << e.describe() << "\n";
+		std::cout << "Exception (cave testing) : " << e.what() << "\n";
+		return;
+	}
+	catch (const std::exception& e)
+	{
+		CU_ASSERT(false);
+		std::cout << "Exception (cave testing) : " << e.what() << "\n";
 		return;
 	}
 	catch (...)
@@ -174,9 +186,17 @@ void v0_conection()
 	{
 		rest = conn.execute("show databases;");
 	}
-	catch(const cave_current::ExceptionDriver&)
+	catch (const cave_current::ExceptionDriver& e)
 	{
 		CU_ASSERT(false);
+		std::cout << "Exception (cave testing) : " << e.what() << "\n";
+		return;
+	}
+	catch (const std::exception& e)
+	{
+		CU_ASSERT(false);
+		std::cout << "Exception (cave testing) : " << e.what() << "\n";
+		return;
 	}
 	catch(...)
 	{
@@ -228,10 +248,16 @@ void v0_driver_pure()
 	{
 		conectfl = conn.connect(dtm, true);
 	}
-	catch (const oct::core::v3::Exception& e)
+	catch (const cave_current::ExceptionDriver& e)
 	{
 		CU_ASSERT(false);
-		std::cout << "Exception (cave testing) : " << e.describe() << "\n";
+		std::cout << "Exception (cave testing) : " << e.what() << "\n";
+		return;
+	}
+	catch (const std::exception& e)
+	{
+		CU_ASSERT(false);
+		std::cout << "Exception (cave testing) : " << e.what() << "\n";
 		return;
 	}
 	catch (...)
