@@ -22,6 +22,7 @@
 
 namespace oct::cave::v0
 {
+
 }
 
 namespace oct::cave::v0::mmsql
@@ -49,7 +50,7 @@ namespace oct::cave::v0::mmsql
 		unsigned int port;
 		unsigned long flags;
 	};
-		
+
 	typedef cave_current::Connection<char,Data> Connection;
 }
 

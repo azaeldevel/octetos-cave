@@ -78,6 +78,8 @@ namespace oct::cave::v0::mmsql
 
 namespace oct::cave::v0
 {
+    static_assert(sizeof(Handle) == sizeof(MYSQL*),"El manejador no es adecaudo para este driver.");
+    static_assert(sizeof(Handle) == sizeof(MYSQL_FIELD*),"El manejador no es adecaudo para este driver.");
 
 	ExceptionDriver::ExceptionDriver(Handle h, const std::string& m, const std::source_location& l) noexcept : oct::core::v3::exception(mysql_errno(reinterpret_cast<MYSQL*>(h)),m, l), handle(h)
 	{
