@@ -54,7 +54,9 @@
 			</Target>
 		</Build>
 		<Compiler>
-			<Add option="-Wall -g -std=c++20 `pkg-config --cflags libmariadb`" />
+			<Add option="-Wall -std=c++20 `pkg-config --cflags libmariadb`" />
+			<Add option="-DIDE_CODEBLOCKS" />
+			<Add option="-DLINUX_ARCH" />
 			<Add directory="../../octetos" />
 		</Compiler>
 		<Linker>

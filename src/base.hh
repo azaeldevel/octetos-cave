@@ -31,14 +31,18 @@
 #if  (defined(_WIN32) || defined(_WIN64))
 	#include <core/src/Exception-v3.hh>
 	#include <cave/src/oct-core.hh>
+#elif defined __linux__ && IDE_CODEBLOCKS
+	#include <core/src/Exception-v3.hh>
+	#include <cave/src/oct-core.hh>
 #elif defined __linux__
 	#include <octetos/core/Exception-v3.hh>
-	#include <glibmm/i18n.h>
 	#include <cave/src/oct-core.hh>
 	#include "config.h"
 #else
 	#error "Plataforma desconocida."
 #endif
+
+namespace core_here = oct::core::v3;
 
 namespace oct::cave::v0
 {
@@ -69,7 +73,7 @@ namespace oct::cave::v0
 	};
 
 
-	class ExceptionDriver : public oct::core::v3::exception
+	class ExceptionDriver : public core_here::exception
 	{
 	public:
 

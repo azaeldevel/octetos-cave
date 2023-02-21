@@ -40,22 +40,22 @@
 
 namespace oct::cave::v0::mmsql
 {
-	Data::Data(const std::string& h, const std::string& u, const std::string& pwd) : port(3306), flags(0)
+	Data::Data(const std::string& h, const std::string& u, const std::string& pwd) : host(h), user(u), password(pwd), port(3306), flags(0)
 	{
 	}
-	Data::Data(const std::string& h, const std::string& u, const std::string& pwd, const std::string& d) : host(h), user(u), password(pwd), DataSource(d), port(3306), flags(0)
+	Data::Data(const std::string& h, const std::string& u, const std::string& pwd, const std::string& d) : DataSource(d), host(h), user(u), password(pwd), port(3306), flags(0)
 	{
 	}
 	Data::Data(const std::string& h, const std::string& u, const std::string& pwd, unsigned int p) : host(h), user(u), password(pwd), port(p), flags(0)
 	{
 	}
-	Data::Data(const std::string& h, const std::string& u, const std::string& pwd, const std::string& d, unsigned int p) : host(h), user(u), password(pwd), DataSource(d), port(p), flags(0)
+	Data::Data(const std::string& h, const std::string& u, const std::string& pwd, const std::string& d, unsigned int p) : DataSource(d), host(h), user(u), password(pwd), port(p), flags(0)
 	{
 	}
-	Data::Data(const std::string& h, const std::string& u, const std::string& pwd, const std::string& d, unsigned int p, const std::string& s) : host(h), user(u), password(pwd), DataSource(d), port(p), socket(s), flags(0)
+	Data::Data(const std::string& h, const std::string& u, const std::string& pwd, const std::string& d, unsigned int p, const std::string& s) : DataSource(d), host(h), user(u), password(pwd), socket(s), port(p), flags(0)
 	{
 	}
-	Data::Data(const std::string& h, const std::string& u, const std::string& pwd, const std::string& d, unsigned int p, const std::string& s, unsigned long f) : host(h), user(u), password(pwd), DataSource(d), port(p), socket(s), flags(f)
+	Data::Data(const std::string& h, const std::string& u, const std::string& pwd, const std::string& d, unsigned int p, const std::string& s, unsigned long f) : DataSource(d), host(h), user(u), password(pwd), socket(s), port(p), flags(f)
 	{
 	}
 	Data::~Data()
@@ -146,7 +146,7 @@ namespace oct::cave::v0
 		size_t i = 0;
 		FieldInfo info;
 		fields.reserve(size());
-		while(field = mysql_fetch_field(reinterpret_cast<MYSQL_RES*>(result)))
+		while((field = mysql_fetch_field(reinterpret_cast<MYSQL_RES*>(result))))
 		{
 			switch(field->type)
 			{
@@ -229,7 +229,7 @@ namespace oct::cave::v0
 
 		return connected;
 	}
-	template<> Connection<char, mmsql::Data>::Connection() : connection((Handle)mysql_init(NULL)), connected(false), autocommit(false)
+	template<> Connection<char, mmsql::Data>::Connection() : connected(false), connection((Handle)mysql_init(NULL)), autocommit(false)
 	{
 	}
 	template<> Connection<char, mmsql::Data>::Connection(Connection&& c) noexcept
@@ -239,7 +239,7 @@ namespace oct::cave::v0
 		autocommit	= c.autocommit;
 		c.connection = NULL;
 	}
-	template<> Connection<char, mmsql::Data>::Connection(const mmsql::Data& d, bool a): connection((Handle)mysql_init(NULL)),connected(false), autocommit(a)
+	template<> Connection<char, mmsql::Data>::Connection(const mmsql::Data& d, bool a): connected(false), connection((Handle)mysql_init(NULL)),autocommit(a)
 	{
 		connect(d,a);
 	}
