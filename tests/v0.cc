@@ -24,6 +24,9 @@
 #if  (defined(_WIN32) || defined(_WIN64))
 	#include <cave/src/base.hh>
 	#include <cave/src/oct-core.hh>
+#elif defined(__linux__) && defined(IDE_CODEBLOCKS)
+	#include <cave/src/base.hh>
+	#include <cave/src/oct-core.hh>
 #elif defined __linux__
 	#include <src/base.hh>
 	#include <src/oct-core.hh>
