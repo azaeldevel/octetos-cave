@@ -257,20 +257,20 @@ namespace oct::cave::v0
 		if (not connected) throw ExceptionDriver("No se harealizado la cionexion.");
 		if (not connection) throw ExceptionDriver("No se ha establesido la cionexion");
 
+		std::cout << "Connection::execute Step 1\n";
+
 		int ret_query = mysql_query(reinterpret_cast<MYSQL*>(connection), str.c_str());
 
-		if (ret_query == -1 and mysql_errno(reinterpret_cast<MYSQL*>(connection)) == 2000)
+		std::cout << "Connection::execute Step 2\n";
+
+		if(ret_query == 0)
 		{
-			throw ExceptionDriver("Error desconocido en driver");
-		}
-		else if (ret_query == 0)
-		{
+			std::cout << "Connection::execute Step 2.2\n";
 			return Result<char,mmsql::Data>(mysql_store_result(reinterpret_cast<MYSQL*>(connection)));
 		}
-		else
-		{
-			throw ExceptionDriver("La consulta fallo");
-		}
+
+		std::cout << "Connection::execute Step 3\n";
+		throw ExceptionDriver(connection,"La consulta fallo");
 	}
 
 

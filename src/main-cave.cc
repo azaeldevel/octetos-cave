@@ -36,8 +36,10 @@
 	#error "Plataforma desconocida"
 #endif
 
+namespace cave_here = oct::cave::v0;
 
-bool execute(const std::filesystem::path& source)
+
+bool execute(cave_here::mmsql::Connection& connection,const std::filesystem::path& source)
 {
 	if(not std::filesystem::exists(source))
 	{
@@ -45,7 +47,7 @@ bool execute(const std::filesystem::path& source)
 		return false;
 	}
 
-
+	cave_here::Result<char, cave_here::mmsql::Data> rest;
 	std::fstream script(source, std::ios::in);
     std::string strline;
     std::stringstream sline;
@@ -54,13 +56,28 @@ bool execute(const std::filesystem::path& source)
     	if(strline.empty()) continue;
     	if(strline[0] == '-' and strline[1] == '-') continue;
 
-		std::cout << "'" << strline << "'\n";
+		std::cout << "'" << strline << "' ..." << "\n";
 
+		try
+		{
+			std::cout << "execute Step 1\n";
+			rest = connection.execute(strline);
+			std::cout << "execute Step 2\n";
+		}
+		catch (const cave_here::ExceptionDriver& e)
+		{
+			std::cout << "Error : " << e.what() << "\n";
+		}
+		catch (...)
+		{
+			std::cout << "Error desconocido...\n";
+		}
+
+		rest.close();
     }
 
 	return false;
 }
-namespace cave_here = oct::cave::v0;
 int main(int argc, char* argv[])
 {
     std::filesystem::path repository;
@@ -156,10 +173,10 @@ int main(int argc, char* argv[])
 
     cave_here::mmsql::Data dtm(host, user, password, database, port);
 	bool conectfl = false;
-	cave_here::mmsql::Connection connection_schema;
+	cave_here::mmsql::Connection connection;
 	try
 	{
-		conectfl = connection_schema.connect(dtm, true);
+		conectfl = connection.connect(dtm, true);
 	}
 	catch (const cave_here::ExceptionDriver& e)
 	{
@@ -181,6 +198,11 @@ int main(int argc, char* argv[])
 		std::cout << "Fallo la conexion a la base de tatos.\n";
 		return EXIT_FAILURE;
 	}
+	if(not connection.is_connected())
+	{
+		std::cout << "Fallo la conexion a la base de tatos.\n";
+		return EXIT_FAILURE;
+	}
 
     std::fstream mpk(repository/pakage, std::ios::in);
     std::string strline,strcmd,strparams;
@@ -197,7 +219,7 @@ int main(int argc, char* argv[])
         //std::cout << strcmd << " : " << strparams << std::endl;
         if(strcmd.compare("source") == 0)
 		{
-			flexe = execute(repository/strparams);
+			flexe = execute(connection,repository/strparams);
 			if(flexe) break;
 		}
     }
