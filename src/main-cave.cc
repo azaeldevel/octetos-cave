@@ -26,22 +26,46 @@
 #include <stdlib.h>
 #include <list>
 
-#ifdef __linux__
-
-#elif defined __linux__ && defined IDE_CODEBLOCKS
+#if defined (__linux__) && defined (IDE_CODEBLOCKS)
 	#include "mmsql.hh"
 #elif defined(_WIN32) || defined(_WIN64)
 
+#elif defined (__linux__)
+	#include "mmsql.hh"
 #else
 	#error "Plataforma desconocida"
 #endif
 
-const char* cmdbegin = "";
+
+bool execute(const std::filesystem::path& source)
+{
+	if(not std::filesystem::exists(source))
+	{
+		std::cout << "No se encontro el archivo : " << source << "\n";
+		return false;
+	}
+
+
+	std::fstream script(source, std::ios::in);
+    std::string strline;
+    std::stringstream sline;
+    while(std::getline(script,strline))
+    {
+    	if(strline.empty()) continue;
+    	if(strline[0] == '-' and strline[1] == '-') continue;
+
+		std::cout << "'" << strline << "'\n";
+
+    }
+
+	return false;
+}
+namespace cave_here = oct::cave::v0;
 int main(int argc, char* argv[])
 {
     std::filesystem::path repository;
     std::string user = "root", password,database, host = "localhost",pakage;
-    //int port = 3306;
+    int port = 3306;
 
     for(int i = 0; i < argc; i++)
     {
@@ -105,7 +129,7 @@ int main(int argc, char* argv[])
 
             user = argv[++i];
         }
-        /*else if(strcmp("--port",argv[i]) == 0)
+        else if(strcmp("--port",argv[i]) == 0)
         {
             if(i + 1 >= argc)
             {
@@ -113,7 +137,7 @@ int main(int argc, char* argv[])
                 return EXIT_FAILURE;
             }
             port = std::stoi(argv[++i]);
-        }*/
+        }
     }
 
 
@@ -127,16 +151,41 @@ int main(int argc, char* argv[])
         std::cerr << "No se espesifico un paquete para trabajar" << std::endl;
         return EXIT_FAILURE;
     }
-    if(password.empty())
-    {
-        std::cerr << "No se espesifico un contraseña para trabajar" << std::endl;
-        return EXIT_FAILURE;
-    }
+
+
+
+    cave_here::mmsql::Data dtm(host, user, password, database, port);
+	bool conectfl = false;
+	cave_here::mmsql::Connection connection_schema;
+	try
+	{
+		conectfl = connection_schema.connect(dtm, true);
+	}
+	catch (const cave_here::ExceptionDriver& e)
+	{
+		std::cout << "Exception (cave testing) : " << e.what() << "\n";
+		return EXIT_FAILURE;
+	}
+	catch (const std::exception& e)
+	{
+		std::cout << "Exception (cave testing) : " << e.what() << "\n";
+		return EXIT_FAILURE;
+	}
+	catch (...)
+	{
+		return EXIT_FAILURE;
+	}
+
+	if(not conectfl)
+	{
+		std::cout << "Fallo la conexion a la base de tatos.\n";
+		return EXIT_FAILURE;
+	}
 
     std::fstream mpk(repository/pakage, std::ios::in);
-    std::string strline,strcmd,strparams,cmdsql;
-    std::list<std::string> cmdlist;
+    std::string strline,strcmd,strparams;
     std::stringstream sline;
+    bool flexe;
     while(std::getline(mpk,strline))
     {
         sline.clear();
@@ -145,7 +194,12 @@ int main(int argc, char* argv[])
         std::getline(sline,strcmd,':');
         std::getline(sline,strparams,':');
 
-        std::cout << strcmd << " : " << strparams << std::endl;
+        //std::cout << strcmd << " : " << strparams << std::endl;
+        if(strcmd.compare("source") == 0)
+		{
+			flexe = execute(repository/strparams);
+			if(flexe) break;
+		}
     }
 
 	return EXIT_SUCCESS;
