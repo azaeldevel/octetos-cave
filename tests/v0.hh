@@ -37,6 +37,7 @@ void v0_conection();
 void v0_driver_pure();
 void v0_mesures();
 void v0_schema();
+void v0_write();
 
 
 void v0_core_core();

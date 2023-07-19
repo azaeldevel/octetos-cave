@@ -8,6 +8,7 @@
 #include <locale>
 #include <locale>
 #include <string>
+#include <random>
 
 /*#if  (defined(_WIN32) || defined(_WIN64))
 	#include <cave/src/mmsql.hh>
@@ -343,4 +344,54 @@ void v0_driver_pure()
 	{
 		std::cout << "Type : " << (int)f.type << "\n";
 	}
+
+
+
+}
+
+void v0_write()
+{
+    cave_current::mmsql::Data dtm("localhost","root","123456", "INFORMATION_SCHEMA", OCTEOTOS_CAVE_TESTS_MMSQL_PORT);
+	bool conectfl = false;
+	cave_current::mmsql::Connection conn;
+	try
+	{
+		conectfl = conn.connect(dtm, true);
+	}
+	catch (const cave_current::ExceptionDriver& e)
+	{
+		CU_ASSERT(false);
+		std::cout << "Exception (cave testing) : " << e.what() << "\n";
+		return;
+	}
+	catch (const std::exception& e)
+	{
+		CU_ASSERT(false);
+		std::cout << "Exception (cave testing) : " << e.what() << "\n";
+		return;
+	}
+	catch (...)
+	{
+		CU_ASSERT(false);
+	}
+	CU_ASSERT(conectfl);
+
+	cave_current::Result<char, cave_current::mmsql::Data> rest_schema;
+	try
+	{
+        std::random_device dev;
+        std::mt19937 rng(dev());
+        std::uniform_int_distribution<std::mt19937::result_type> dist6(1,1000000);
+        std::string newuser = "CREATE USER IF NOT EXISTS 'develop" + std::to_string(dist6(rng)) + "'@localhost IDENTIFIED BY '123456'";
+		rest_schema = conn.execute(newuser);
+	}
+	catch (const cave_current::ExceptionDriver& e)
+	{
+		std::cout << e.what() << "\n";
+	}
+	catch (...)
+	{
+		CU_ASSERT(false);
+	}
+
 }
