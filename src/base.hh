@@ -648,6 +648,6 @@ namespace oct::cave::v0
 
 
 }
-namespace cave_current = oct::cave::v0;
+
 
 #endif

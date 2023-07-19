@@ -9,7 +9,7 @@
 #include <locale>
 #include <string>
 
-#if  (defined(_WIN32) || defined(_WIN64))
+/*#if  (defined(_WIN32) || defined(_WIN64))
 	#include <cave/src/mmsql.hh>
 #elif defined(__linux__) && defined(IDE_CODEBLOCKS)
 	#include <cave/src/mmsql.hh>
@@ -19,8 +19,8 @@
 	#include <src/oct-core.hh>
 #else
 #error "Plataforma desconocida."
-#endif
-
+#endif*/
+#include <cave/src/mmsql.hh>
 
 #if defined LINUX_ARCH
 	#include <mysql/mysql.h>
@@ -41,6 +41,7 @@
 
 
 namespace core = oct::core::v3;
+namespace cave_current = oct::cave::v0;
 /*#if defined OCTEOTOS_CAVE_TESTS_DRIVER_MMSQL
 namespace cave = oct::cave::v0;
 namespace driver = oct::cave::v0::mmsql;

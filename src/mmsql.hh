@@ -51,7 +51,7 @@ namespace oct::cave::v0::mmsql
 		unsigned long flags;
 	};
 
-	typedef cave_current::Connection<char,Data> Connection;
+	typedef oct::cave::v0::Connection<char,Data> Connection;
 }
 
 #endif

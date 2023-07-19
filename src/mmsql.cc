@@ -37,6 +37,7 @@
 	#error "Plataforma desconocida."
 #endif
 
+namespace cave_current = oct::cave::v0;
 
 namespace oct::cave::v0::mmsql
 {
@@ -257,19 +258,19 @@ namespace oct::cave::v0
 		if (not connected) throw ExceptionDriver("No se harealizado la cionexion.");
 		if (not connection) throw ExceptionDriver("No se ha establesido la cionexion");
 
-		std::cout << "Connection::execute Step 1\n";
+		//std::cout << "Connection::execute Step 1\n";
 
 		int ret_query = mysql_query(reinterpret_cast<MYSQL*>(connection), str.c_str());
 
-		std::cout << "Connection::execute Step 2\n";
+		//std::cout << "Connection::execute Step 2\n";
 
 		if(ret_query == 0)
 		{
-			std::cout << "Connection::execute Step 2.2\n";
+			//std::cout << "Connection::execute Step 2.2\n";
 			return Result<char,mmsql::Data>(mysql_store_result(reinterpret_cast<MYSQL*>(connection)));
 		}
 
-		std::cout << "Connection::execute Step 3\n";
+		//std::cout << "Connection::execute Step 3\n";
 		throw ExceptionDriver(connection,"La consulta fallo");
 	}
 

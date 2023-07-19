@@ -23,6 +23,8 @@
 
 
 namespace core = oct::core::v3;
+namespace cave_current = oct::cave::v0;
+
 /*#if defined OCTEOTOS_CAVE_TESTS_DRIVER_MMSQL
 namespace cave = oct::cave::v0;
 namespace driver = oct::cave::v0::mmsql;

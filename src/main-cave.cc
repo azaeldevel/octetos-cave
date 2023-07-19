@@ -25,6 +25,7 @@
 #include <filesystem>
 #include <stdlib.h>
 #include <list>
+#include <algorithm>
 
 #if defined (__linux__) && defined (IDE_CODEBLOCKS)
 	#include "mmsql.hh"
@@ -55,14 +56,16 @@ bool execute(cave_here::mmsql::Connection& connection,const std::filesystem::pat
     {
     	if(strline.empty()) continue;
     	if(strline[0] == '-' and strline[1] == '-') continue;
+    	strline.erase(remove(strline.begin(), strline.end(), '\n'), strline.end());
+    	strline.erase(remove(strline.begin(), strline.end(), ';'), strline.end());
 
 		std::cout << "'" << strline << "' ..." << "\n";
 
 		try
 		{
-			std::cout << "execute Step 1\n";
+			//std::cout << "execute Step 1\n";
 			rest = connection.execute(strline);
-			std::cout << "execute Step 2\n";
+			//std::cout << "execute Step 2\n";
 		}
 		catch (const cave_here::ExceptionDriver& e)
 		{
