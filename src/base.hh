@@ -28,7 +28,7 @@
 #include <list>
 #include <type_traits>
 #include <source_location>
-#if  (defined(_WIN32) || defined(_WIN64))
+/*#if  (defined(_WIN32) || defined(_WIN64))
 	#include <core/src/Exception-v3.hh>
 	#include <cave/src/oct-core.hh>
 #elif defined __linux__ && IDE_CODEBLOCKS
@@ -40,7 +40,10 @@
 	#include "config.h"
 #else
 	#error "Plataforma desconocida."
-#endif
+#endif*/
+
+#include <core/3/Exception.hh>
+#include "oct-core.hh"
 
 namespace core_here = oct::core::v3;
 
