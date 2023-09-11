@@ -143,7 +143,7 @@ namespace oct::cave::v0
 	}
 	template<> void Result<char, cave_current::mmsql::Data>::load_fields_info()
 	{
-		MYSQL_FIELD* field;
+		/*MYSQL_FIELD* field;
 		size_t i = 0;
 		FieldInfo info;
 		fields.reserve(size());
@@ -190,7 +190,7 @@ namespace oct::cave::v0
 			}
 			fields.push_back(info);
 			i++;
-		}
+		}*/
 	}
 
 
@@ -255,8 +255,8 @@ namespace oct::cave::v0
 
 	template<> Result<char,mmsql::Data> Connection<char, mmsql::Data>::execute(const std::string& str)
 	{
-		if (not connected) throw ExceptionDriver("No se harealizado la cionexion.");
-		if (not connection) throw ExceptionDriver("No se ha establesido la cionexion");
+		if (not connected) throw std::runtime_error("No se ha realizado la conexion.");
+		if (not connection) throw std::runtime_error("No se ha establesido la cionexion");
 
 		//std::cout << "Connection::execute Step 1\n";
 
@@ -271,9 +271,22 @@ namespace oct::cave::v0
 		}
 
 		//std::cout << "Connection::execute Step 3\n";
-		throw ExceptionDriver(connection,"La consulta fallo");
+		throw std::runtime_error("La consulta fallo");
 	}
+    template<> bool Connection<char, mmsql::Data>::insert(const std::string& str)
+	{
+		if (not connected) throw std::runtime_error("No se ha realizado la conexion.");
+		if (not connection) throw std::runtime_error("No se ha establesido la cionexion");
 
+		//std::cout << "Connection::execute Step 1\n";
+		int ret_query = mysql_query(reinterpret_cast<MYSQL*>(connection), str.c_str());
+
+		//std::cout << "Connection::execute Step 2\n";
+		if(ret_query == 0) return true;
+
+		//std::cout << "Connection::execute Step 3\n";
+		return false;
+	}
 
 
 	template<> bool Connection<char, mmsql::Data>::commit()

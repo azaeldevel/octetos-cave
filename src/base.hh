@@ -312,7 +312,7 @@ namespace oct::cave::v0
 		{
 			return (result ? true : false);
 		}
-		explicit operator bool() const
+		operator bool() const
 		{
 		    return is_stored();
 		}
@@ -379,19 +379,19 @@ namespace oct::cave::v0
 		/**
 		*\brief Determina el type de datos del campo
 		*/
-		Types get_type(size_t field) const
+		/*Types get_type(size_t field) const
 		{
 			if (field < size()) return fields[field].type;
 
 			return Types::NONE;
-		}
+		}*/
 
-		const std::vector<FieldInfo>& fields_info() const
+		/*const std::vector<FieldInfo>& fields_info() const
 		{
 			return fields;
-		}
+		}*/
 	private:
-		std::vector<FieldInfo> fields;
+		//std::vector<FieldInfo> fields;
 		void load_fields_info();
 
 	protected:
@@ -477,6 +477,7 @@ namespace oct::cave::v0
 		}
 
 		RS execute(const std::string&);
+		bool insert(const std::string&);
 		RS select(const std::string& fields,const std::string& table)
 		{
 			std::string srtsql;

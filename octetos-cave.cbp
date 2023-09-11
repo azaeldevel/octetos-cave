@@ -60,7 +60,7 @@
 				<Option object_output="bin/obj/Debug" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters="--repository /home/azael/develop/octetos/cave/tests-v0/mariadb.pkg --package muposys-full.mpk --user root --password 4dm1nK3y --database muposys-cave" />
+				<Option parameters="--repository /home/azael/develop/octetos/cave/tests-v0/mariadb.pkg --package muposys-full.mpk --user root --password 4dm1nK3y --database muposys-dev" />
 			</Target>
 		</Build>
 		<Compiler>

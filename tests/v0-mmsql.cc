@@ -89,6 +89,31 @@ struct Table
         return "INFORMATION_SCHEMA.SCHEMATA";
 	}
 };
+
+struct Version
+{
+	std::string name;
+	char major, minor,patch;
+
+	Version() = default;
+	Version(const char** s)
+	{
+		name = s[0];
+	}
+	Version(cave_current::Row<char,cave_current::mmsql::Data> s)
+	{
+		name = s[0];
+	}
+
+	template<class C> bool insert(C& connector)
+	{
+	    std::string sql = "INSERT INTO Version(name,major,minor) VALUES(";
+        sql += "'" + name + "'," + std::to_string(major)  + "," + std::to_string(minor) + ")";
+        //std::cout << "SQL 2 : " << sql << "\n";
+        return connector.insert(sql);
+	}
+};
+
 void v0_develop()
 {
 	/*MYSQL* conn = mysql_init(NULL);
@@ -344,10 +369,10 @@ void v0_driver_pure()
 		CU_ASSERT(false);
 	}
 	CU_ASSERT(rest_schema.is_stored());
-	for (const cave_current::Result<char, cave_current::mmsql::Data>::FieldInfo& f : rest_schema.fields_info())
+	/*for (const cave_current::Result<char, cave_current::mmsql::Data>::FieldInfo& f : rest_schema.fields_info())
 	{
 		std::cout << "Type : " << (int)f.type << "\n";
-	}
+	}*/
 
 
 
@@ -355,7 +380,12 @@ void v0_driver_pure()
 
 void v0_write()
 {
-    cave_current::mmsql::Data dtm("localhost","develop","123456", "INFORMATION_SCHEMA", OCTEOTOS_CAVE_TESTS_MMSQL_PORT);
+    std::random_device dev;
+    std::mt19937 rng(dev());
+    std::uniform_int_distribution<std::mt19937::result_type> longint(1,92233720368547);
+    std::uniform_int_distribution<std::mt19937::result_type> smallint(1,128);
+
+    cave_current::mmsql::Data dtm("localhost","develop","123456", "muposys-dev", OCTEOTOS_CAVE_TESTS_MMSQL_PORT);
 	bool conectfl = false;
 	cave_current::mmsql::Connection conn;
 	try
@@ -386,7 +416,8 @@ void v0_write()
         std::random_device dev;
         std::mt19937 rng(dev());
         std::uniform_int_distribution<std::mt19937::result_type> dist6(1,1000000);
-        std::string newuser = "CREATE USER IF NOT EXISTS 'develop" + std::to_string(dist6(rng)) + "'@localhost IDENTIFIED BY '123456'";
+        std::string newuser = "CREATE USER IF NOT EXISTS 'develop" + std::to_string(dist6(rng)) + "'@localhost IDENTIFIED BY '123456';";
+        std::cout << "SQL : " << newuser << "\n";
 		rest_schema = conn.execute(newuser);
 	}
 	catch (const cave_current::ExceptionDriver& e)
@@ -398,4 +429,24 @@ void v0_write()
 		CU_ASSERT(false);
 	}*/
 
+	std::string sqlversionInser = "INSERT INTO Version(name,major,minor) VALUES(";
+	sqlversionInser += "'name" + std::to_string(longint(rng)) + "'," + std::to_string(smallint(rng))  + "," + std::to_string(smallint(rng)) + ")";
+	//std::cout << sqlversionInser << "\n";
+
+	try
+	{
+        conn.execute(sqlversionInser);
+	}
+	catch(...)
+	{
+        std::cout << "Error desconocido en escritura de base de datos\n";
+	}
+    //CU_ASSERT(flatexec1);
+
+    Version ver1;
+    ver1.name = "name" + std::to_string(longint(rng));
+    ver1.major = smallint(rng);
+    ver1.minor = smallint(rng);
+    bool flagver1 = ver1.insert(conn);
+    CU_ASSERT(flagver1)
 }
