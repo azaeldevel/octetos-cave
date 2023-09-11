@@ -287,6 +287,20 @@ namespace oct::cave::v0
 		//std::cout << "Connection::execute Step 3\n";
 		return false;
 	}
+    template<> bool Connection<char, mmsql::Data>::update(const std::string& str)
+	{
+		if (not connected) throw std::runtime_error("No se ha realizado la conexion.");
+		if (not connection) throw std::runtime_error("No se ha establesido la cionexion");
+
+		//std::cout << "Connection::execute Step 1\n";
+		int ret_query = mysql_query(reinterpret_cast<MYSQL*>(connection), str.c_str());
+
+		//std::cout << "Connection::execute Step 2\n";
+		if(ret_query == 0) return true;
+
+		//std::cout << "Connection::execute Step 3\n";
+		return false;
+	}
 
 
 	template<> bool Connection<char, mmsql::Data>::commit()

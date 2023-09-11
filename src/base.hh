@@ -478,6 +478,9 @@ namespace oct::cave::v0
 
 		RS execute(const std::string&);
 		bool insert(const std::string&);
+		bool update(const std::string&);
+
+
 		RS select(const std::string& fields,const std::string& table)
 		{
 			std::string srtsql;
