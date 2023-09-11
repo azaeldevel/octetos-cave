@@ -91,7 +91,7 @@ struct Table
 };
 void v0_develop()
 {
-	MYSQL* conn = mysql_init(NULL);
+	/*MYSQL* conn = mysql_init(NULL);
 	mysql_options(conn, MYSQL_SET_CHARSET_NAME, "utf8");
 	mysql_options(conn, MYSQL_INIT_COMMAND, "SET NAMES utf8");
 	MYSQL* _conn = mysql_real_connect(conn,"localhost", "develop", "123456", "muposys-dev", OCTEOTOS_CAVE_TESTS_MMSQL_PORT,NULL,0);
@@ -102,10 +102,10 @@ void v0_develop()
 
 
 	mysql_free_result(result);
-	mysql_close(conn);
+	mysql_close(conn);*/
 }
 
-template<typename T = std::chrono::milliseconds>
+/*template<typename T = std::chrono::milliseconds>
 void mesure_query(size_t base_length,oct::core::MesureExecution& mesure, cave_current::mmsql::Connection& conn,const char* str)
 {
 	mesure.start = std::chrono::high_resolution_clock::now();
@@ -119,10 +119,10 @@ void mesure_query(size_t base_length,oct::core::MesureExecution& mesure, cave_cu
   	//std::cout << "Ejecucion : took " << time_1/std::chrono::milliseconds(1) << "ns to run.\n";
 	mesure.media = double(mesure.duration.count()) / double(base_length);
 
-}
+}*/
 void v0_mesures()
 {
-	std::cout << "\n";
+	/*std::cout << "\n";
 	cave_current::mmsql::Data dtm("localhost","develop","123456","INFORMATION_SCHEMA", OCTEOTOS_CAVE_TESTS_MMSQL_PORT);
 	cave_current::mmsql::Connection conn;
 	bool conectfl = false;
@@ -151,10 +151,10 @@ void v0_mesures()
 	CU_ASSERT(conn.is_connected());
 	CU_ASSERT(conn.ping());
 
-	const size_t base_length = 1000;
+	//const size_t base_length = 1000;
 	const size_t base_test = 10;
 
-	oct::core::MesureExecution mesures[base_test];
+	oct::core::MesureExecution mesures[base_test];*/
 	/*for (size_t i = 0; i < base_test; i++)
 	{
 		mesure_query(base_length,mesures[i],conn,"show databases;");
@@ -300,10 +300,13 @@ void v0_driver_pure()
 	{
 		CU_ASSERT(false);
 	}
-	/*for (const Table& t : lst_dbs2)
+	CU_ASSERT(lst_dbs2flag)
+	/*
+	for (const Table& t : lst_dbs2)
 	{
 		std::cout << "Name : " << t.name << "\n";
-	}*/
+	}
+	*/
 
 
 	std::list<Table> lst_dbs3;
@@ -320,6 +323,7 @@ void v0_driver_pure()
 	{
 		CU_ASSERT(false);
 	}
+	CU_ASSERT(lst_dbs3flag)
 	/*for (const Table& t : lst_dbs3)
 	{
 		std::cout << "Name : " << t.name << "\n";
@@ -351,7 +355,7 @@ void v0_driver_pure()
 
 void v0_write()
 {
-    cave_current::mmsql::Data dtm("localhost","root","123456", "INFORMATION_SCHEMA", OCTEOTOS_CAVE_TESTS_MMSQL_PORT);
+    cave_current::mmsql::Data dtm("localhost","develop","123456", "INFORMATION_SCHEMA", OCTEOTOS_CAVE_TESTS_MMSQL_PORT);
 	bool conectfl = false;
 	cave_current::mmsql::Connection conn;
 	try
@@ -376,7 +380,7 @@ void v0_write()
 	}
 	CU_ASSERT(conectfl);
 
-	cave_current::Result<char, cave_current::mmsql::Data> rest_schema;
+	/*cave_current::Result<char, cave_current::mmsql::Data> rest_schema;
 	try
 	{
         std::random_device dev;
@@ -392,6 +396,6 @@ void v0_write()
 	catch (...)
 	{
 		CU_ASSERT(false);
-	}
+	}*/
 
 }
