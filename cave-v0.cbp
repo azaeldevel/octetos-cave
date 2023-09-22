@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="cave-v0" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/octetos-cave" prefix_auto="1" extension_auto="1" />
+				<Option object_output="bin/obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g `pkg-config cunit --cflags`" />
+					<Add option="-DOCTEOTOS_CAVE_ENABLE_TDD_V0" />
+					<Add option="-DOCTEOTOS_CAVE_TESTS_MMSQL_PORT=3306" />
+				</Compiler>
+				<Linker>
+					<Add option="`pkg-config cunit --libs` `pkg-config --libs libmariadb`" />
+				</Linker>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/octetos-cave" prefix_auto="1" extension_auto="1" />
+				<Option object_output="bin/obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2 `pkg-config cunit --cflags`" />
+					<Add option="-DOCTEOTOS_CAVE_ENABLE_TDD_V0" />
+					<Add option="-DOCTEOTOS_CAVE_TESTS_MMSQL_PORT=3306" />
+				</Compiler>
+				<Linker>
+					<Add option="`pkg-config cunit --libs` `pkg-config --libs libmariadb`" />
+				</Linker>
+			</Target>
+			<Target title="liboctetos-cave-mmsql-dbg">
+				<Option output="bin/Debug/octetos-cave-mmsql" imp_lib="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).a" def_file="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).def" prefix_auto="1" extension_auto="1" />
+				<Option object_output="bin/obj/Debug/" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-fPIC" />
+				</Compiler>
+				<Linker>
+					<Add option="`pkg-config --libs libmariadb`" />
+					<Add directory="../core/bin/Debug" />
+				</Linker>
+			</Target>
+			<Target title="testing-v0">
+				<Option output="bin/Debug/tesint-v0" prefix_auto="1" extension_auto="1" />
+				<Option object_output="bin/obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="`pkg-config --cflags cunit`" />
+					<Add option="-DOCTEOTOS_CAVE_ENABLE_TDD_V0" />
+					<Add option="-DOCTEOTOS_CAVE_TESTS_MMSQL_PORT=3306" />
+				</Compiler>
+				<Linker>
+					<Add option="`pkg-config cunit  --libs`" />
+					<Add directory="../core/bin/Debug" />
+				</Linker>
+			</Target>
+			<Target title="cave-dbg">
+				<Option output="bin/Debug/cave" prefix_auto="1" extension_auto="1" />
+				<Option object_output="bin/obj/Debug" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option parameters="--repository /home/azael/develop/octetos/cave/tests-v0/mariadb.pkg --package muposys-full.mpk --user root --password 4dm1nK3y --database muposys-dev" />
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall -pedantic -std=c++20 `pkg-config --cflags libmariadb`" />
+			<Add option="-DIDE_CODEBLOCKS" />
+			<Add option="-DLINUX_ARCH" />
+			<Add directory="../../octetos" />
+		</Compiler>
+		<Unit filename="0/base.cc" />
+		<Unit filename="0/base.hh" />
+		<Unit filename="0/main-cave.cc">
+			<Option target="cave-dbg" />
+		</Unit>
+		<Unit filename="0/maria.hh" />
+		<Unit filename="0/mmsql.cc" />
+		<Unit filename="0/mmsql.hh" />
+		<Unit filename="0/oct-core.hh" />
+		<Unit filename="0/schema.cc" />
+		<Unit filename="0/schema.hh" />
+		<Unit filename="tests/main.cc">
+			<Option target="testing-v0" />
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="tests/v0-mmsql.cc">
+			<Option target="testing-v0" />
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="tests/v0-schema.cc">
+			<Option target="testing-v0" />
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="tests/v0.cc">
+			<Option target="testing-v0" />
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="tests/v0.hh">
+			<Option target="testing-v0" />
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Extensions>
+			<lib_finder disable_auto="1">
+				<lib name="libmariadb" />
+			</lib_finder>
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
