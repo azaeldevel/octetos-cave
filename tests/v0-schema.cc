@@ -3,17 +3,17 @@
 #include <iostream>
 #include <stdio.h>
 #if  (defined(_WIN32) || defined(_WIN64))
-	#include <cave/src/mmsql.hh>
-	#include <cave/src/oct-core.hh>
-	#include <cave/src/schema.hh>
+	#include <cave/0/mmsql.hh>
+	#include <cave/0/oct-core.hh>
+	#include <cave/0/schema.hh>
 #elif defined __linux__ && defined IDE_CODEBLOCKS
-	#include <cave/src/mmsql.hh>
-	#include <cave/src/oct-core.hh>
-	#include <cave/src/schema.hh>
+	#include <cave/0/mmsql.hh>
+	#include <cave/0/oct-core.hh>
+	#include <cave/0/schema.hh>
 #elif defined __linux__
-	#include <src/mmsql.hh>
-	#include <src/oct-core.hh>
-	#include <src/schema.hh>
+	#include <0/mmsql.hh>
+	#include <0/oct-core.hh>
+	#include <0/schema.hh>
 #else
 #error "Plataforma desconocida."
 #endif

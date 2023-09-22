@@ -22,14 +22,14 @@
 #include <string>
 #include <iostream>
 #if  (defined(_WIN32) || defined(_WIN64))
-	#include <cave/src/base.hh>
-	#include <cave/src/oct-core.hh>
+	#include <cave/0/base.hh>
+	#include <cave/0/oct-core.hh>
 #elif defined(__linux__) && defined(IDE_CODEBLOCKS)
-	#include <cave/src/base.hh>
-	#include <cave/src/oct-core.hh>
+	#include <cave/0/base.hh>
+	#include <cave/0/oct-core.hh>
 #elif defined __linux__
-	#include <src/base.hh>
-	#include <src/oct-core.hh>
+	#include <0/base.hh>
+	#include <0/oct-core.hh>
 #else
  	#error "Plataforma desconocida."
 #endif
