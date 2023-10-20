@@ -317,6 +317,7 @@ namespace oct::cave::v0
 		    return is_stored();
 		}
 
+
 		void close();
 		size_t size()const;
 
@@ -494,6 +495,10 @@ namespace oct::cave::v0
 
 			return execute(srtsql);
 		}
+		/**
+		*\brief SQL clause select.
+		*
+		*/
 		RS select(const std::string& fields,const std::string& table,const std::string& where)
 		{
 			std::string srtsql;
@@ -630,6 +635,22 @@ namespace oct::cave::v0
 			}
 			srtsql += sets.back();
 			srtsql  += " WHERE = " + where;
+			return execute(srtsql);
+		}
+		RS update(const std::string& sets, const std::string& table)
+		{
+			if (sets.empty()) return RS();
+			if (table.empty()) return RS();
+
+			std::string srtsql = "UPDATE " + table + " SET " + sets;
+
+			return execute(srtsql);
+		}
+
+
+		RS remove(const std::string& table, const std::string& where)
+		{
+			std::string srtsql = "DELETE FROM " + table + " WHERE " + where;
 			return execute(srtsql);
 		}
 

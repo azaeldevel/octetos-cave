@@ -52,6 +52,7 @@ namespace oct::cave::v0::mmsql
 	};
 
 	typedef oct::cave::v0::Connection<char,Data> Connection;
+	typedef oct::cave::v0::Result<char,Data> Result;
 }
 
 #endif
