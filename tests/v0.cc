@@ -21,19 +21,8 @@
 
 #include <string>
 #include <iostream>
-#if  (defined(_WIN32) || defined(_WIN64))
-	#include <cave/0/base.hh>
-	#include <cave/0/oct-core.hh>
-#elif defined(__linux__) && defined(IDE_CODEBLOCKS)
-	#include <cave/0/base.hh>
-	#include <cave/0/oct-core.hh>
-#elif defined __linux__
-	#include <0/base.hh>
-	#include <0/oct-core.hh>
-#else
- 	#error "Plataforma desconocida."
-#endif
-
+#include <cave/0/base.hh>
+#include <cave/0/oct-core.hh>
 
 int v0_init(void)
 {

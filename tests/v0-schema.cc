@@ -2,21 +2,9 @@
 #include <string>
 #include <iostream>
 #include <stdio.h>
-#if  (defined(_WIN32) || defined(_WIN64))
-	#include <cave/0/mmsql.hh>
-	#include <cave/0/oct-core.hh>
-	#include <cave/0/schema.hh>
-#elif defined __linux__ && defined IDE_CODEBLOCKS
-	#include <cave/0/mmsql.hh>
-	#include <cave/0/oct-core.hh>
-	#include <cave/0/schema.hh>
-#elif defined __linux__
-	#include <0/mmsql.hh>
-	#include <0/oct-core.hh>
-	#include <0/schema.hh>
-#else
-#error "Plataforma desconocida."
-#endif
+#include <cave/0/mmsql.hh>
+#include <cave/0/oct-core.hh>
+#include <cave/0/schema.hh>
 
 
 #include "v0.hh"
