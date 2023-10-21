@@ -45,7 +45,7 @@
 					<Add option="-DOCTEOTOS_CAVE_TESTS_MMSQL_PORT=3306" />
 				</Compiler>
 				<Linker>
-					<Add option="`pkg-config cunit  --libs`" />
+					<Add option="`pkg-config cunit  --libs` `pkg-config --libs libmariadb`" />
 					<Add directory="../core/bin/Debug" />
 				</Linker>
 			</Target>
@@ -55,6 +55,9 @@
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Option parameters="--repository /home/azael/develop/octetos/cave/tests-v0/mariadb.pkg --package muposys-full.mpk --user root --password 4dm1nK3y --database muposys-dev" />
+				<Linker>
+					<Add option="`pkg-config --libs libmariadb`" />
+				</Linker>
 			</Target>
 			<Target title="liboctetos-cave-mmsql-dbg">
 				<Option output="bin/Debug/octetos-cave-mmsql-0" imp_lib="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).a" def_file="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).def" prefix_auto="1" extension_auto="1" />
