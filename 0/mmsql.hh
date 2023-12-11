@@ -1,5 +1,5 @@
-#ifndef OCTETOS_COVE_MMSQL_V0_HH
-#define OCTETOS_COVE_MMSQL_V0_HH
+#ifndef OCTETOS_CAVE_V0_MMSQL_HH
+#define OCTETOS_CAVE_V0_MMSQL_HH
 
 /*
  * Copyright (C) 2022 Azael R. <azael.devel@gmail.com>

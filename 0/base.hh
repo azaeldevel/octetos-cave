@@ -1,6 +1,6 @@
 
-#ifndef OCTETOS_CAVE_BASE_V0_HH
-#define OCTETOS_CAVE_BASE_V0_HH
+#ifndef OCTETOS_CAVE_V0_BASE_HH
+#define OCTETOS_CAVE_V0_BASE_HH
 
 /*
  * Copyright (C) 2022 Azael R. <azael.devel@gmail.com>

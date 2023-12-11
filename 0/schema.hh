@@ -1,7 +1,7 @@
 
 
-#ifndef OCTETOS_CAVE_SCHEMA_HH
-#define OCTETOS_CAVE_SCHEMA_HH
+#ifndef OCTETOS_CAVE_V0_SCHEMA_HH
+#define OCTETOS_CAVE_V0_SCHEMA_HH
 
 #include "base.hh"
 
@@ -104,4 +104,3 @@ namespace oct::cave::v0
 }
 
 #endif
- 
