@@ -84,6 +84,12 @@ int main(int argc, char *argv[])
 		return CU_get_error();
 	}
 
+	if (NULL == CU_add_test(pSuite_v1, "Selects v1", v1_selects))
+	{
+		CU_cleanup_registry();
+		return CU_get_error();
+	}
+
 #endif
 
 	/* Run all tests using the CUnit Basic interface */

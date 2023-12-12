@@ -41,8 +41,6 @@ namespace oct::cave::v1
 	typedef void* Handle;
 	typedef unsigned long index;
 
-
-
 	enum class Source
 	{
 		none,
@@ -238,34 +236,6 @@ namespace oct::cave::v1
 		using char_type = CB;
 		using data_type = DS;
 
-		enum class Types
-		{
-			NONE,
-			BOOL,
-			CHAR,
-			SCHAR,
-			UCHAR,
-			CSTRING,
-			STRING,
-			INTEGER,
-			UINTEGER,
-			SHORT,
-			USHORT,
-			LONG,
-			ULONG,
-			LONGLONG,
-			ULONGLONG,
-			FLOAT,
-			DOUBLE,
-			LONGDOUBLE,
-			SELECTION,
-
-		};
-
-		struct FieldInfo
-		{
-			Types type;
-		};
 
 	public:
 		Result() : result(NULL)
@@ -373,21 +343,8 @@ namespace oct::cave::v1
 				v.push_back((const CB**)row);
 			}
 		}
-;
-		/**
-		*\brief Determina el type de datos del campo
-		*/
-		/*Types get_type(size_t field) const
-		{
-			if (field < size()) return fields[field].type;
 
-			return Types::NONE;
-		}*/
 
-		/*const std::vector<FieldInfo>& fields_info() const
-		{
-			return fields;
-		}*/
 	private:
 		//std::vector<FieldInfo> fields;
 		void load_fields_info();
@@ -406,27 +363,7 @@ namespace oct::cave::v1
 		}
 	};
 
-	template<char_base CB, datasource DS> const char * to_string(typename Result<CB,DS>::Types const type)
-	{
-		switch (type)
-		{
-		case Result<CB, DS>::Types::CHAR: return "char";
-		case Result<CB, DS>::Types::UCHAR: return "unsigned char";
-		case Result<CB, DS>::Types::SCHAR: return "signed char";
-		case Result<CB, DS>::Types::SHORT: return "short";
-		case Result<CB, DS>::Types::USHORT: return "unsigned short";
-		case Result<CB, DS>::Types::INTEGER: return "int";
-		case Result<CB, DS>::Types::UINTEGER: return "unsigned int";
-		case Result<CB, DS>::Types::LONG: return "long";
-		case Result<CB, DS>::Types::ULONG: return "unsigned long";
-		case Result<CB, DS>::Types::LONGLONG: return "long long";
-		case Result<CB, DS>::Types::ULONGLONG: return "unsigned long long";
-		case Result<CB, DS>::Types::FLOAT: return "float";
-		case Result<CB, DS>::Types::DOUBLE: return "double";
-		case Result<CB, DS>::Types::LONGDOUBLE: return "long double";
-		case Result<CB, DS>::Types::SELECTION: return "std::vector<std::string>";
-		}
-	}
+
 
 	template <typename T> concept is_Result_instation =
 		std::is_same_v<
@@ -532,6 +469,10 @@ namespace oct::cave::v1
 		}
 
 		RS execute(const char*);
+		RS execute(const std::string& str)
+		{
+		    return execute(str.c_str());
+		}
 
 		//Por string
         RS select(const char* table)
@@ -605,17 +546,67 @@ namespace oct::cave::v1
 
 
 
-		RS insert(const char* str)
+        //por string
+        RS insert(const char* str)
 		{
 			return execute(str);
 		}
+        RS insert(const char* table,const char* fields,const char* values)
+		{
+			std::string srtsql = "INSERT INTO ";
+            srtsql += table;
+			srtsql += "(";
+			srtsql += fields;
+			srtsql += ") ";
+            srtsql += "VALUES(";
+            srtsql += values;
+            srtsql += ")";
+			//std::cout << srtsql << "\n";
+
+			return insert(srtsql);
+		}
+
+
 		RS update(const char* str)
 		{
 			return execute(str);
 		}
+		RS update(const std::string& str)
+		{
+			return update(str.c_str());
+		}
+        RS update(const char* table,const char* sets)
+		{
+			std::string srtsql = "UPDATE ";
+            srtsql += table;
+			srtsql += " SET ";
+			srtsql += sets;
+			//std::cout << srtsql << "\n";
+
+			return update(srtsql);
+		}
+        RS update(const char* table,const char* sets,const char* where)
+		{
+			std::string srtsql = "UPDATE ";
+            srtsql += table;
+			srtsql += " SET ";
+			srtsql += sets;
+			srtsql += " WHERE ";
+			srtsql += where;
+			//std::cout << srtsql << "\n";
+
+			return update(srtsql);
+		}
+
+
+
 		RS remove(const char* str)
 		{
 			return execute(str);
+		}
+		RS remove(const std::string& str)
+		{
+			return remove(str.c_str());
 		}
 
 

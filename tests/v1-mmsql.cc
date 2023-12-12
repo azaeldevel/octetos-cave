@@ -110,7 +110,56 @@ struct Version
 
 void v1_develop()
 {
+    std::random_device dev;
+    std::mt19937 rng(dev());
+    std::uniform_int_distribution<std::mt19937::result_type> longint(1,92233720368547);
+    std::uniform_int_distribution<std::mt19937::result_type> smallint(1,128);
 
+    cave::mmsql::Data dtm("localhost","develop","123456", "muposys-dev", OCTEOTOS_CAVE_TESTS_MMSQL_PORT);
+	bool conectfl = false;
+	cave::mmsql::Connection conn;
+	try
+	{
+		conectfl = conn.connect(dtm, true);
+	}
+	catch (const cave::ExceptionDriver& e)
+	{
+		CU_ASSERT(false);
+		std::cout << "Exception (cave testing) : " << e.what() << "\n";
+		return;
+	}
+	catch (const std::exception& e)
+	{
+		CU_ASSERT(false);
+		std::cout << "Exception (cave testing) : " << e.what() << "\n";
+		return;
+	}
+	catch (...)
+	{
+		CU_ASSERT(false);
+	}
+	CU_ASSERT(conectfl);
+
+
+	std::string sqlversionInser = "INSERT INTO Version(name,major,minor) VALUES(";
+	sqlversionInser += "'name" + std::to_string(longint(rng)) + "'," + std::to_string(smallint(rng))  + "," + std::to_string(smallint(rng)) + ")";
+	//std::cout << sqlversionInser << "\n";
+    cave::mmsql::Result rs1;
+	try
+	{
+        rs1 = conn.execute(sqlversionInser);
+	}
+	catch(...)
+	{
+        std::cout << "Error desconocido en escritura de base de datos\n";
+	}
+
+
+
+}
+
+void v1_selects()
+{
     cave::mmsql::Data dtm("localhost","develop","123456", "muposys-dev", OCTEOTOS_CAVE_TESTS_MMSQL_PORT);
 	bool conectfl = false;
 	cave::mmsql::Connection conn;
@@ -186,10 +235,8 @@ void v1_develop()
 	{
 		CU_ASSERT(false);
 	}
-	for(size_t i = 0; i < rs3.size(); i++)
+	/*for(size_t i = 0; i < rs3.size(); i++)
     {
         std::cout << "id:" << rs3.next()[0] << "\n";
-    }
+    }*/
 }
-
-
