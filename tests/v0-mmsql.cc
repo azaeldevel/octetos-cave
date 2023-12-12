@@ -82,20 +82,23 @@ struct Table
 
 struct Version
 {
+    long id;
 	std::string name;
 	char major, minor,patch;
 
 	Version() = default;
 	Version(const char** s)
 	{
+		id = std::atol(s[0]);
 		name = s[0];
 	}
 	Version(cave_current::Row<char,cave_current::mmsql::Data> s)
 	{
+		id = std::atol(s[0]);
 		name = s[0];
 	}
 
-	static std::string fields()
+	static std::string fields_insert()
 	{
         return "name,major,minor";
 	}
@@ -110,7 +113,7 @@ struct Version
 	    std::string sql;
         sql += "'" + name + "'," + std::to_string(major)  + "," + std::to_string(minor);
         //std::cout << "SQL 2 : " << sql << "\n";
-        return connector.insert(fields(),sql,table());
+        return connector.insert(fields_insert(),sql,table());
 	}
 };
 
@@ -449,4 +452,7 @@ void v0_write()
     ver1.minor = smallint(rng);
     auto retver = ver1.insert(conn);
     //CU_ASSERT(flagver1)
+
+
 }
+

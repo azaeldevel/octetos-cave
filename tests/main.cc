@@ -3,6 +3,8 @@
 
 #ifdef OCTEOTOS_CAVE_ENABLE_TDD_V0
 	#include "v0.hh"
+#elif defined OCTEOTOS_CAVE_ENABLE_TDD_V1
+    #include "v1.hh"
 #endif
 
 
@@ -63,6 +65,20 @@ int main(int argc, char *argv[])
 	}
 
 	if (NULL == CU_add_test(pSuite_cotetos_core_v0, "Pruebas de ecritura en Base de Datos", v0_write))
+	{
+		CU_cleanup_registry();
+		return CU_get_error();
+	}
+
+#elif defined OCTEOTOS_CAVE_ENABLE_TDD_V1
+    CU_pSuite pSuite_v1 = CU_add_suite("Octetos Cave Library v1", v1_init, v1_clean);
+	if (NULL == pSuite_v1)
+	{
+		CU_cleanup_registry();
+		return CU_get_error();
+	}
+
+	if (NULL == CU_add_test(pSuite_v1, "Developing v1", v1_develop))
 	{
 		CU_cleanup_registry();
 		return CU_get_error();

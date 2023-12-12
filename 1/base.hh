@@ -1,6 +1,6 @@
 
-#ifndef OCTETOS_CAVE_V0_BASE_HH
-#define OCTETOS_CAVE_V0_BASE_HH
+#ifndef OCTETOS_CAVE_V1_BASE_HH
+#define OCTETOS_CAVE_V1_BASE_HH
 
 /*
  * Copyright (C) 2022 Azael R. <azael.devel@gmail.com>
@@ -28,27 +28,13 @@
 #include <list>
 #include <type_traits>
 #include <source_location>
-/*#if  (defined(_WIN32) || defined(_WIN64))
-	#include <core/src/Exception-v3.hh>
-	#include <cave/src/oct-core.hh>
-#elif defined __linux__ && IDE_CODEBLOCKS
-	#include <core/src/Exception-v3.hh>
-	#include <cave/src/oct-core.hh>
-#elif defined __linux__
-	#include <octetos/core/Exception-v3.hh>
-	#include <cave/src/oct-core.hh>
-	#include "config.h"
-#else
-	#error "Plataforma desconocida."
-#endif*/
-
 #include <core/3/Exception.hh>
 #include <core/3/array.hh>
-#include "oct-core.hh"
+#include <core/3/numbers.hh>
 
-namespace core_here = oct::core::v3;
 
-namespace oct::cave::v0
+
+namespace oct::cave::v1
 {
     namespace core = oct::core::v3;
 
@@ -78,7 +64,7 @@ namespace oct::cave::v0
 	};
 
 
-	class ExceptionDriver : public core_here::exception
+	class ExceptionDriver : public core::exception
 	{
 	public:
 
@@ -99,7 +85,7 @@ namespace oct::cave::v0
 	template<class T> concept char_base = std::is_same<char, T>::value || std::is_same<wchar_t, T>::value;
 	template<class R> concept row_string = std::is_same<const char*, R>::value || std::is_same<const wchar_t*, R>::value;
 	//Contenmedr tipo A, rquiere un contructor para el array de c-string
-	template<class S> concept container_A = std::is_constructible_v<S, const char**> && std::is_default_constructible<S>::value && std::is_move_constructible_v<S> && !row_string<S>;
+	template<class S> concept starable = std::is_constructible_v<S, const char**> && std::is_default_constructible<S>::value && std::is_move_constructible_v<S> && !row_string<S>;
 	template<class T> concept datasource = std::derived_from<T, DataSource> || std::is_same<T, DataSource>::value;
 
 
@@ -151,11 +137,11 @@ namespace oct::cave::v0
 		}
 		void store(signed char& v, size_t field)
 		{
-			v = oct::core::atoi<signed char>(row[field]);
+			v = core::to_number<signed char>(row[field]);
 		}
 		void store(unsigned char& v, size_t field)
 		{
-			v = oct::core::atoi<unsigned char>(row[field]);
+			v = core::to_number<unsigned char>(row[field]);
 		}
 		void store(const CB*& v, size_t field)
 		{
@@ -171,35 +157,35 @@ namespace oct::cave::v0
 		}*/
 		void store(int& v, size_t field)
 		{
-			v = oct::core::atoi<int>(row[field]);
+			v = core::to_number<int>(row[field]);
 		}
 		void store(unsigned int& v, size_t field)
 		{
-			v = oct::core::atoi<unsigned int>(row[field]);
+			v = core::to_number<unsigned int>(row[field]);
 		}
 		void store(short& v, size_t field)
 		{
-			v = oct::core::atoi<short>(row[field]);
+			v = core::to_number<short>(row[field]);
 		}
 		void store(unsigned short& v, size_t field)
 		{
-			v = oct::core::atoi<unsigned short>(row[field]);
+			v = core::to_number<unsigned short>(row[field]);
 		}
 		void store(long& v, size_t field)
 		{
-			v = oct::core::atoi<long>(row[field]);
+			v = core::to_number<long>(row[field]);
 		}
 		void tore(unsigned long& v, size_t field)
 		{
-			v = oct::core::atoi<unsigned long>(row[field]);
+			v = core::to_number<unsigned long>(row[field]);
 		}
 		void store(long long& v, size_t field)
 		{
-			v = oct::core::atoi<long long>(row[field]);
+			v = core::to_number<long long>(row[field]);
 		}
 		void store(unsigned long long& v, size_t field)
 		{
-			v = oct::core::atoi<unsigned long long>(row[field]);
+			v = core::to_number<unsigned long long>(row[field]);
 		}
 		void store(float& v, size_t field)
 		{
@@ -215,7 +201,7 @@ namespace oct::cave::v0
 		}
 		void store(bool& v, size_t field)
 		{
-			v = (bool)oct::core::atoi<unsigned char>(row[field]);
+			v = (bool)core::to_number<unsigned char>(row[field]);
 		}
 
 		template<typename T> void store(T& v, const char* field);
@@ -348,7 +334,7 @@ namespace oct::cave::v0
 			}
 		}
 
-		template<container_A S> void store(std::vector<S>& v)
+		template<starable S> void store(std::vector<S>& v)
 		{
 			v.reserve(size());
 			Row<CB, DS> row;
@@ -358,7 +344,7 @@ namespace oct::cave::v0
 				v.push_back((const CB**)row);
 			}
 		}
-		template<container_A S> void store(std::list<S>& v)
+		template<starable S> void store(std::list<S>& v)
 		{
 			Row<CB, DS> row;
 			for (size_t i = 0; i < size(); i++)
@@ -449,43 +435,24 @@ namespace oct::cave::v0
 	template <typename T> concept is_Result_derived = std::derived_from<std::remove_const_t<T>, Result<typename T::char_type, typename T::data_type>>;
 	template <typename T> concept result = is_Result_instation<T> || is_Result_derived<T>;
 
-	template <typename T> concept ContainerSelectionStorable = requires(T t)
-	{
-	    T::fields();
-		T::table();
-		//TODO: verificar que el contenerdor tenga contructor para row
-	};
-	template <typename T> concept ContainerInsertable = requires(T t)
-	{
-	    T::fields();
-		T::table();
-	    t.values();
-	};
-	template <typename T> concept ContainerUpdateble = requires(T t)
-	{
-	    T::fields();
-		T::table();
-	    t.values();
-	};
 
 
 	template <typename T> concept Selectable = requires(T t)
 	{
-	    T::fields();
+	    T::select_fields();
 		T::table();
-		//TODO: verificar que el contenerdor tenga contructor para row
-	};
+	} && starable<T>;
 	template <typename T> concept Insertable = requires(T t)
 	{
-	    T::fields();
+	    T::insert_fields();
 		T::table();
-	    t.values();
+	    t.insert_values();
 	};
 	template <typename T> concept Updatable = requires(T t)
 	{
-	    T::fields();
+	    T::update_fields();
 		T::table();
-	    t.values();
+	    t.update_values();
 	};
 	template <typename T> concept Removable = requires(T t)
 	{
@@ -498,17 +465,14 @@ namespace oct::cave::v0
 	{
 
 	};
-
 	struct Select : public Query
 	{
 
 	};
-
 	struct Insert : public Query
 	{
 
 	};
-
 	struct Update : public Query
 	{
 
@@ -545,176 +509,84 @@ namespace oct::cave::v0
 			return connection;
 		}
 
-		RS execute(const std::string&);
+		RS execute(const char*);
 
-
-		RS select(const std::string& fields,const std::string& table)
+		//Por string
+        RS select(const char* table)
 		{
-			std::string srtsql = "SELECT " + fields + " FROM " + table;
-			std::cout << srtsql << "\n";
+			std::string srtsql = "SELECT * ";
+            srtsql += " FROM ";
+            srtsql += table;
+			//std::cout << srtsql << "\n";
 
-			return execute(srtsql);
+			return execute(srtsql.c_str());
 		}
-		/**
-		*\brief SQL clause select.
-		*
-		*/
-		RS select(const std::string& fields,const std::string& table,const std::string& where)
+        RS select(const char* table,const char* fields)
 		{
-			std::string srtsql;
-			srtsql.reserve(30 + fields.size() + table.size() + where.size());
-			srtsql = "SELECT ";
+			std::string srtsql = "SELECT ";
 			srtsql += fields;
-			srtsql += " FROM ";
-			srtsql += table;
-			srtsql += " WHERE ";
-			srtsql += where;
-			srtsql += ";";
+            srtsql += " FROM ";
+            srtsql += table;
 			//std::cout << srtsql << "\n";
 
-			return execute(srtsql);
+			return execute(srtsql.c_str());
 		}
-		RS select(const std::vector<std::string>& list,const std::string& table,const std::string& where)
+        RS select(const char* table,const char* fields,const char* where)
 		{
-			std::string srtsql;
-			size_t reserved = 30 + table.size() + where.size();
-			for(const std::string& s : list)
-			{
-				reserved += s.size() + 1;//el tamaño del estring mas una coma
-			}
-			srtsql.reserve(reserved);
-
-			srtsql = "SELECT ";
-			if(list.size() > 1)
-			{
-				for(size_t i = 0; i < list.size() - 2; i++)
-				{
-					srtsql += list[i];
-				}
-			}
-			else
-			{
-				srtsql += list[0];
-			}
-
-			srtsql += " FROM ";
-			srtsql += table;
-			srtsql += " WHERE ";
-			srtsql += where;
-			srtsql += ";";
+			std::string srtsql = "SELECT ";
+			srtsql += fields;
+            srtsql += " FROM ";
+            srtsql += table;
+            srtsql += " WHERE ";
+            srtsql += where;
 			//std::cout << srtsql << "\n";
 
-			return execute(srtsql);
+			return execute(srtsql.c_str());
 		}
-		template<ContainerSelectionStorable CS> bool select(std::vector<CS>& c)
+        RS select(const char* table,const char* fields,const char* where, size_t limit)
 		{
-		    std::string srtsql = "SELECT " + CS::fields() + " FROM " + CS::table();
-            RS result = execute(srtsql);
-            if(not result) return false;
-            c.reserve(result.size());
+			std::string srtsql = "SELECT ";
+			srtsql += fields;
+            srtsql += " FROM ";
+            srtsql += table;
+            srtsql += " WHERE ";
+            srtsql += where;
+            srtsql += " LIMIT ";
+            srtsql += std::to_string(limit);
+			//std::cout << srtsql << "\n";
+
+			return execute(srtsql.c_str());
+		}
+
+		//Por contenedor
+        template<Selectable SC> void select(std::vector<SC>& rs)
+		{
+			std::string srtsql = "SELECT " + SC::select_fields() + " FROM " + SC::table();
+            RS result = execute(srtsql.c_str());
+            if(not result) return;
             for(size_t i = 0; i < result.size(); i++)
             {
-                c.push_back(result.next());
+                rs.push_back(result.next());
             }
-
-		    return true;
 		}
-		template<ContainerSelectionStorable CS> bool select(std::vector<CS>& c,const std::string& where)
+
+
+
+		RS insert(const char* str)
 		{
-		    std::string srtsql = "SELECT " + CS::fields() + " FROM " + CS::table()  + " WHERE " + where;
-			RS result = execute(srtsql);
-			if (not result) return false;
-			c.reserve(result.size());
-			for (size_t i = 0; i < result.size(); i++)
-			{
-				c.push_back(result.next());
-			}
-
-			return true;
+			return execute(str);
 		}
-		template<ContainerSelectionStorable CS> bool select(std::list<CS>& c)
+		RS update(const char* str)
 		{
-			std::string srtsql = "SELECT " + CS::fields() + " FROM " + CS::table();
-			RS result = execute(srtsql);
-			if (not result) return false;
-
-			for (size_t i = 0; i < result.size(); i++)
-			{
-				c.push_back(result.next());
-			}
-
-			return true;
+			return execute(str);
 		}
-		template<ContainerSelectionStorable CS> bool select(std::list<CS>& c, const std::string& where)
+		RS remove(const char* str)
 		{
-			std::string srtsql = "SELECT " + CS::fields() + " FROM " + CS::table() + " WHERE " + where;
-			RS result = execute(srtsql);
-			if (not result) return false;
-
-			for (size_t i = 0; i < result.size(); i++)
-			{
-				c.push_back(result.next());
-			}
-
-			return true;
-		}
-
-		bool insert(const std::string&);
-		RS insert(const std::string& fields,const std::string& values,const std::string& table)
-		{
-            std::string srtsql = "INSERT INTO " + table + "(" + fields + ")" + " VALUES(" + values + ")";
-            return execute(srtsql);
-		}
-		template<ContainerInsertable CI> RS insert(const CI& c)
-		{
-            std::string srtsql = "INSERT INTO " + CI::table() + "(" + CI::fields() + ")" + " VALUES(" + c.values() + ")";
-            return execute(srtsql);
+			return execute(str);
 		}
 
 
-		bool update(const std::string&);
-		RS update(const std::vector<std::string>& sets, const std::string& table)
-		{
-			if (sets.empty()) return RS();
 
-			std::string srtsql = "UPDATE " + table + " SET ";
-			for (size_t i = 0; i < sets.size() - 1; i++)
-			{
-				srtsql += sets[i] + ",";
-			}
-			srtsql += sets.back();
-
-			return execute(srtsql);
-		}
-		RS update(const std::vector<std::string>& sets, const std::string& table, const std::string& where)
-		{
-			if (sets.empty()) return RS();
-
-			std::string srtsql = "UPDATE " + table + " SET ";
-			for (size_t i = 0; i < sets.size() - 1; i++)
-			{
-				srtsql += sets[i] + ",";
-			}
-			srtsql += sets.back();
-			srtsql  += " WHERE = " + where;
-			return execute(srtsql);
-		}
-		RS update(const std::string& sets, const std::string& table)
-		{
-			if (sets.empty()) return RS();
-			if (table.empty()) return RS();
-
-			std::string srtsql = "UPDATE " + table + " SET " + sets;
-
-			return execute(srtsql);
-		}
-
-
-		RS remove(const std::string& table, const std::string& where)
-		{
-			std::string srtsql = "DELETE FROM " + table + " WHERE " + where;
-			return execute(srtsql);
-		}
 
 		bool begin();
 		bool commit();
