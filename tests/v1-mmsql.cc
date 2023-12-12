@@ -246,7 +246,7 @@ void v1_develop()
         rs3[i].major = smallint(rng);
         try
         {
-             conn.update(rs3[i],{1,2});
+             conn.update(rs3[i],{1});
         }
         catch (const cave::ExceptionDriver&)
         {

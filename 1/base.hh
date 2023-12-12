@@ -734,22 +734,36 @@ namespace oct::cave::v1
 
 			return update(srtsql);
 		}
+		//Por contenedor
+        template<Updatable UC> RS update(const UC& uc)
+        {
+            std::string strsql = "UPDATE " + UC::table() + " SET " + uc.update_values() + ") WHERE ";
+            strsql += UC::identifier_name() + " = " + uc.identifier_value();
+			//std::cout << str << "\n";
+            return update(strsql);
+        }
+        template<Updatable UC> RS update(const UC& uc,const char* where)
+        {
+            std::string str = "UPDATE " + UC::table() + " SET " + uc.update_values() + " WHERE " + where;
+			//std::cout << str << "\n";
+            return update(str);
+        }
         //por indices
         RS update(const char* table,const std::initializer_list<const char*>& sets)
 		{
-			std::string srtsql = "UPDATE ";
-            srtsql += table;
-			srtsql += " SET ";
+			std::string strsql = "UPDATE ";
+            strsql += table;
+			strsql += " SET ";
 
-			srtsql += std::data(sets)[0];
+			strsql += std::data(sets)[0];
             for(size_t i = 1; i < sets.size(); i++)
             {
-                srtsql += ",";
-                srtsql += std::data(sets)[i];
+                strsql += ",";
+                strsql += std::data(sets)[i];
             }
-			std::cout << srtsql << "\n";
+			//std::cout << strsql << "\n";
 
-			return update(srtsql);
+			return update(strsql);
 		}
         RS update(const char* table,const std::initializer_list<const char*>& sets,const char* where)
 		{
@@ -765,7 +779,7 @@ namespace oct::cave::v1
             }
 			srtsql += " WHERE ";
 			srtsql += where;
-			std::cout << srtsql << "\n";
+			//std::cout << srtsql << "\n";
 
 			return update(srtsql);
 		}
@@ -783,19 +797,6 @@ namespace oct::cave::v1
             srtsql += uc.update_values(sets) + " WHERE " + where;
 			//std::cout << str << "\n";
             return update(srtsql);
-        }
-		//Por contenedor
-        template<Updatable UC> RS update(const UC& uc)
-        {
-            std::string str = "UPDATE " + UC::table() + " SET " + uc.update_values() + ") WHERE ";
-			//std::cout << str << "\n";
-            return update(str);
-        }
-        template<Updatable UC> RS update(const UC& uc,const char* where)
-        {
-            std::string str = "UPDATE " + UC::table() + " SET " + uc.update_values() + " WHERE " + where;
-			//std::cout << str << "\n";
-            return update(str);
         }
 
 
