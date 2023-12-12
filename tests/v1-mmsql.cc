@@ -84,6 +84,13 @@ struct Version
 		id = std::atol(s[0]);
 		name = s[0];
 	}
+	Version& operator =(const char** s)
+	{
+		id = std::atol(s[0]);
+		name = s[0];
+
+		return *this;
+	}
 
 	static std::string select_fields()
 	{

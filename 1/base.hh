@@ -83,7 +83,10 @@ namespace oct::cave::v1
 	template<class T> concept char_base = std::is_same<char, T>::value || std::is_same<wchar_t, T>::value;
 	template<class R> concept row_string = std::is_same<const char*, R>::value || std::is_same<const wchar_t*, R>::value;
 	//Contenmedr tipo A, rquiere un contructor para el array de c-string
-	template<class S> concept starable = std::is_constructible_v<S, const char**> && std::is_default_constructible<S>::value && std::is_move_constructible_v<S> && !row_string<S>;
+	template<class S> concept starable = std::is_constructible_v<S, const char**> && std::is_default_constructible<S>::value && std::is_move_constructible_v<S> && !row_string<S> && requires (S s)
+	{
+		s = (const char**)NULL;
+	};
 	template<class T> concept datasource = std::derived_from<T, DataSource> || std::is_same<T, DataSource>::value;
 
 
@@ -474,6 +477,8 @@ namespace oct::cave::v1
 		    return execute(str.c_str());
 		}
 
+		template<core::natural ID> ID last_id();
+
 		//Por string
         RS select(const char* table)
 		{
@@ -551,7 +556,12 @@ namespace oct::cave::v1
 		{
 			return execute(str);
 		}
-        template<core::natural ID> RS insert(const char* str, ID& id);
+        template<core::natural ID> RS insert(const char* str, ID& id)
+        {
+            RS rs = insert(str);
+            id = last_id();
+            return rs;
+        }
         RS insert(const std::string& str)
 		{
 			return insert(str.c_str());
