@@ -102,10 +102,54 @@ struct Version
         return vals;
 	}
 
+	std::string update_values()const
+	{
+	    std::string vals;
+	    vals += "name = '" + name + "'";
+	    vals += ",major = " + std::to_string(major);
+	    vals += ",minor = " + std::to_string(minor);
+
+        return vals;
+	}
+
+	std::string update_values(const std::initializer_list<size_t>& list)const
+	{
+	    std::vector<std::string> vals(3);
+	    vals[0] = "name = '" + name + "'";
+	    vals[1] = "major = " + std::to_string(major);
+	    vals[2] = "minor = " + std::to_string(minor);
+
+        std::string str;
+        str = vals[std::data(list)[0]];
+        for(size_t i = 1; i < list.size(); i++)
+        {
+            str += "," + vals[std::data(list)[i]];
+        }
+
+        return str;
+	}
+
 	static std::string select_fields()
 	{
         return "id,name,major,minor";
 	}
+	static std::string select_fields(const std::initializer_list<size_t>& list)
+	{
+	    std::vector<std::string> vals(3);
+	    vals[0] = "name";
+	    vals[1] = "major ";
+	    vals[2] = "minor";
+
+        std::string str;
+        str = vals[std::data(list)[0]];
+        for(size_t i = 1; i < list.size(); i++)
+        {
+            str += "," + vals[std::data(list)[i]];
+        }
+
+        return str;
+	}
+
 	static std::string insert_fields()
 	{
         return "name,major,minor";
@@ -116,13 +160,15 @@ struct Version
         return "Version";
 	}
 
-	/*template<class C> cave::mmsql::Result insert(C& connector)
+
+	static std::string identifier_name()
 	{
-	    std::string sql;
-        sql += "'" + name + "'," + std::to_string(major)  + "," + std::to_string(minor);
-        //std::cout << "SQL 2 : " << sql << "\n";
-        return connector.insert(fields_insert(),sql,table());
-	}*/
+        return "id";
+	}
+	std::string identifier_value() const
+	{
+        return std::to_string(id);
+	}
 };
 
 void v1_develop()
@@ -176,6 +222,42 @@ void v1_develop()
     ver1.major = smallint(rng);
     ver1.minor = smallint(rng);
     cave::mmsql::Result rs2 = conn.insert(ver1);
+
+    std::vector<Version> rs3;
+    try
+    {
+		 conn.select(rs3,"RAND()",3);
+	}
+	catch (const cave::ExceptionDriver&)
+	{
+		CU_ASSERT(false);
+	}
+	catch (...)
+	{
+		CU_ASSERT(false);
+	}
+	/*for(size_t i = 0; i < rs3.size(); i++)
+    {
+        std::cout << "id:" << rs3[i].id << "\n";
+    }*/
+
+    for(size_t i = 0; i < rs3.size(); i++)
+    {
+        rs3[i].major = smallint(rng);
+        try
+        {
+             conn.update(rs3[i],{1,2});
+        }
+        catch (const cave::ExceptionDriver&)
+        {
+            CU_ASSERT(false);
+        }
+        catch (...)
+        {
+            CU_ASSERT(false);
+        }
+    }
+
 
 }
 

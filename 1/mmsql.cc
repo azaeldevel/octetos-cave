@@ -237,6 +237,22 @@ namespace oct::cave::v1
     {
         return mysql_insert_id(reinterpret_cast<MYSQL*>(connection));
     }
+    /*template<> template<> unsigned long Connection<char, mmsql::Data>::last_id<unsigned long>()
+    {
+        return mysql_insert_id(reinterpret_cast<MYSQL*>(connection));
+    }
+    template<> template<> unsigned int Connection<char, mmsql::Data>::last_id<unsigned int>()
+    {
+        return mysql_insert_id(reinterpret_cast<MYSQL*>(connection));
+    }
+    template<> template<> unsigned int Connection<char, mmsql::Data>::last_id<unsigned short>()
+    {
+        return mysql_insert_id(reinterpret_cast<MYSQL*>(connection));
+    }
+    template<> template<> unsigned int Connection<char, mmsql::Data>::last_id<unsigned char>()
+    {
+        return mysql_insert_id(reinterpret_cast<MYSQL*>(connection));
+    }*/
 
 
 

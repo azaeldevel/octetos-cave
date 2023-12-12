@@ -94,7 +94,7 @@
 			</Target>
 		</Build>
 		<Compiler>
-			<Add option="-Wall -pedantic -std=c++20 `pkg-config --cflags libmariadb`" />
+			<Add option="-Wall -pedantic -std=c++23 `pkg-config --cflags libmariadb`" />
 			<Add directory="../../octetos" />
 		</Compiler>
 		<Unit filename="1/base.cc">
