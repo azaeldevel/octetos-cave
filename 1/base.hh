@@ -401,28 +401,6 @@ namespace oct::cave::v1
 	    t.values();
 	};
 
-	struct Query
-	{
-
-	};
-	struct Select : public Query
-	{
-
-	};
-	struct Insert : public Query
-	{
-
-	};
-	struct Update : public Query
-	{
-
-	};
-
-	struct Delete : public Query
-	{
-
-	};
-
 
 	namespace names
 	{
@@ -530,8 +508,8 @@ namespace oct::cave::v1
         template<Selectable SC> void select(std::vector<SC>& rs)
 		{
 			std::string srtsql = "SELECT " + SC::select_fields() + " FROM " + SC::table();
-            RS result = execute(srtsql.c_str());
-            if(not result) return;
+			//std::cout << srtsql << "\n";
+            RS result = execute(srtsql);
             for(size_t i = 0; i < result.size(); i++)
             {
                 rs.push_back(result.next());
@@ -580,6 +558,13 @@ namespace oct::cave::v1
 
 			return insert(srtsql);
 		}
+		//Por contenedor
+        template<Insertable IC> RS insert(const IC& ic)
+        {
+            std::string str = "INSERT INTO " + IC::table() + "(" + IC::insert_fields() + ") VALUES(" + ic.insert_values() + ")";
+			//std::cout << str << "\n";
+            return insert(str);
+        }
 
 
 		RS update(const char* str)
@@ -644,6 +629,13 @@ namespace oct::cave::v1
 	};
 
 
+	struct Query
+	{
+        virtual void select() = 0;
+        virtual void update() = 0;
+        virtual void insert() = 0;
+        virtual void remove() = 0;
+	};
 
 }
 

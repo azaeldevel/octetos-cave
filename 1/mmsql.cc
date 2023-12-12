@@ -232,7 +232,12 @@ namespace oct::cave::v1
         id = mysql_insert_id(reinterpret_cast<MYSQL*>(connection));
 
         return rs;
+    }
+    template<> long Connection<char, mmsql::Data>::last_id()
+    {
+
     }*/
+
 
 
 

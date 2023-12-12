@@ -77,19 +77,29 @@ struct Version
 	Version(const char** s)
 	{
 		id = std::atol(s[0]);
-		name = s[0];
+		name = s[1];
 	}
 	Version(cave::Row<char,cave::mmsql::Data> s)
 	{
 		id = std::atol(s[0]);
-		name = s[0];
+		name = s[1];
 	}
 	Version& operator =(const char** s)
 	{
 		id = std::atol(s[0]);
-		name = s[0];
+		name = s[1];
 
 		return *this;
+	}
+
+	std::string insert_values()const
+	{
+	    std::string vals;
+	    vals += "'" + name + "'";
+	    vals += "," + std::to_string(major);
+	    vals += "," + std::to_string(minor);
+
+        return vals;
 	}
 
 	static std::string select_fields()
@@ -161,7 +171,11 @@ void v1_develop()
         std::cout << "Error desconocido en escritura de base de datos\n";
 	}
 
-
+    Version ver1;
+    ver1.name = "name" + std::to_string(longint(rng));
+    ver1.major = smallint(rng);
+    ver1.minor = smallint(rng);
+    cave::mmsql::Result rs2 = conn.insert(ver1);
 
 }
 
