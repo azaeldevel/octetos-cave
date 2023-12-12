@@ -551,6 +551,10 @@ namespace oct::cave::v1
 		{
 			return execute(str);
 		}
+        RS insert(const std::string& str)
+		{
+			return insert(str.c_str());
+		}
         RS insert(const char* table,const char* fields,const char* values)
 		{
 			std::string srtsql = "INSERT INTO ";
