@@ -226,6 +226,14 @@ namespace oct::cave::v1
 		throw std::runtime_error("La consulta fallo");
 	}
 
+    /*template<> template<> Result<char,mmsql::Data> Connection<char, mmsql::Data>::insert(const char* str, long& id)
+    {
+        Result<char,mmsql::Data> rs = execute(str);
+        id = mysql_insert_id(reinterpret_cast<MYSQL*>(connection));
+
+        return rs;
+    }*/
+
 
 
 	template<> bool Connection<char, mmsql::Data>::commit()

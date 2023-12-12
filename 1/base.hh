@@ -551,6 +551,7 @@ namespace oct::cave::v1
 		{
 			return execute(str);
 		}
+        template<core::natural ID> RS insert(const char* str, ID& id);
         RS insert(const std::string& str)
 		{
 			return insert(str.c_str());
