@@ -34,7 +34,7 @@ int v1_init(void);
 int v1_clean(void);
 void v1_develop();
 void v1_selects();
-void v1_updates();
+void v1_writes();
 
 
 #endif

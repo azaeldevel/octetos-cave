@@ -342,7 +342,7 @@ void v1_selects()
         std::cout << "id:" << rs3.next()[0] << "\n";
     }*/
 }
-void v1_updates()
+void v1_writes()
 {
     std::random_device dev;
     std::mt19937 rng(dev());
