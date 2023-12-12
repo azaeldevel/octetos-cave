@@ -377,25 +377,25 @@ namespace oct::cave::v1
 
 
 
-	template <typename T> concept Selectable = requires(T t)
+	template <typename T> concept selectable = requires(T t)
 	{
 	    T::select_fields();
 		T::table();
 	} && starable<T>;
-	template <typename T> concept Insertable = requires(T t)
+	template <typename T> concept insertable = requires(T t)
 	{
 	    T::insert_fields();
 		T::table();
 	    t.insert_values();
 	};
-	template <typename T> concept Updatable = requires(T t)
+	template <typename T> concept updatable = requires(T t)
 	{
 		T::table();
 	    t.update_values();
 		T::identifier_name();
 		t.identifier_value();
 	};
-	template <typename T> concept Removable = requires(T t)
+	template <typename T> concept removable = requires(T t)
 	{
 	    T::fields();
 		T::table();
@@ -586,7 +586,7 @@ namespace oct::cave::v1
 			return execute(srtsql.c_str());
 		}
 		//Por contenedor
-        template<Selectable SC> void select(std::vector<SC>& rs)
+        template<selectable SC> void select(std::vector<SC>& rs)
 		{
 			std::string srtsql = "SELECT " + SC::select_fields() + " FROM " + SC::table();
 			//std::cout << srtsql << "\n";
@@ -596,7 +596,7 @@ namespace oct::cave::v1
                 rs.push_back(result.next());
             }
 		}
-        template<Selectable SC> void select(std::vector<SC>& rs,const char* where)
+        template<selectable SC> void select(std::vector<SC>& rs,const char* where)
 		{
 			std::string srtsql = "SELECT " + SC::select_fields() + " FROM " + SC::table() + " WHERE " + where;
 			//std::cout << srtsql << "\n";
@@ -606,7 +606,7 @@ namespace oct::cave::v1
                 rs.push_back(result.next());
             }
 		}
-        template<Selectable SC> void select(std::vector<SC>& rs,const char* where,size_t limit)
+        template<selectable SC> void select(std::vector<SC>& rs,const char* where,size_t limit)
 		{
 			std::string srtsql = "SELECT " + SC::select_fields() + " FROM " + SC::table() + " WHERE " + where + " LIMIT " + std::to_string(limit);
 			//std::cout << srtsql << "\n";
@@ -616,7 +616,7 @@ namespace oct::cave::v1
                 rs.push_back(result.next());
             }
 		}
-        template<Selectable SC> void select(std::vector<SC>& rs,const char* where,const char* order,size_t limit)
+        template<selectable SC> void select(std::vector<SC>& rs,const char* where,const char* order,size_t limit)
 		{
 			std::string srtsql = "SELECT " + SC::select_fields() + " FROM " + SC::table() + " WHERE " + where + " ORDER BY " + order + " LIMIT " + std::to_string(limit);
 			//std::cout << srtsql << "\n";
@@ -626,7 +626,7 @@ namespace oct::cave::v1
                 rs.push_back(result.next());
             }
 		}
-        template<Selectable SC> void select(std::vector<SC>& rs,size_t limit)
+        template<selectable SC> void select(std::vector<SC>& rs,size_t limit)
 		{
 			std::string srtsql = "SELECT " + SC::select_fields() + " FROM " + SC::table() + " LIMIT " + std::to_string(limit);
 			//std::cout << srtsql << "\n";
@@ -696,7 +696,7 @@ namespace oct::cave::v1
 			return insert(srtsql);
 		}
 		//Por contenedor
-        template<Insertable IC> RS insert(const IC& ic)
+        template<insertable IC> RS insert(const IC& ic)
         {
             std::string str = "INSERT INTO " + IC::table() + "(" + IC::insert_fields() + ") VALUES(" + ic.insert_values() + ")";
 			//std::cout << str << "\n";
@@ -735,14 +735,14 @@ namespace oct::cave::v1
 			return update(srtsql);
 		}
 		//Por contenedor
-        template<Updatable UC> RS update(const UC& uc)
+        template<updatable UC> RS update(const UC& uc)
         {
             std::string strsql = "UPDATE " + UC::table() + " SET " + uc.update_values() + ") WHERE ";
             strsql += UC::identifier_name() + " = " + uc.identifier_value();
 			//std::cout << str << "\n";
             return update(strsql);
         }
-        template<Updatable UC> RS update(const UC& uc,const char* where)
+        template<updatable UC> RS update(const UC& uc,const char* where)
         {
             std::string str = "UPDATE " + UC::table() + " SET " + uc.update_values() + " WHERE " + where;
 			//std::cout << str << "\n";
@@ -783,7 +783,7 @@ namespace oct::cave::v1
 
 			return update(srtsql);
 		}
-        template<Updatable UC> RS update(const UC& uc,const std::initializer_list<size_t>& sets)
+        template<updatable UC> RS update(const UC& uc,const std::initializer_list<size_t>& sets)
         {
             std::string srtsql = "UPDATE " + UC::table() + " SET ";
             srtsql += uc.update_values(sets) + " WHERE ";
@@ -791,7 +791,7 @@ namespace oct::cave::v1
 			//std::cout << str << "\n";
             return update(srtsql);
         }
-        template<Updatable UC> RS update(const UC& uc,const std::initializer_list<size_t>& sets,const char* where)
+        template<updatable UC> RS update(const UC& uc,const std::initializer_list<size_t>& sets,const char* where)
         {
             std::string srtsql = "UPDATE " + UC::table() + " SET ";
             srtsql += uc.update_values(sets) + " WHERE " + where;
@@ -807,8 +807,26 @@ namespace oct::cave::v1
 		}
 		RS remove(const std::string& str)
 		{
-			return remove(str.c_str());
+			return execute(str.c_str());
 		}
+		//por string
+		RS remove(const char* table,const char* where)
+		{
+			std::string strsql = "DELETE FROM ";
+			strsql += table;
+            strsql += " WHERE ";
+            strsql += where;
+			//std::cout << strsql << "\n";
+			return remove(strsql);
+		}
+		//Por contenedor
+        template<removable UC> RS remove(const UC& uc)
+        {
+            std::string strsql = "DELETE FROM " + UC::table() + " WHERE ";
+            strsql += UC::identifier_name() + " = " + uc.identifier_value();
+			//std::cout << str << "\n";
+            return update(strsql);
+        }
 
 
 
