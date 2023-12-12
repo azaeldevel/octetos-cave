@@ -20,7 +20,6 @@
 #include <iostream>
 
 #include "mmsql.hh"
-#include "oct-core.hh"
 
 
 #if defined LINUX_ARCH

@@ -483,6 +483,28 @@ namespace oct::cave::v1
 
 	};
 
+
+	namespace names
+	{
+        template<class T = std::string> class Table : public T
+        {
+
+        public:
+            Table()= default;
+            Table(const char* str) : T(str)
+            {
+            }
+            Table(const T& str) : T(str)
+            {
+            }
+
+        };
+        template<class T = std::string> class Field : public T
+        {
+
+        };
+	}
+
 	template<char_base CB, datasource DS, result RS = Result<CB,DS>> class Connection
 	{
 	public:
@@ -568,6 +590,17 @@ namespace oct::cave::v1
             {
                 rs.push_back(result.next());
             }
+		}
+
+		//Por nombres
+        RS select(const names::Table<std::string>& table)
+		{
+			std::string srtsql = "SELECT * ";
+            srtsql += " FROM ";
+            srtsql += table;
+			//std::cout << srtsql << "\n";
+
+			return execute(srtsql.c_str());
 		}
 
 

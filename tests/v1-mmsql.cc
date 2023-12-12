@@ -149,6 +149,10 @@ void v1_develop()
 	{
 		CU_ASSERT(false);
 	}
+	/*for(size_t i = 0; i < rs1.size(); i++)
+    {
+        std::cout << "id:" << rs1.next()[0] << "\n";
+    }*/
 
 
     std::vector<Version> rs2;
@@ -164,11 +168,28 @@ void v1_develop()
 	{
 		CU_ASSERT(false);
 	}
-	for(const Version& v : rs2)
+	/*for(const Version& v : rs2)
     {
         std::cout << "id:" << v.id << "\n";
-    }
+    }*/
 
+    cave::mmsql::Result rs3;
+    try
+    {
+		 rs3 = conn.select(cave::names::Table<std::string>("Version"));
+	}
+	catch (const cave::ExceptionDriver&)
+	{
+		CU_ASSERT(false);
+	}
+	catch (...)
+	{
+		CU_ASSERT(false);
+	}
+	for(size_t i = 0; i < rs3.size(); i++)
+    {
+        std::cout << "id:" << rs3.next()[0] << "\n";
+    }
 }
 
 
