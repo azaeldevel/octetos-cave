@@ -27,6 +27,7 @@ namespace oct::cave::v1::maria
 {
 	typedef mmsql::Data Data;
 	typedef mmsql::Connection Connection;
+	typedef mmsql::Result Result;
 }
 
 #endif
