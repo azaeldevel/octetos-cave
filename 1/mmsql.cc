@@ -199,6 +199,7 @@ namespace oct::cave::v1
 	{
 		if(connection)
 		{
+			//mysql_rollback(reinterpret_cast<MYSQL*>(connection));
 			mysql_close(reinterpret_cast<MYSQL*>(connection));
 			connection = NULL;
 		}
@@ -215,14 +216,10 @@ namespace oct::cave::v1
 
 		//std::cout << "Connection::execute Step 2\n";
 
-		if(ret_query == 0)
-		{
-			//std::cout << "Connection::execute Step 2.2\n";
-			return Result<char,mmsql::Data>(mysql_store_result(reinterpret_cast<MYSQL*>(connection)));
-		}
+		if(ret_query == 0) return Result<char,mmsql::Data>(mysql_store_result(reinterpret_cast<MYSQL*>(connection)));
 
 		//std::cout << "Connection::execute Step 3\n";
-		throw std::runtime_error("La consulta fallo");
+        throw ExceptionDriver((Handle)connection,"Fallo la ejecucion de la consulta");
 	}
 
     template<> template<> size_t Connection<char, mmsql::Data>::last_id<size_t>()
@@ -298,6 +295,80 @@ namespace oct::cave::v1::mmsql
         }
 
         return true;
+    }
+
+    bool execute(Connection& conn,const std::vector<std::filesystem::path>& sources)
+    {
+        std::ifstream actual;
+        //std::string strsql,strline;
+        //std::ostringstream streamsql;
+        std::string strline,strsql;
+        //std::stringstream sline;
+        Result rs;
+        for(const std::filesystem::path& p : sources)
+        {
+            //std::cout << p << "\n";
+            actual.open(p);
+            //streamsql << actual.rdbuf();
+            //strsql = streamsql.str();
+            //std::cout << strsql << "\n";
+            while(std::getline(actual,strline))
+            {
+                if(strline.empty())continue;
+                if(strline.starts_with("--"))continue;
+
+                copy_chars(strline,strsql);
+                std::cout << strsql << "\n";
+                try
+                {
+                    rs = conn.execute(strsql);
+                }
+                catch (const ExceptionDriver& e)
+                {
+                    std::cout << e.what() << "\n";
+                    return EXIT_FAILURE;
+                }
+                catch (const std::exception& e)
+                {
+                    std::cout << e.what() << "\n";
+                    return EXIT_FAILURE;
+                }
+                catch (...)
+                {
+                    return EXIT_FAILURE;
+                }
+            }
+
+            strline.clear();
+            strsql.clear();
+            actual.close();
+        }
+
+        return true;
+    }
+    void copy_chars(const std::string& from,std::string& to)
+    {
+        to = from;
+        for(size_t i = 0; i < from.size(); i++)
+        {
+            if(isalnum(from[i]))
+            {
+
+            }
+            else if(isgraph(from[i]))
+            {
+
+            }
+            else if(isspace(from[i]))
+            {
+
+            }
+            else
+            {
+                std::cout << "|"<< from[i] << "|\n";
+                to[i] = ' ';
+            }
+        }
     }
 }
 

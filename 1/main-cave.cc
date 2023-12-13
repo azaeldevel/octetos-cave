@@ -88,11 +88,13 @@ int repository(int argc, char* argv[]);
 int create_user(int argc, char* argv[]);
 int import(int argc, char* argv[]);
 
+const std::string cmdpwd("[require]");
+
 int main(int argc, char* argv[])
 {
     for(int i = 1; i < argc; i++)
     {
-        std::cout << "Main : \t\t" << argv[i] << "(" << &argv[i] << "):" << argc << std::endl;
+        //std::cout << "Main : \t\t" << argv[i] << "(" << &argv[i] << "):" << argc << std::endl;
         if(strcmp("import",argv[i]) == 0)
         {
             if(i < argc)
@@ -202,6 +204,7 @@ int repository(int argc, char* argv[])
     std::fstream mpk(dir/pakage, std::ios::in);
     std::string strline,strcmd,strparams;
     std::stringstream sline;
+    std::vector<std::filesystem::path> sources;
 
     while(std::getline(mpk,strline))
     {
@@ -210,10 +213,16 @@ int repository(int argc, char* argv[])
 
         std::getline(sline,strcmd,':');
         std::getline(sline,strparams,':');
-        std::cout << strcmd << ":" << strparams << std::endl;
+        //std::cout << strcmd << ":" << strparams << std::endl;
 
         if(strcmd.compare("source") == 0)
 		{
+		    sources.push_back(dir/strparams);
+		    if(not std::filesystem::exists(sources.back()))
+            {
+                std::cerr << "No se encuentre el archivo " << sources.back() << std::endl;
+                return EXIT_FAILURE;
+            }
 		}
 		else if(strcmd.compare("host") == 0)
         {
@@ -233,9 +242,43 @@ int repository(int argc, char* argv[])
         }
 		else if(strcmd.compare("password") == 0)
         {
-            password = strparams;
+            if(cmdpwd.compare("[require]") == 0)
+            {
+                std::cout << "Inserta la contraseña : ";
+                std::cin >> password;
+            }
+            else
+            {
+                password = strparams;
+            }
+
         }
     }
+
+
+    cave::mmsql::Data dtm(host, user, password, port);
+	bool conectfl = false;
+	cave::mmsql::Connection connection;
+	try
+	{
+		conectfl = connection.connect(dtm, false);
+	}
+	catch (const cave::ExceptionDriver& e)
+	{
+		std::cout << e.what() << "\n";
+		return EXIT_FAILURE;
+	}
+	catch (const std::exception& e)
+	{
+		std::cout << e.what() << "\n";
+		return EXIT_FAILURE;
+	}
+	catch (...)
+	{
+		return EXIT_FAILURE;
+	}
+
+    cave::mmsql::execute(connection,sources);
 
 
     return EXIT_SUCCESS;

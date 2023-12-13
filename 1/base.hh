@@ -28,6 +28,14 @@
 #include <list>
 #include <type_traits>
 #include <source_location>
+#include <filesystem>
+#include<iostream>
+#include<fstream>
+#include<sstream>
+#include <algorithm>
+#include <iostream>
+#include <iterator>
+#include <string>
 #include <core/3/Exception.hh>
 #include <core/3/array.hh>
 #include <core/3/numbers.hh>

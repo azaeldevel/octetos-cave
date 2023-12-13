@@ -111,6 +111,22 @@
 					<Add directory="bin/Debug" />
 				</Linker>
 			</Target>
+			<Target title="cave-reposistory-dbg">
+				<Option output="bin/Debug/cave" prefix_auto="1" extension_auto="1" />
+				<Option object_output="bin/obj/Debug" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option parameters="repository /home/azael/develop/octetos/cave/tests/package" />
+				<Compiler>
+					<Add option="-DOCTEOTOS_CAVE_DRIVER_MMSQL" />
+					<Add option="-DOCTEOTOS_CAVE_ENABLE_TDD_V1" />
+				</Compiler>
+				<Linker>
+					<Add option="`pkg-config --libs libmariadb`" />
+					<Add library="cave-mmsql-1" />
+					<Add directory="bin/Debug" />
+				</Linker>
+			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-Wall -pedantic -std=c++23 `pkg-config --cflags libmariadb`" />
@@ -133,6 +149,7 @@
 		<Unit filename="1/main-cave.cc">
 			<Option target="cave-dbg" />
 			<Option target="cave-create-dbg" />
+			<Option target="cave-reposistory-dbg" />
 		</Unit>
 		<Unit filename="1/mmsql.cc">
 			<Option target="Debug" />
