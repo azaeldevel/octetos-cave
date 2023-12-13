@@ -59,6 +59,7 @@
 				<Option parameters="--repository /home/azael/develop/octetos/cave/tests-v0/mariadb.pkg --package muposys-full.mpk --user root --password 4dm1nK3y --database muposys-dev" />
 				<Compiler>
 					<Add option="-DOCTEOTOS_CAVE_DRIVER_MMSQL" />
+					<Add option="-DOCTEOTOS_CAVE_ENABLE_TDD_V1" />
 				</Compiler>
 				<Linker>
 					<Add option="`pkg-config --libs libmariadb`" />
@@ -99,9 +100,10 @@
 				<Option object_output="bin/obj/Debug" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters="create database --user root --password 4dm1nK3y --database muposys-dev-2" />
+				<Option parameters="create database --user root --database muposysdev3 --password 4dm1nK3y " />
 				<Compiler>
 					<Add option="-DOCTEOTOS_CAVE_DRIVER_MMSQL" />
+					<Add option="-DOCTEOTOS_CAVE_ENABLE_TDD_V1" />
 				</Compiler>
 				<Linker>
 					<Add option="`pkg-config --libs libmariadb`" />

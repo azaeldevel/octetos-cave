@@ -146,6 +146,7 @@ int create(int argc, char* argv[])
 
     return EXIT_SUCCESS;
 }
+
 int create_database(int argc, char* argv[])
 {
     std::string user = "root",password,database, host = "localhost";
@@ -229,37 +230,10 @@ int create_database(int argc, char* argv[])
 	}
     dtm.print(std::cout);
 
-
-	if(conectfl)
+    if(conectfl)
     {
-        std::string strsql;
-        strsql = "CREATE DATABASE " + database;
-        std::cout << strsql << "\n";
-        cave::mmsql::Result rs;
-        try
-        {
-             rs = connection.execute(strsql);
-        }
-        catch (const cave::ExceptionDriver& e)
-        {
-            std::cout << e.what() << "\n";
-            return EXIT_FAILURE;
-        }
-        catch (const std::exception& e)
-        {
-            std::cout << e.what() << "\n";
-            return EXIT_FAILURE;
-        }
-        catch (...)
-        {
-            return EXIT_FAILURE;
-        }
+        if(cave::mmsql::create_database(connection,database)) return EXIT_SUCCESS;
     }
-    else
-    {
-
-    }
-
 
 	return EXIT_SUCCESS;
 }

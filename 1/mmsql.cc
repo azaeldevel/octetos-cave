@@ -225,33 +225,10 @@ namespace oct::cave::v1
 		throw std::runtime_error("La consulta fallo");
 	}
 
-    /*template<> template<> Result<char,mmsql::Data> Connection<char, mmsql::Data>::insert(const char* str, long& id)
-    {
-        Result<char,mmsql::Data> rs = execute(str);
-        id = mysql_insert_id(reinterpret_cast<MYSQL*>(connection));
-
-        return rs;
-    }*/
     template<> template<> size_t Connection<char, mmsql::Data>::last_id<size_t>()
     {
         return mysql_insert_id(reinterpret_cast<MYSQL*>(connection));
     }
-    /*template<> template<> unsigned long Connection<char, mmsql::Data>::last_id<unsigned long>()
-    {
-        return mysql_insert_id(reinterpret_cast<MYSQL*>(connection));
-    }
-    template<> template<> unsigned int Connection<char, mmsql::Data>::last_id<unsigned int>()
-    {
-        return mysql_insert_id(reinterpret_cast<MYSQL*>(connection));
-    }
-    template<> template<> unsigned int Connection<char, mmsql::Data>::last_id<unsigned short>()
-    {
-        return mysql_insert_id(reinterpret_cast<MYSQL*>(connection));
-    }
-    template<> template<> unsigned int Connection<char, mmsql::Data>::last_id<unsigned char>()
-    {
-        return mysql_insert_id(reinterpret_cast<MYSQL*>(connection));
-    }*/
 
 
 
@@ -290,11 +267,38 @@ namespace oct::cave::v1
 		return false;
 	}
 
-
 }
 
 namespace oct::cave::v1::mmsql
 {
+
+    bool create_database(Connection& conn,const std::string& database)
+    {
+        std::string strsql;
+        strsql = "CREATE DATABASE " + database;
+        //std::cout << strsql << "\n";
+        Result rs;
+        try
+        {
+            rs = conn.execute(strsql);
+        }
+        catch (const ExceptionDriver& e)
+        {
+            std::cout << e.what() << "\n";
+            return false;
+        }
+        catch (const std::exception& e)
+        {
+            std::cout << e.what() << "\n";
+            return false;
+        }
+        catch (...)
+        {
+                return false;
+        }
+
+        return true;
+    }
 }
 
 

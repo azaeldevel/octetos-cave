@@ -60,6 +60,9 @@ namespace oct::cave::v1::mmsql
 
 	typedef oct::cave::v1::Connection<char,Data> Connection;
 	typedef oct::cave::v1::Result<char,Data> Result;
+
+
+    bool create_database(Connection& conn,const std::string& database);
 }
 
 #endif
