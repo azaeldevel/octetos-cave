@@ -62,10 +62,12 @@
 				</Compiler>
 				<Linker>
 					<Add option="`pkg-config --libs libmariadb`" />
+					<Add library="cave-mmsql-1" />
+					<Add directory="bin/Debug" />
 				</Linker>
 			</Target>
 			<Target title="liboctetos-cave-mmsql-dbg">
-				<Option output="bin/Debug/cave-mmsql-0" imp_lib="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).a" def_file="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).def" prefix_auto="1" extension_auto="1" />
+				<Option output="bin/Debug/cave-mmsql-1" imp_lib="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).a" def_file="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).def" prefix_auto="1" extension_auto="1" />
 				<Option object_output="bin/obj/Debug/" />
 				<Option type="3" />
 				<Option compiler="gcc" />
@@ -79,7 +81,7 @@
 				</Linker>
 			</Target>
 			<Target title="liboctetos-cave-mmsql">
-				<Option output="bin/Release/cave-mmsql-0" imp_lib="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).a" def_file="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).def" prefix_auto="1" extension_auto="1" />
+				<Option output="bin/Release/cave-mmsql-1" imp_lib="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).a" def_file="$(TARGET_OUTPUT_DIR)$(TARGET_OUTPUT_BASENAME).def" prefix_auto="1" extension_auto="1" />
 				<Option object_output="bin/obj/Release/" />
 				<Option type="3" />
 				<Option compiler="gcc" />
@@ -90,6 +92,21 @@
 				<Linker>
 					<Add option="`pkg-config --libs libmariadb`" />
 					<Add directory="../core/bin/Debug" />
+				</Linker>
+			</Target>
+			<Target title="cave-create-dbg">
+				<Option output="bin/Debug/cave" prefix_auto="1" extension_auto="1" />
+				<Option object_output="bin/obj/Debug" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option parameters="create database --user root --password 4dm1nK3y --database muposys-dev-2" />
+				<Compiler>
+					<Add option="-DOCTEOTOS_CAVE_DRIVER_MMSQL" />
+				</Compiler>
+				<Linker>
+					<Add option="`pkg-config --libs libmariadb`" />
+					<Add library="cave-mmsql-1" />
+					<Add directory="bin/Debug" />
 				</Linker>
 			</Target>
 		</Build>
@@ -113,6 +130,7 @@
 		</Unit>
 		<Unit filename="1/main-cave.cc">
 			<Option target="cave-dbg" />
+			<Option target="cave-create-dbg" />
 		</Unit>
 		<Unit filename="1/mmsql.cc">
 			<Option target="Debug" />

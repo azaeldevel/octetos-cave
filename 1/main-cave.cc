@@ -37,10 +37,10 @@
 	#error "Plataforma desconocida"
 #endif
 
-namespace cave_here = oct::cave::v0;
+namespace cave = oct::cave::v1;
 
 
-bool execute(cave_here::mmsql::Connection& connection,const std::filesystem::path& source)
+bool execute(cave::mmsql::Connection& connection,const std::filesystem::path& source)
 {
 	if(not std::filesystem::exists(source))
 	{
@@ -48,7 +48,7 @@ bool execute(cave_here::mmsql::Connection& connection,const std::filesystem::pat
 		return false;
 	}
 
-	cave_here::Result<char, cave_here::mmsql::Data> rest;
+	cave::Result<char, cave::mmsql::Data> rest;
 	std::fstream script(source, std::ios::in);
     std::string strline;
     std::stringstream sline;
@@ -67,7 +67,7 @@ bool execute(cave_here::mmsql::Connection& connection,const std::filesystem::pat
 			rest = connection.execute(strline);
 			//std::cout << "execute Step 2\n";
 		}
-		catch (const cave_here::ExceptionDriver& e)
+		catch (const cave::ExceptionDriver& e)
 		{
 			std::cout << "Error : " << e.what() << "\n";
 		}
@@ -81,7 +81,254 @@ bool execute(cave_here::mmsql::Connection& connection,const std::filesystem::pat
 
 	return false;
 }
+
+int create(int argc, char* argv[]);
+int create_database(int argc, char* argv[]);
+int create_user(int argc, char* argv[]);
+int import(int argc, char* argv[]);
+
 int main(int argc, char* argv[])
+{
+    for(int i = 1; i < argc; i++)
+    {
+        std::cout << "Main : \t\t" << argv[i] << "(" << &argv[i] << "):" << argc << std::endl;
+        if(strcmp("import",argv[i]) == 0)
+        {
+            if(i < argc)
+            {
+                std::cerr << "No se espesifico el valor para muposys password" << std::endl;
+                return EXIT_FAILURE;
+            }
+
+            //return import(argc - (i + 1),&argv[i]);
+            return EXIT_FAILURE;
+        }
+        else if(strcmp("create",argv[i]) == 0)
+        {
+            return create(argc - (i + 1),&argv[i]);
+        }
+    }
+
+	return EXIT_SUCCESS;
+}
+
+int create(int argc, char* argv[])
+{
+    for(int i = 1; i < argc; i++)
+    {
+        std::cout << "Create : \t\t" << argv[i] << "(" << &argv[i] << "):" << argc << std::endl;
+        if(strcmp("user",argv[i]) == 0)
+        {
+            if(i >= argc)
+            {
+                std::cerr << "Faltan opciones adicionales en create user" << std::endl;
+                return EXIT_FAILURE;
+            }
+
+            return create_user(argc - (i + 1),&argv[i]);
+        }
+        else if(strcmp("database",argv[i]) == 0)
+        {
+            if(i >= argc)
+            {
+                std::cerr << "Faltan opciones adicionales create database" << std::endl;
+                return EXIT_FAILURE;
+            }
+
+            return create_database(argc - (i + 1),&argv[i]);
+        }
+        else
+        {
+            std::cerr << "Deve especificarse un sub-comando para create, se encontro '" << argv[i] << "'" << std::endl;
+            return EXIT_FAILURE;
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+int create_database(int argc, char* argv[])
+{
+    std::string user = "root",password,database, host = "localhost";
+    int port = 3306;
+
+    for(int i = 1; i < argc; i++)
+    {
+        std::cout << "Database : \t\t" << argv[i] << "(" << &argv[i] << "):" << argc << std::endl;
+        if(strcmp("--password",argv[i]) == 0)
+        {
+            if(i >= argc)
+            {
+                std::cerr << "No se espesifico el valor para pakage" << std::endl;
+                return EXIT_FAILURE;
+            }
+
+            password = argv[++i];
+        }
+        else if(strcmp("--database",argv[i]) == 0)
+        {
+            if(i >= argc)
+            {
+                std::cerr << "No se espesifico el valor para muposys database" << std::endl;
+                return EXIT_FAILURE;
+            }
+
+            database = argv[++i];
+        }
+        else if(strcmp("--host",argv[i]) == 0)
+        {
+            if(i >= argc)
+            {
+                std::cerr << "No se espesifico el valor para muposys password" << std::endl;
+                return EXIT_FAILURE;
+            }
+
+            host = argv[++i];
+        }
+        else if(strcmp("--user",argv[i]) == 0)
+        {
+            if(i >= argc)
+            {
+                std::cerr << "No se espesifico el valor para muposys password" << std::endl;
+                return EXIT_FAILURE;
+            }
+
+            user = argv[++i];
+        }
+        else if(strcmp("--port",argv[i]) == 0)
+        {
+            if(i >= argc)
+            {
+                std::cerr << "No se espesifico el valor para muposys password" << std::endl;
+                return EXIT_FAILURE;
+            }
+            port = std::stoi(argv[++i]);
+        }
+    }
+
+    cave::mmsql::Data dtm(host, user, password, database, port);
+	bool conectfl = false;
+	cave::mmsql::Connection connection;
+	try
+	{
+		conectfl = connection.connect(dtm, true);
+	}
+	catch (const cave::ExceptionDriver& e)
+	{
+		std::cout << e.what() << "\n";
+		return EXIT_FAILURE;
+	}
+	catch (const std::exception& e)
+	{
+		std::cout << e.what() << "\n";
+		return EXIT_FAILURE;
+	}
+	catch (...)
+	{
+		return EXIT_FAILURE;
+	}
+
+	/*
+	if(conectfl)
+    {
+        std::string strsql;
+        strsql = "CREATE DATABASE " + database;
+        std::cout << strsql << "\n";
+        cave::mmsql::Result rs = connection.execute(strsql);
+    }
+    else
+    {
+
+    }
+    */
+
+	return EXIT_SUCCESS;
+}
+int create_user(int argc, char* argv[])
+{
+    std::string user = "root", password,database, host = "localhost";
+    int port = 3306;
+
+    for(int i = 0; i < argc; i++)
+    {
+        std::cout << "User : \t\t" << argv[i] << "(" << &argv[i] << "):" << argc << std::endl;
+        if(strcmp("--password",argv[i]) == 0)
+        {
+            if(i + 1 >= argc)
+            {
+                std::cerr << "No se espesifico el valor para pakage" << std::endl;
+                return EXIT_FAILURE;
+            }
+
+            password = argv[++i];
+        }
+        else if(strcmp("--database",argv[i]) == 0)
+        {
+            if(i + 1 >= argc)
+            {
+                std::cerr << "No se espesifico el valor para muposys database" << std::endl;
+                return EXIT_FAILURE;
+            }
+
+            database = argv[++i];
+        }
+        else if(strcmp("--host",argv[i]) == 0)
+        {
+            if(i + 1 >= argc)
+            {
+                std::cerr << "No se espesifico el valor para muposys password" << std::endl;
+                return EXIT_FAILURE;
+            }
+
+            host = argv[++i];
+        }
+        else if(strcmp("--user",argv[i]) == 0)
+        {
+            if(i + 1 >= argc)
+            {
+                std::cerr << "No se espesifico el valor para muposys password" << std::endl;
+                return EXIT_FAILURE;
+            }
+
+            user = argv[++i];
+        }
+        else if(strcmp("--port",argv[i]) == 0)
+        {
+            if(i + 1 >= argc)
+            {
+                std::cerr << "No se espesifico el valor para muposys password" << std::endl;
+                return EXIT_FAILURE;
+            }
+            port = std::stoi(argv[++i]);
+        }
+    }
+
+
+
+    /*cave::mmsql::Data dtm(host, user, password, port);
+	bool conectfl = false;
+	cave::mmsql::Connection connection;
+	try
+	{
+		conectfl = connection.connect(dtm, true);
+	}
+	catch (const cave::ExceptionDriver& e)
+	{
+		std::cout << "Exception (cave testing) : " << e.what() << "\n";
+		return EXIT_FAILURE;
+	}
+	catch (const std::exception& e)
+	{
+		std::cout << "Exception (cave testing) : " << e.what() << "\n";
+		return EXIT_FAILURE;
+	}
+	catch (...)
+	{
+		return EXIT_FAILURE;
+	}*/
+
+	return EXIT_SUCCESS;
+}
+int import(int argc, char* argv[])
 {
     std::filesystem::path repository;
     std::string user = "root", password,database, host = "localhost",pakage;
@@ -174,14 +421,14 @@ int main(int argc, char* argv[])
 
 
 
-    cave_here::mmsql::Data dtm(host, user, password, database, port);
+    cave::mmsql::Data dtm(host, user, password, database, port);
 	bool conectfl = false;
-	cave_here::mmsql::Connection connection;
+	cave::mmsql::Connection connection;
 	try
 	{
 		conectfl = connection.connect(dtm, true);
 	}
-	catch (const cave_here::ExceptionDriver& e)
+	catch (const cave::ExceptionDriver& e)
 	{
 		std::cout << "Exception (cave testing) : " << e.what() << "\n";
 		return EXIT_FAILURE;
@@ -226,7 +473,4 @@ int main(int argc, char* argv[])
 			if(flexe) break;
 		}
     }
-
-	return EXIT_SUCCESS;
 }
-

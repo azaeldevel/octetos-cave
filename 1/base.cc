@@ -32,11 +32,18 @@ const char* ExceptionDriver::what() const noexcept
 	if (description.empty())
 	{
 		description = _location.file_name();
-		description += ":";
+		description += " : ";
 		description += std::to_string(_location.line()) + " ";
-		if (_code_flag) description += "- " + std::to_string(_code);
 		if (not _message.empty()) description += _message + " ";
-		if (handle) description += driver_message(handle);
+		if (_code_flag)
+        {
+            description += "\n\tCode(" + std::to_string(_code);
+            if (handle)
+            {
+                description +=  "): ";
+                description +=  driver_message(handle);
+            }
+        }
 	}
 
 	return description.c_str();

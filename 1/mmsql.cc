@@ -142,7 +142,6 @@ namespace oct::cave::v1
 	}
 	template<> void Result<char, mmsql::Data>::load_fields_info()
 	{
-
 	}
 
 
