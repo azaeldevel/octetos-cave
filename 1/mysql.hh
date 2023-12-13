@@ -1,5 +1,5 @@
-#ifndef OCTETOS_COVE_MYSQL_V0_HH
-#define OCTETOS_COVE_MYSQL_V0_HH
+#ifndef OCTETOS_CAVE_MYSQL_V1_HH
+#define OCTETOS_CAVE_MYSQL_V1_HH
 
 
 /*
@@ -20,13 +20,13 @@
  */
 
 
-#include "base.hh"
+
 #include "mmsql.hh"
 
-namespace oct::cave::v0::mysql
+namespace oct::cave::v1::mysql
 {
-	typedef cave_current::mmsql::Data Data;
-	typedef cave_current::mmsql::Connection Connection;
+	typedef mmsql::Data Data;
+	typedef mmsql::Connection Connection;
 }
 
 #endif

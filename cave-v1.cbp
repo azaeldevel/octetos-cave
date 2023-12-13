@@ -151,6 +151,14 @@
 			<Option target="cave-create-dbg" />
 			<Option target="cave-reposistory-dbg" />
 		</Unit>
+		<Unit filename="1/maria.hh">
+			<Option target="Debug" />
+			<Option target="Release" />
+			<Option target="testing-v1" />
+			<Option target="cave-dbg" />
+			<Option target="liboctetos-cave-mmsql-dbg" />
+			<Option target="liboctetos-cave-mmsql" />
+		</Unit>
 		<Unit filename="1/mmsql.cc">
 			<Option target="Debug" />
 			<Option target="Release" />
@@ -164,6 +172,14 @@
 			<Option target="liboctetos-cave-mmsql-dbg" />
 			<Option target="liboctetos-cave-mmsql" />
 			<Option target="testing-v1" />
+		</Unit>
+		<Unit filename="1/mysql.hh">
+			<Option target="Debug" />
+			<Option target="Release" />
+			<Option target="testing-v1" />
+			<Option target="cave-dbg" />
+			<Option target="liboctetos-cave-mmsql-dbg" />
+			<Option target="liboctetos-cave-mmsql" />
 		</Unit>
 		<Unit filename="tests/main.cc">
 			<Option target="Debug" />
