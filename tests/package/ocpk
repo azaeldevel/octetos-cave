@@ -1,0 +1,11 @@
+ver:0.1-alpha
+user:root
+password:[require]
+source:database.sql
+source:stock.sql
+source:user-mang.sql
+source:servicies.sql
+source:fabric.sql
+source:sales.sql
+source:http.sql
+source:default-data.sql

@@ -84,6 +84,7 @@ bool execute(cave::mmsql::Connection& connection,const std::filesystem::path& so
 
 int create(int argc, char* argv[]);
 int create_database(int argc, char* argv[]);
+int repository(int argc, char* argv[]);
 int create_user(int argc, char* argv[]);
 int import(int argc, char* argv[]);
 
@@ -91,7 +92,7 @@ int main(int argc, char* argv[])
 {
     for(int i = 1; i < argc; i++)
     {
-        //std::cout << "Main : \t\t" << argv[i] << "(" << &argv[i] << "):" << argc << std::endl;
+        std::cout << "Main : \t\t" << argv[i] << "(" << &argv[i] << "):" << argc << std::endl;
         if(strcmp("import",argv[i]) == 0)
         {
             if(i < argc)
@@ -107,9 +108,137 @@ int main(int argc, char* argv[])
         {
             return create(argc - i,&argv[i]);
         }
+        else if(strcmp("repository",argv[i]) == 0)
+        {
+            return repository(argc - i,&argv[i]);
+        }
     }
 
 	return EXIT_SUCCESS;
+}
+
+int repository(int argc, char* argv[])
+{
+    std::filesystem::path dir,pakage = "ocpk";
+    std::string user = "root",password,database, host = "localhost";
+    int port = 3306;
+
+    for(int i = 0; i < argc; i++)
+    {
+        //std::cout << "Database : \t\t" << argv[i] << "(" << &argv[i] << "):" << argc << std::endl;
+        if(strcmp("--password",argv[i]) == 0)
+        {
+            if(i >= argc)
+            {
+                std::cerr << "No se espesifico el valor para pakage" << std::endl;
+                return EXIT_FAILURE;
+            }
+
+            password = argv[++i];
+        }
+        else if(strcmp("--database",argv[i]) == 0)
+        {
+            if(i >= argc)
+            {
+                std::cerr << "No se espesifico el valor para muposys database" << std::endl;
+                return EXIT_FAILURE;
+            }
+            //std::cout << "\tDatabase : \t\t" << argv[i+1] << std::endl;
+
+            database = argv[++i];
+        }
+        else if(strcmp("--host",argv[i]) == 0)
+        {
+            if(i >= argc)
+            {
+                std::cerr << "No se espesifico el valor para muposys password" << std::endl;
+                return EXIT_FAILURE;
+            }
+
+            host = argv[++i];
+        }
+        else if(strcmp("--user",argv[i]) == 0)
+        {
+            if(i >= argc)
+            {
+                std::cerr << "No se espesifico el valor para muposys password" << std::endl;
+                return EXIT_FAILURE;
+            }
+
+            user = argv[++i];
+        }
+        else if(strcmp("--port",argv[i]) == 0)
+        {
+            if(i >= argc)
+            {
+                std::cerr << "No se espesifico el valor para muposys password" << std::endl;
+                return EXIT_FAILURE;
+            }
+            port = std::stoi(argv[++i]);
+        }
+        else if(strcmp("repository",argv[i]) == 0)
+        {
+            if(i >= argc)
+            {
+                std::cerr << "No se espesifico el valor para muposys password" << std::endl;
+                return EXIT_FAILURE;
+            }
+
+            dir = argv[++i];
+        }
+    }
+
+    if(dir.empty())
+    {
+        std::cerr << "No se espesifico un reposistorio para trabajar" << std::endl;
+        return EXIT_FAILURE;
+    }
+    if(not std::filesystem::exists(dir))
+    {
+        std::cerr << "No se encuentre el archivo " << dir << std::endl;
+        return EXIT_FAILURE;
+    }
+
+    std::fstream mpk(dir/pakage, std::ios::in);
+    std::string strline,strcmd,strparams;
+    std::stringstream sline;
+
+    while(std::getline(mpk,strline))
+    {
+        sline.clear();
+        sline << strline;
+
+        std::getline(sline,strcmd,':');
+        std::getline(sline,strparams,':');
+        std::cout << strcmd << ":" << strparams << std::endl;
+
+        if(strcmd.compare("source") == 0)
+		{
+		}
+		else if(strcmd.compare("host") == 0)
+        {
+            host = strparams;
+        }
+		else if(strcmd.compare("user") == 0)
+        {
+            user = strparams;user = strparams;
+        }
+		else if(strcmd.compare("port") == 0)
+        {
+            port = cave::core::to_number<decltype(port)>(strparams.c_str());
+        }
+		else if(strcmd.compare("database") == 0)
+        {
+            database = strparams;
+        }
+		else if(strcmd.compare("password") == 0)
+        {
+            password = strparams;
+        }
+    }
+
+
+    return EXIT_SUCCESS;
 }
 
 int create(int argc, char* argv[])

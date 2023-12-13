@@ -100,7 +100,7 @@
 				<Option object_output="bin/obj/Debug" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters="create database --user root --database muposysdev3 --password 4dm1nK3y " />
+				<Option parameters="create database --user root --database muposysdev4 --password 4dm1nK3y " />
 				<Compiler>
 					<Add option="-DOCTEOTOS_CAVE_DRIVER_MMSQL" />
 					<Add option="-DOCTEOTOS_CAVE_ENABLE_TDD_V1" />
