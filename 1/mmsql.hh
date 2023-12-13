@@ -45,6 +45,13 @@ namespace oct::cave::v1::mmsql
 		unsigned int get_port()const;
 		unsigned long get_flags()const;
 
+#ifdef OCTEOTOS_CAVE_ENABLE_TDD_V1
+		void print(std::ostream& o)const
+		{
+            o << host << ":" << port << "/" << user << "/" << database << "\n";
+		}
+#endif // OCTEOTOS_CAVE_ENABLE_TDD_V1
+
 	private:
 		std::string host, user, password, socket;
 		unsigned int port;

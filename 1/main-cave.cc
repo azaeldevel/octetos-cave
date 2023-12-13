@@ -91,7 +91,7 @@ int main(int argc, char* argv[])
 {
     for(int i = 1; i < argc; i++)
     {
-        std::cout << "Main : \t\t" << argv[i] << "(" << &argv[i] << "):" << argc << std::endl;
+        //std::cout << "Main : \t\t" << argv[i] << "(" << &argv[i] << "):" << argc << std::endl;
         if(strcmp("import",argv[i]) == 0)
         {
             if(i < argc)
@@ -100,12 +100,12 @@ int main(int argc, char* argv[])
                 return EXIT_FAILURE;
             }
 
-            //return import(argc - (i + 1),&argv[i]);
+            //return import(argc - i,&argv[i]);
             return EXIT_FAILURE;
         }
         else if(strcmp("create",argv[i]) == 0)
         {
-            return create(argc - (i + 1),&argv[i]);
+            return create(argc - i,&argv[i]);
         }
     }
 
@@ -116,7 +116,7 @@ int create(int argc, char* argv[])
 {
     for(int i = 1; i < argc; i++)
     {
-        std::cout << "Create : \t\t" << argv[i] << "(" << &argv[i] << "):" << argc << std::endl;
+        //std::cout << "Create : \t\t" << argv[i] << "(" << &argv[i] << "):" << argc << std::endl;
         if(strcmp("user",argv[i]) == 0)
         {
             if(i >= argc)
@@ -125,7 +125,7 @@ int create(int argc, char* argv[])
                 return EXIT_FAILURE;
             }
 
-            return create_user(argc - (i + 1),&argv[i]);
+            return create_user(argc - i,&argv[i]);
         }
         else if(strcmp("database",argv[i]) == 0)
         {
@@ -135,7 +135,7 @@ int create(int argc, char* argv[])
                 return EXIT_FAILURE;
             }
 
-            return create_database(argc - (i + 1),&argv[i]);
+            return create_database(argc - i,&argv[i]);
         }
         else
         {
@@ -153,7 +153,7 @@ int create_database(int argc, char* argv[])
 
     for(int i = 1; i < argc; i++)
     {
-        std::cout << "Database : \t\t" << argv[i] << "(" << &argv[i] << "):" << argc << std::endl;
+        //std::cout << "Database : \t\t" << argv[i] << "(" << &argv[i] << "):" << argc << std::endl;
         if(strcmp("--password",argv[i]) == 0)
         {
             if(i >= argc)
@@ -171,6 +171,7 @@ int create_database(int argc, char* argv[])
                 std::cerr << "No se espesifico el valor para muposys database" << std::endl;
                 return EXIT_FAILURE;
             }
+            //std::cout << "\tDatabase : \t\t" << argv[i+1] << std::endl;
 
             database = argv[++i];
         }
@@ -205,7 +206,7 @@ int create_database(int argc, char* argv[])
         }
     }
 
-    cave::mmsql::Data dtm(host, user, password, database, port);
+    cave::mmsql::Data dtm(host, user, password, port);
 	bool conectfl = false;
 	cave::mmsql::Connection connection;
 	try
@@ -226,20 +227,39 @@ int create_database(int argc, char* argv[])
 	{
 		return EXIT_FAILURE;
 	}
+    dtm.print(std::cout);
 
-	/*
+
 	if(conectfl)
     {
         std::string strsql;
         strsql = "CREATE DATABASE " + database;
         std::cout << strsql << "\n";
-        cave::mmsql::Result rs = connection.execute(strsql);
+        cave::mmsql::Result rs;
+        try
+        {
+             rs = connection.execute(strsql);
+        }
+        catch (const cave::ExceptionDriver& e)
+        {
+            std::cout << e.what() << "\n";
+            return EXIT_FAILURE;
+        }
+        catch (const std::exception& e)
+        {
+            std::cout << e.what() << "\n";
+            return EXIT_FAILURE;
+        }
+        catch (...)
+        {
+            return EXIT_FAILURE;
+        }
     }
     else
     {
 
     }
-    */
+
 
 	return EXIT_SUCCESS;
 }
