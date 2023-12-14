@@ -2,6 +2,7 @@ ver:0.1-alpha
 user:root
 password:[require]
 source:database.sql
+source:base.sql
 source:stock.sql
 source:user-mang.sql
 source:servicies.sql

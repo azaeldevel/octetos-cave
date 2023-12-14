@@ -40,53 +40,10 @@
 namespace cave = oct::cave::v1;
 
 
-bool execute(cave::mmsql::Connection& connection,const std::filesystem::path& source)
-{
-	if(not std::filesystem::exists(source))
-	{
-		std::cout << "No se encontro el archivo : " << source << "\n";
-		return false;
-	}
-
-	cave::Result<char, cave::mmsql::Data> rest;
-	std::fstream script(source, std::ios::in);
-    std::string strline;
-    std::stringstream sline;
-    while(std::getline(script,strline))
-    {
-    	if(strline.empty()) continue;
-    	if(strline[0] == '-' and strline[1] == '-') continue;
-    	strline.erase(remove(strline.begin(), strline.end(), '\n'), strline.end());
-    	strline.erase(remove(strline.begin(), strline.end(), ';'), strline.end());
-
-		std::cout << "'" << strline << "' ..." << "\n";
-
-		try
-		{
-			//std::cout << "execute Step 1\n";
-			rest = connection.execute(strline);
-			//std::cout << "execute Step 2\n";
-		}
-		catch (const cave::ExceptionDriver& e)
-		{
-			std::cout << "Error : " << e.what() << "\n";
-		}
-		catch (...)
-		{
-			std::cout << "Error desconocido...\n";
-		}
-
-		rest.close();
-    }
-
-	return false;
-}
-
 int create(int argc, char* argv[]);
 int create_database(int argc, char* argv[]);
 int repository(int argc, char* argv[]);
 int create_user(int argc, char* argv[]);
-int import(int argc, char* argv[]);
 
 const std::string cmdpwd("[require]");
 
@@ -121,7 +78,7 @@ int main(int argc, char* argv[])
 
 int repository(int argc, char* argv[])
 {
-    std::filesystem::path dir,pakage = "ocpk";
+    std::filesystem::path dir,package = "ocpk";
     std::string user = "root",password,database, host = "localhost";
     int port = 3306;
 
@@ -188,6 +145,16 @@ int repository(int argc, char* argv[])
 
             dir = argv[++i];
         }
+        else if(strcmp("--package",argv[i]) == 0)
+        {
+            if(i >= argc)
+            {
+                std::cerr << "No se espesifico el valor para muposys password" << std::endl;
+                return EXIT_FAILURE;
+            }
+
+            package = argv[++i];
+        }
     }
 
     if(dir.empty())
@@ -201,7 +168,7 @@ int repository(int argc, char* argv[])
         return EXIT_FAILURE;
     }
 
-    std::fstream mpk(dir/pakage, std::ios::in);
+    std::fstream mpk(dir/package, std::ios::in);
     std::string strline,strcmd,strparams;
     std::stringstream sline;
     std::vector<std::filesystem::path> sources;
@@ -278,8 +245,11 @@ int repository(int argc, char* argv[])
 		return EXIT_FAILURE;
 	}
 
-    cave::mmsql::execute(connection,sources);
-
+	if(conectfl)
+    {
+        cave::mmsql::execute(connection,sources);
+        connection.commit();
+    }
 
     return EXIT_SUCCESS;
 }
@@ -468,8 +438,6 @@ int create_user(int argc, char* argv[])
         }
     }
 
-
-
     /*cave::mmsql::Data dtm(host, user, password, port);
 	bool conectfl = false;
 	cave::mmsql::Connection connection;
@@ -493,150 +461,4 @@ int create_user(int argc, char* argv[])
 	}*/
 
 	return EXIT_SUCCESS;
-}
-int import(int argc, char* argv[])
-{
-    std::filesystem::path repository;
-    std::string user = "root", password,database, host = "localhost",pakage;
-    int port = 3306;
-
-    for(int i = 0; i < argc; i++)
-    {
-        if(strcmp("-r",argv[i]) == 0 or strcmp("--repository",argv[i]) == 0)
-        {
-            if(i + 1 >= argc)
-            {
-                std::cerr << "No se espesifico el valor para repository" << std::endl;
-                return EXIT_FAILURE;
-            }
-
-            repository = argv[++i];
-        }
-        else if(strcmp("--package",argv[i]) == 0)
-        {
-            if(i + 1 >= argc)
-            {
-                std::cerr << "No se espesifico el valor para pakage" << std::endl;
-                return EXIT_FAILURE;
-            }
-
-            pakage = argv[++i];
-        }
-        else if(strcmp("--password",argv[i]) == 0)
-        {
-            if(i + 1 >= argc)
-            {
-                std::cerr << "No se espesifico el valor para pakage" << std::endl;
-                return EXIT_FAILURE;
-            }
-
-            password = argv[++i];
-        }
-        else if(strcmp("--database",argv[i]) == 0)
-        {
-            if(i + 1 >= argc)
-            {
-                std::cerr << "No se espesifico el valor para muposys database" << std::endl;
-                return EXIT_FAILURE;
-            }
-
-            database = argv[++i];
-        }
-        else if(strcmp("--host",argv[i]) == 0)
-        {
-            if(i + 1 >= argc)
-            {
-                std::cerr << "No se espesifico el valor para muposys password" << std::endl;
-                return EXIT_FAILURE;
-            }
-
-            host = argv[++i];
-        }
-        else if(strcmp("--user",argv[i]) == 0)
-        {
-            if(i + 1 >= argc)
-            {
-                std::cerr << "No se espesifico el valor para muposys password" << std::endl;
-                return EXIT_FAILURE;
-            }
-
-            user = argv[++i];
-        }
-        else if(strcmp("--port",argv[i]) == 0)
-        {
-            if(i + 1 >= argc)
-            {
-                std::cerr << "No se espesifico el valor para muposys password" << std::endl;
-                return EXIT_FAILURE;
-            }
-            port = std::stoi(argv[++i]);
-        }
-    }
-
-
-    if(repository.empty())
-    {
-        std::cerr << "No se espesifico un reposistorio para trabajar" << std::endl;
-        return EXIT_FAILURE;
-    }
-    if(pakage.empty())
-    {
-        std::cerr << "No se espesifico un paquete para trabajar" << std::endl;
-        return EXIT_FAILURE;
-    }
-
-
-
-    cave::mmsql::Data dtm(host, user, password, database, port);
-	bool conectfl = false;
-	cave::mmsql::Connection connection;
-	try
-	{
-		conectfl = connection.connect(dtm, true);
-	}
-	catch (const cave::ExceptionDriver& e)
-	{
-		std::cout << "Exception (cave testing) : " << e.what() << "\n";
-		return EXIT_FAILURE;
-	}
-	catch (const std::exception& e)
-	{
-		std::cout << "Exception (cave testing) : " << e.what() << "\n";
-		return EXIT_FAILURE;
-	}
-	catch (...)
-	{
-		return EXIT_FAILURE;
-	}
-
-	if(not conectfl)
-	{
-		std::cout << "Fallo la conexion a la base de tatos.\n";
-		return EXIT_FAILURE;
-	}
-	if(not connection.is_connected())
-	{
-		std::cout << "Fallo la conexion a la base de tatos.\n";
-		return EXIT_FAILURE;
-	}
-
-    std::fstream mpk(repository/pakage, std::ios::in);
-    std::string strline,strcmd,strparams;
-    std::stringstream sline;
-    bool flexe;
-    while(std::getline(mpk,strline))
-    {
-        sline.clear();
-        sline << strline;
-
-        std::getline(sline,strcmd,':');
-        std::getline(sline,strparams,':');
-
-        //std::cout << strcmd << " : " << strparams << std::endl;
-        if(strcmd.compare("source") == 0)
-		{
-			flexe = execute(connection,repository/strparams);
-			if(flexe) break;
-		}
-    }
 }
