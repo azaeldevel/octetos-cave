@@ -607,7 +607,7 @@ namespace oct::cave::v1
         template<selectable SC> void select(std::vector<SC>& rs,const char* where)
 		{
 			std::string srtsql = "SELECT " + SC::select_fields() + " FROM " + SC::table() + " WHERE " + where;
-			//std::cout << srtsql << "\n";
+			std::cout << srtsql << "\n";
             RS result = execute(srtsql);
             for(size_t i = 0; i < result.size(); i++)
             {

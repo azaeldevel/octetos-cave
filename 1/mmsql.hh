@@ -30,6 +30,7 @@ namespace oct::cave::v1::mmsql
 	class Data : public DataSource
 	{
 	public:
+		Data() = default;
 		Data(const std::string& host, const std::string& user, const std::string& password);
 		Data(const std::string& host, const std::string& user, const std::string& password, const std::string& database);
 		Data(const std::string& host, const std::string& user, const std::string& password, unsigned int port);
@@ -44,6 +45,13 @@ namespace oct::cave::v1::mmsql
 		const std::string& get_socket()const;
 		unsigned int get_port()const;
 		unsigned long get_flags()const;
+
+		void set(const std::string& host, const std::string& user, const std::string& password);
+		void set(const std::string& host, const std::string& user, const std::string& password, const std::string& database);
+		void set(const std::string& host, const std::string& user, const std::string& password, unsigned int port);
+		void set(const std::string& host, const std::string& user, const std::string& password, const std::string& database, unsigned int port);
+		void set(const std::string& host, const std::string& user, const std::string& password, const std::string& database, unsigned int port, const std::string& socket);
+		void set(const std::string& host, const std::string& user, const std::string& password, const std::string& database, unsigned int port, const std::string& socket, unsigned long flags);
 
 #ifdef OCTEOTOS_CAVE_ENABLE_TDD_V1
 		void print(std::ostream& o)const

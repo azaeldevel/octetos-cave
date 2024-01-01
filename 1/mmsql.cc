@@ -89,6 +89,60 @@ namespace oct::cave::v1::mmsql
 		return flags;
 	}
 
+	void Data::set(const std::string& h, const std::string& u, const std::string& pwd)
+	{
+	    host = h;
+	    user = u;
+	    password = pwd;
+	    port = 3306;
+	    flags = 0;
+	}
+	void Data::set(const std::string& h, const std::string& u, const std::string& pwd, const std::string& d)
+	{
+	    database = d;
+	    host = h;
+	    user = u;
+	    password = pwd;
+	    port = 3306;
+	    flags = 0;
+	}
+	void Data::set(const std::string& h, const std::string& u, const std::string& pwd, unsigned int p)
+	{
+	    host = h;
+	    user = u;
+	    password = pwd;
+	    port = p;
+	    flags = 0;
+	}
+	void Data::set(const std::string& h, const std::string& u, const std::string& pwd, const std::string& d, unsigned int p)
+	{
+	    database = d;
+	    host = h;
+	    user = u;
+	    password = pwd;
+	    port = p;
+	    flags = 0;
+	}
+	void Data::set(const std::string& h, const std::string& u, const std::string& pwd, const std::string& d, unsigned int p, const std::string& s)
+	{
+	    database = d;
+	    host = h;
+	    user = u;
+	    password = pwd;
+	    socket = s;
+	    port = 3306;
+	    flags = 0;
+	}
+	void Data::set(const std::string& h, const std::string& u, const std::string& pwd, const std::string& d, unsigned int p, const std::string& s, unsigned long f)
+	{
+	    database = d;
+	    host = h;
+	    user = u;
+	    password = pwd;
+	    socket = s;
+	    port = p;
+	    flags = f;
+	}
 }
 
 namespace oct::cave::v1
