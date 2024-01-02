@@ -1,3 +1,5 @@
-user = "root";
+host = "[require]";
+user = "[require]";
+port = "3306";
 password = "[require]";
 files = ("database.sql","base.sql","stock.sql","user-mang.sql","servicies.sql","fabric.sql","sales.sql","http.sql","default-data.sql");

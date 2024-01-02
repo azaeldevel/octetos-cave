@@ -36,6 +36,7 @@
 
 //namespace cave = oct::cave::v1;
 const std::string cmdpwd("[require]");
+const std::string cmd_require("[require]");
 
 namespace oct::cave::v1
 {
@@ -121,10 +122,21 @@ namespace oct::cave::v1
         libconfig::Setting &root = config.getRoot();
 
         //
-        std::string name = root.lookup("user");
-        std::cout << "name : " << name<< std::endl;
-        std::string password = root.lookup("password");
-        std::cout << "password : " << password << std::endl;
+        host = (std::string)root.lookup("host");
+        user = (std::string)root.lookup("user");
+        password = (std::string)root.lookup("password");
+        if(root.exists("port"))
+        {
+            //port = root.lookup("port");
+        }
+
+
+        //std::cout << "name : " << name<< std::endl;
+        //std::cout << "password : " << password << std::endl;
+        //database = root.lookup("database");
+        //std::cout << "password : " << password << std::endl;
+
+        //std::cout << "port : " << port << std::endl;
 
         const libconfig::Setting &list = root["files"];
         std::cout << "cantidad : " << list.getLength() << std::endl;
@@ -134,7 +146,24 @@ namespace oct::cave::v1
             files.push_back((std::filesystem::path)list[i]);
         }
 
-        if(password.compare(cmdpwd) == 0)
+        if(host.compare(cmd_require) == 0)
+        {
+            host.clear();
+            std::cout << "Indicar Host : ";
+            std::cin >> host;
+        }
+        if(user.compare(cmd_require) == 0)
+        {
+            host.clear();
+            std::cout << "Indicar user : ";
+            std::cin >> user;
+        }
+        if(port == 0)
+        {
+            std::cout << "Indicar port : ";
+            std::cin >> port;
+        }
+        if(password.compare(cmd_require) == 0)
         {
             password.clear();
             std::cout << "Inserta la password para " << user << " : ";
