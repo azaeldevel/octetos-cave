@@ -41,6 +41,8 @@ namespace oct::cave::v1
         int repository_import(int argc, char* argv[]);
         int repository(int argc, char* argv[]);
 
+        virtual std::vector<std::string> resolved_template(const std::string& type,const std::string& name);
+
     private:
         std::filesystem::path dir,package = "ocpk";
         std::string user = "root",password,database, host = "localhost";

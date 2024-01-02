@@ -44,7 +44,7 @@ namespace oct::cave::v1
     {
         for(int i = 1; i < argc; i++)
         {
-            std::cout << "Main : \t\t" << argv[i] << "(" << &argv[i] << "):" << argc << std::endl;
+            //std::cout << "Main : \t\t" << argv[i] << "(" << &argv[i] << "):" << argc << std::endl;
             if(strcmp("--password",argv[i]) == 0)
             {
                 if(i >= argc)
@@ -114,8 +114,9 @@ namespace oct::cave::v1
     }
     int Program::repository_import(int argc, char* argv[])
     {
+        std::vector<std::string> header;
         std::filesystem::path file = argv[1];
-        std::cout << file << std::endl;
+        //std::cout << file << std::endl;
         std::vector<std::filesystem::path> files;
         libconfig::Config config;
         config.readFile(file.c_str());
@@ -123,51 +124,51 @@ namespace oct::cave::v1
 
         //
         host = (std::string)root.lookup("host");
+        std::cout << "host : " << host << std::endl;
         user = (std::string)root.lookup("user");
+        std::cout << "user : " << user << std::endl;
         password = (std::string)root.lookup("password");
-        if(root.exists("port"))
-        {
-            //port = root.lookup("port");
-        }
-
-
-        //std::cout << "name : " << name<< std::endl;
-        //std::cout << "password : " << password << std::endl;
-        //database = root.lookup("database");
-        //std::cout << "password : " << password << std::endl;
-
+        std::cout << "password : " << password << std::endl;
+        //port = (int)root.lookup("port");
         //std::cout << "port : " << port << std::endl;
 
+        database = (std::string)root.lookup("database");
+        std::cout << "database : " << database << std::endl;
         const libconfig::Setting &list = root["files"];
-        std::cout << "cantidad : " << list.getLength() << std::endl;
+        //std::cout << "cantidad : " << list.getLength() << std::endl;
         for(int i = 0; i < list.getLength(); i++)
         {
-            std::cout << (std::string)list[i] << "\n";
+            //std::cout << (std::string)list[i] << "\n";
             files.push_back((std::filesystem::path)list[i]);
         }
 
         if(host.compare(cmd_require) == 0)
         {
             host.clear();
-            std::cout << "Indicar Host : ";
+            std::cout << "Conection Host : ";
             std::cin >> host;
         }
         if(user.compare(cmd_require) == 0)
         {
             host.clear();
-            std::cout << "Indicar user : ";
+            std::cout << "Conection user : ";
             std::cin >> user;
         }
         if(port == 0)
         {
-            std::cout << "Indicar port : ";
+            std::cout << "Conection port : ";
             std::cin >> port;
         }
         if(password.compare(cmd_require) == 0)
         {
             password.clear();
-            std::cout << "Inserta la password para " << user << " : ";
+            std::cout << "Conection Password [" << user << "] : ";
             std::cin >> password;
+        }
+        if(database.compare("[basic-template]") == 0)
+        {
+            //
+            header = this->resolved_template(database,"database-header");
         }
 
         mmsql::Data dtm(host, user, password, port);
@@ -194,6 +195,14 @@ namespace oct::cave::v1
 
         if(conectfl)
         {
+            if(not header.empty())
+            {
+                for(const std::string& str : header)
+                {
+                    std::cout << str << "\n";
+                    connection.execute(str);
+                }
+            }
             mmsql::execute(connection,files,true);
             connection.commit();
         }
@@ -218,9 +227,49 @@ namespace oct::cave::v1
 
         }
 
-
-
         return EXIT_SUCCESS;
+    }
+
+    std::vector<std::string> Program::resolved_template(const std::string& type,const std::string& name)
+    {
+        std::vector<std::string> sqlheader;
+        if(type.compare("[basic-template]") == 0)
+        {
+            if(name.compare("database-header") == 0)
+            {
+                std::string database,user,password;
+                std::cout << "Database : ";
+                std::cin >> database;
+                std::cout << "Usuario : ";
+                std::cin >> user;
+                std::cout << "Password : ";
+                std::cin >> password;
+
+                std::string str = "CREATE  USER IF NOT EXISTS '" + user + "'@'" + host + "' IDENTIFIED BY '" + password + "';";
+                sqlheader.push_back(str);
+                str = "CREATE DATABASE `";
+                str += database + "`;";
+                sqlheader.push_back(str);
+                str = "GRANT ALL PRIVILEGES ON `";
+                str += database + "`.* TO '" + user + "'@'" + host + "';";
+                sqlheader.push_back(str);
+                str = "FLUSH PRIVILEGES;";
+                sqlheader.push_back(str);
+                str = "USE `";
+                str += database + "`;";
+                sqlheader.push_back(str);
+
+                return sqlheader;
+            }
+            else
+            {
+
+            }
+
+            return sqlheader;
+        }
+
+        return sqlheader;
     }
 
 }
