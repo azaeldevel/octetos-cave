@@ -58,11 +58,12 @@
 				<Option compiler="gcc" />
 				<Option parameters="--repository /home/azael/develop/octetos/cave/tests-v0/mariadb.pkg --package muposys-full.mpk --user root --password 4dm1nK3y --database muposys-dev" />
 				<Compiler>
+					<Add option="pkg-config libconfig++ --cflags`" />
 					<Add option="-DOCTEOTOS_CAVE_DRIVER_MMSQL" />
 					<Add option="-DOCTEOTOS_CAVE_ENABLE_TDD_V1" />
 				</Compiler>
 				<Linker>
-					<Add option="`pkg-config --libs libmariadb`" />
+					<Add option="`pkg-config --libs libmariadb` pkg-config libconfig++ --libs`" />
 					<Add library="cave-mmsql-1" />
 					<Add directory="bin/Debug" />
 				</Linker>
@@ -129,11 +130,30 @@
 					<Add directory="bin/Debug" />
 				</Linker>
 			</Target>
+			<Target title="cave-reposistory-create">
+				<Option output="bin/Debug/cave" prefix_auto="1" extension_auto="1" />
+				<Option object_output="bin/obj/Debug" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option parameters="repository import /home/azael/develop/octetos/cave/tests/package/muposys.ocpk" />
+				<Compiler>
+					<Add option="`pkg-config libconfig++ --cflags`" />
+					<Add option="-DOCTEOTOS_CAVE_DRIVER_MMSQL" />
+					<Add option="-DOCTEOTOS_CAVE_ENABLE_TDD_V1" />
+				</Compiler>
+				<Linker>
+					<Add option="`pkg-config --libs libmariadb` `pkg-config libconfig++ --libs`" />
+					<Add library="cave-mmsql-1" />
+					<Add directory="bin/Debug" />
+				</Linker>
+			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-Wall -pedantic -std=c++23 `pkg-config --cflags libmariadb`" />
 			<Add directory="../../octetos" />
 		</Compiler>
+		<Unit filename="1/Program.cc" />
+		<Unit filename="1/Program.hh" />
 		<Unit filename="1/base.cc">
 			<Option target="Debug" />
 			<Option target="liboctetos-cave-mmsql-dbg" />
@@ -152,6 +172,7 @@
 			<Option target="cave-dbg" />
 			<Option target="cave-create-dbg" />
 			<Option target="cave-reposistory-dbg" />
+			<Option target="cave-reposistory-create" />
 		</Unit>
 		<Unit filename="1/maria.hh">
 			<Option target="Debug" />

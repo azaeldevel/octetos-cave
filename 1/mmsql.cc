@@ -351,7 +351,7 @@ namespace oct::cave::v1::mmsql
         return true;
     }
 
-    bool execute(Connection& conn,const std::vector<std::filesystem::path>& sources)
+    bool execute(Connection& conn,const std::vector<std::filesystem::path>& sources, bool log)
     {
         std::ifstream actual;
         //std::string strsql,strline;
@@ -361,7 +361,7 @@ namespace oct::cave::v1::mmsql
         Result rs;
         for(const std::filesystem::path& p : sources)
         {
-            //std::cout << p << "\n";
+            if(log) std::cout << "Ejecutando : " << p << "\n";
             actual.open(p);
             //streamsql << actual.rdbuf();
             //strsql = streamsql.str();
