@@ -58,6 +58,19 @@ const std::string& DataSource::get_database()const
 }
 
 
+
+    Script::operator const std::vector<std::string>& () const
+    {
+        return sql;
+    }
+    void Script::print(std::ostream& out)
+    {
+        for(const std::string& str : sql)
+        {
+            out << str << "\n";
+        }
+    }
+
     Database::Database(Database::Type t,const char* d) : type(t),database(d)
     {
         build();
@@ -123,10 +136,6 @@ const std::string& DataSource::get_database()const
             break;
         }
     }
-    Database::operator const std::vector<std::string>& () const
-    {
-        return sql;
-    }
 
     std::vector<std::string> split(const std::string& source,bool log)
     {
@@ -140,12 +149,5 @@ const std::string& DataSource::get_database()const
         }
 
         return ls;
-    }
-    void print(std::ostream& out,const std::vector<std::string>& list)
-    {
-        for(const std::string& str : list)
-        {
-            out << str << "\n";
-        }
     }
 }

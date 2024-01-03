@@ -177,7 +177,7 @@ void v1_develop()
     std::mt19937 rng(dev());
     std::uniform_int_distribution<std::mt19937::result_type> longint(1,92233720368547);
     std::uniform_int_distribution<std::mt19937::result_type> smallint(1,128);
-    std::string database_name = "cave-37-dev";
+    std::string database_name = "cave-39-dev";
 
     cave::mmsql::Data dtmroot("localhost","root","4dm1nK3y", OCTEOTOS_CAVE_TESTS_MMSQL_PORT);
 	bool conectflroot = false;
@@ -205,11 +205,13 @@ void v1_develop()
 	CU_ASSERT(conectflroot);
 
 	cave::Database stmt(cave::Database::basic_header,database_name.c_str(),"develop","123456");
-    cave::print(std::cout,stmt);
+    //cave::print(std::cout,stmt);
+    stmt.print(std::cout);
 
 	try
     {
-        connroot.execute(stmt);
+        //connroot.execute(stmt);
+        stmt.execute(connroot);
     }
     catch (const cave::ExceptionDriver& e)
     {

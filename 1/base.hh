@@ -473,10 +473,25 @@ namespace oct::cave::v1
 
 
 
-	class Statement
+	class Script
 	{
     public:
-        virtual operator const std::vector<std::string>&() const = 0;
+        Script() = default;
+        Script(const std::filesystem::path&);
+        operator const std::vector<std::string>&() const;
+
+		template<class C> void execute(C& c)
+		{
+		    c.execute(*this);
+		}
+
+        void print(std::ostream&);
+
+	protected:
+        std::vector<std::string> sql;
+
+    private:
+
 	};
 
 	template<char_base CB, datasource DS, result RS = Result<CB,DS>> class Connection
@@ -510,7 +525,7 @@ namespace oct::cave::v1
 		{
 		    return execute(str.c_str());
 		}
-		void execute(const Statement& q)
+		void execute(const Script& q)
 		{
 		    Result<CB,DS> rs;
             for(const std::string& str : (const std::vector<std::string>&)q)
@@ -880,7 +895,7 @@ namespace oct::cave::v1
         virtual void remove() = 0;
 	};
 
-	class Database : public Statement
+	class Database : public Script
 	{
     public:
         enum Type
@@ -894,7 +909,6 @@ namespace oct::cave::v1
         Database() = default;
         Database(Type,const char* database);
         Database(Type,const char* database,const char* user,const char* password);
-        virtual operator const std::vector<std::string>&() const;
 
     private:
         void build();
@@ -902,7 +916,6 @@ namespace oct::cave::v1
     private:
         Type type;
         const char *database,*user,*password;
-        std::vector<std::string> sql;
 	};
 
 
@@ -912,7 +925,6 @@ namespace oct::cave::v1
         std::vector<std::string> ls = split(str,log);
         execute(conn,ls,log);
     }
-    void print(std::ostream&,const std::vector<std::string>&);
 
 }
 
