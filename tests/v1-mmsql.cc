@@ -177,7 +177,7 @@ void v1_develop()
     std::mt19937 rng(dev());
     std::uniform_int_distribution<std::mt19937::result_type> longint(1,92233720368547);
     std::uniform_int_distribution<std::mt19937::result_type> smallint(1,128);
-    std::string database_name = "cave-39-dev";
+    std::string database_name = "cave-40-dev";
 
     cave::mmsql::Data dtmroot("localhost","root","4dm1nK3y", OCTEOTOS_CAVE_TESTS_MMSQL_PORT);
 	bool conectflroot = false;

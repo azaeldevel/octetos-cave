@@ -101,7 +101,7 @@ const std::string& DataSource::get_database()const
     {
         std::string str;
         str = "CREATE USER ";
-        if(not check_exist) str += "IF NOT EXISTS";
+        if(check_exist) str += "IF NOT EXISTS";
         str += " '";
         str += user;
         str += "'@'";
@@ -153,30 +153,10 @@ const std::string& DataSource::get_database()const
             if(not database) break;
             if(not user) break;
             if(not password) break;
-            str = "CREATE USER IF NOT EXISTS '";
-            str += user;
-            str += "'@'%' IDENTIFIED BY '";
-            str += password;
-            str += "';";
-            sql.push_back(str);
-            str = "CREATE DATABASE `";
-            str += database;
-            str += "`;";
-            sql.push_back(str);
-            str = "GRANT ALL PRIVILEGES ON `";
-            str += database;
-            str += "`.* TO '";
-            str += user;
-            str += "'@'%' IDENTIFIED BY '";
-            str += password;
-            str += "';";
-            sql.push_back(str);
-            str = "FLUSH PRIVILEGES;";
-            sql.push_back(str);
-            str = "USE `";
-            str += database;
-            str += "`;";
-            sql.push_back(str);
+            create_user(user,true,"%",password);
+            Script::create_database(database);
+            grand_all_privileges(database,user,"%",password);
+            Script::use(database);
             break;
         }
     }
