@@ -80,7 +80,7 @@ namespace oct::cave::v1::mmsql
 	{
 		return socket;
 	}
-	unsigned int Data::get_port()const
+	int Data::get_port()const
 	{
 		return port;
 	}

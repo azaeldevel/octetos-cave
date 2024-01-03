@@ -43,7 +43,7 @@ namespace oct::cave::v1::mmsql
 		const std::string& get_user()const;
 		const std::string& get_password()const;
 		const std::string& get_socket()const;
-		unsigned int get_port()const;
+		int get_port()const;
 		unsigned long get_flags()const;
 
 		void set(const std::string& host, const std::string& user, const std::string& password);
@@ -62,7 +62,7 @@ namespace oct::cave::v1::mmsql
 
 	private:
 		std::string host, user, password, socket;
-		unsigned int port;
+		int port;
 		unsigned long flags;
 	};
 

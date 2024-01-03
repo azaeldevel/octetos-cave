@@ -118,15 +118,14 @@ namespace oct::cave::v1
         config.readFile(file.c_str());
 
         libconfig::Setting &root = config.getRoot();
-        if(root.exists("database"))
-        {
-            libconfig::Setting &database = root.lookup("database");
-            if(root.exists("mmsql"))
-            {
-                libconfig::Setting &mmsql = root.lookup("mmsql");
+        std::cout << "DB : " << (std::string) dt.get_database() << "\n";
+        root["database"]["mmsql"]["host"] = dt.get_host();
+        root["database"]["mmsql"]["user"] = dt.get_user();
+        root["database"]["mmsql"]["port"] = dt.get_port();
+        root["database"]["mmsql"]["password"] = dt.get_password();
+        root["database"]["mmsql"]["database"] = dt.get_database();
 
-            }
-        }
+        config.writeFile(file.c_str());
 
         return true;
     }
