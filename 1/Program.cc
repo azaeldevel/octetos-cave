@@ -200,10 +200,46 @@ namespace oct::cave::v1
                 for(const std::string& str : header)
                 {
                     std::cout << str << "\n";
-                    connection.execute(str);
+                    try
+                    {
+                        connection.execute(str);
+                    }
+                    catch (const ExceptionDriver& e)
+                    {
+                        std::cout << e.what() << "\n";
+                        return EXIT_FAILURE;
+                    }
+                    catch (const std::exception& e)
+                    {
+                        std::cout << e.what() << "\n";
+                        return EXIT_FAILURE;
+                    }
+                    catch (...)
+                    {
+                        return EXIT_FAILURE;
+                    }
                 }
             }
-            mmsql::execute(connection,files,true);
+
+            try
+            {
+                mmsql::execute(connection,files,true);
+            }
+            catch (const ExceptionDriver& e)
+            {
+                std::cout << e.what() << "\n";
+                return EXIT_FAILURE;
+            }
+            catch (const std::exception& e)
+            {
+                std::cout << e.what() << "\n";
+                return EXIT_FAILURE;
+            }
+            catch (...)
+            {
+                return EXIT_FAILURE;
+            }
+
             connection.commit();
         }
 
@@ -245,13 +281,13 @@ namespace oct::cave::v1
                 std::cout << "Password : ";
                 std::cin >> password;
 
-                std::string str = "CREATE  USER IF NOT EXISTS '" + user + "'@'" + host + "' IDENTIFIED BY '" + password + "';";
+                std::string str = "CREATE  USER IF NOT EXISTS '" + user + "'@'%' IDENTIFIED BY '" + password + "';";
                 sqlheader.push_back(str);
                 str = "CREATE DATABASE `";
                 str += database + "`;";
                 sqlheader.push_back(str);
                 str = "GRANT ALL PRIVILEGES ON `";
-                str += database + "`.* TO '" + user + "'@'" + host + "';";
+                str += database + "`.* TO '" + user + "'@'%' IDENTIFIED BY '" + password +  "';";
                 sqlheader.push_back(str);
                 str = "FLUSH PRIVILEGES;";
                 sqlheader.push_back(str);
