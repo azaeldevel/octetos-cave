@@ -30,7 +30,7 @@
 #include <iostream>
 #include <libconfig.h++>
 
-
+#include "mmsql.hh"
 
 namespace oct::cave::v1
 {
@@ -41,7 +41,7 @@ namespace oct::cave::v1
         int repository_import(int argc, char* argv[]);
         int repository(int argc, char* argv[]);
 
-        virtual std::vector<std::string> resolved_template(const std::string& type,const std::string& name);
+        virtual std::vector<std::string> resolved_database(const std::string& type,const std::string& name,mmsql::Data&);
 
     private:
         std::filesystem::path dir,package = "ocpk";

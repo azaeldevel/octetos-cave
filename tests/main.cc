@@ -1,9 +1,9 @@
 
 #include <CUnit/Basic.h>
 
-#ifdef OCTEOTOS_CAVE_ENABLE_TDD_V0
+#ifdef OCTEOTOS_CAVE_V0_TDD
 	#include "v0.hh"
-#elif defined OCTEOTOS_CAVE_ENABLE_TDD_V1
+#elif defined OCTEOTOS_CAVE_V1_TDD
     #include "v1.hh"
 #endif
 
@@ -12,7 +12,7 @@ int main(int argc, char *argv[])
 {
 	if (CUE_SUCCESS != CU_initialize_registry()) return CU_get_error();
 
-#ifdef OCTEOTOS_CAVE_ENABLE_TDD_V0
+#ifdef OCTEOTOS_CAVE_V0_TDD
 
 	CU_pSuite pSuite_v0 = CU_add_suite("Octetos Cave Library", v0_init, v0_clean);
 	if (NULL == pSuite_v0)
@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
 		return CU_get_error();
 	}
 
-#elif defined OCTEOTOS_CAVE_ENABLE_TDD_V1
+#elif defined OCTEOTOS_CAVE_V1_TDD
     CU_pSuite pSuite_v1 = CU_add_suite("Octetos Cave Library v1", v1_init, v1_clean);
 	if (NULL == pSuite_v1)
 	{

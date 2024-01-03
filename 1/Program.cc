@@ -22,7 +22,7 @@
 #include <fstream>
 
 #include "Program.hh"
-#include "mmsql.hh"
+
 
 #if defined (__linux__) && defined (IDE_CODEBLOCKS)
 
@@ -112,10 +112,52 @@ namespace oct::cave::v1
         }
         return EXIT_FAILURE;
     }
+    bool update_config(const std::filesystem::path& file,const mmsql::Data& dt)
+    {
+        libconfig::Config config;
+        config.readFile(file.c_str());
+
+        libconfig::Setting &root = config.getRoot();
+        if(root.exists("database"))
+        {
+            libconfig::Setting &database = root.lookup("database");
+            if(root.exists("mmsql"))
+            {
+                libconfig::Setting &mmsql = root.lookup("mmsql");
+
+            }
+        }
+
+        return true;
+    }
     int Program::repository_import(int argc, char* argv[])
     {
-        std::vector<std::string> header;
         std::filesystem::path file = argv[1];
+        std::filesystem::path config_file = argv[3];
+        mmsql::Data dt_create;
+        if(argc == 2)
+        {
+            file = argv[1];
+        }
+        else if(argc == 4 and strcmp(argv[2],"--update-config") == 0)
+        {
+            file = argv[1];
+            config_file = argv[3];
+            //std::cout << "config : " << config_file << "\n";
+        }
+        else if(argc == 5)
+        {
+            std::cerr << "En desarrollo...!\n";
+        }
+        else
+        {
+            std::cerr << "El sub-comando import tiene los formato los siguinetes : ";
+            std::cerr << "\timport 'archivo de repositorio'";
+            std::cerr << "\timport 'archivo de repositorio' archivo de configuracion poara actualizar";
+            std::cerr << "\timport 'archivo de repositorio' 'archivo de configuracion poara actualizar' 'path in config file'";
+        }
+
+        std::vector<std::string> header;
         //std::cout << file << std::endl;
         std::vector<std::filesystem::path> files;
         libconfig::Config config;
@@ -124,16 +166,16 @@ namespace oct::cave::v1
 
         //
         host = (std::string)root.lookup("host");
-        std::cout << "host : " << host << std::endl;
+        //std::cout << "host : " << host << std::endl;
         user = (std::string)root.lookup("user");
-        std::cout << "user : " << user << std::endl;
+        //std::cout << "user : " << user << std::endl;
         password = (std::string)root.lookup("password");
-        std::cout << "password : " << password << std::endl;
+        //std::cout << "password : " << password << std::endl;
         //port = (int)root.lookup("port");
         //std::cout << "port : " << port << std::endl;
 
         database = (std::string)root.lookup("database");
-        std::cout << "database : " << database << std::endl;
+        //std::cout << "database : " << database << std::endl;
         const libconfig::Setting &list = root["files"];
         //std::cout << "cantidad : " << list.getLength() << std::endl;
         for(int i = 0; i < list.getLength(); i++)
@@ -144,20 +186,47 @@ namespace oct::cave::v1
 
         if(host.compare(cmd_require) == 0)
         {
-            host.clear();
-            std::cout << "Conection Host : ";
-            std::cin >> host;
+            host = "localhost";
+            std::cout << "Conection Host [" << host << "]: ";
+            std::string cmd;
+            std::cin >> cmd;
+            if(cmd.compare("S") == 0 or cmd.compare("s") == 0 )
+            {
+
+            }
+            else
+            {
+                host = cmd;
+            }
         }
         if(user.compare(cmd_require) == 0)
         {
-            host.clear();
-            std::cout << "Conection user : ";
-            std::cin >> user;
+            user = "root";
+            std::cout << "Conection user [" << user << "] : ";
+            std::string cmd;
+            std::cin >> cmd;
+            if(cmd.compare("S") == 0 or cmd.compare("s") == 0 )
+            {
+
+            }
+            else
+            {
+                user = cmd;
+            }
         }
         if(port == 0)
         {
-            std::cout << "Conection port : ";
-            std::cin >> port;
+            std::cout << "Conection port [" << port << "]: ";
+            std::string cmd;
+            std::cin >> cmd;
+            if(cmd.compare("S") == 0 or cmd.compare("s") == 0 )
+            {
+
+            }
+            else
+            {
+                port = std::atoi(cmd.c_str());
+            }
         }
         if(password.compare(cmd_require) == 0)
         {
@@ -165,11 +234,15 @@ namespace oct::cave::v1
             std::cout << "Conection Password [" << user << "] : ";
             std::cin >> password;
         }
+
         if(database.compare("[basic-template]") == 0)
         {
             //
-            header = this->resolved_template(database,"database-header");
+            header = this->resolved_database(database,"database-header",dt_create);
         }
+
+        std::cout << "data : " << host << "," <<  user << "," <<  password << "," <<  port << std::endl;
+
 
         mmsql::Data dtm(host, user, password, port);
         bool conectfl = false;
@@ -240,7 +313,18 @@ namespace oct::cave::v1
                 return EXIT_FAILURE;
             }
 
-            connection.commit();
+            //write config file
+            if(not config_file.empty())
+            {
+                if(update_config(config_file,dt_create))
+                {
+                    connection.commit();
+                }
+            }
+            else
+            {
+                connection.commit();
+            }
         }
 
         return EXIT_SUCCESS;
@@ -266,7 +350,7 @@ namespace oct::cave::v1
         return EXIT_SUCCESS;
     }
 
-    std::vector<std::string> Program::resolved_template(const std::string& type,const std::string& name)
+    std::vector<std::string> Program::resolved_database(const std::string& type,const std::string& name,mmsql::Data& dt)
     {
         std::vector<std::string> sqlheader;
         if(type.compare("[basic-template]") == 0)
@@ -294,6 +378,9 @@ namespace oct::cave::v1
                 str = "USE `";
                 str += database + "`;";
                 sqlheader.push_back(str);
+
+                //verificacion de conexion
+                dt.set(host, user, password,database, port);
 
                 return sqlheader;
             }

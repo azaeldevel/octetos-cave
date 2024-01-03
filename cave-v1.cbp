@@ -147,6 +147,23 @@
 					<Add directory="bin/Debug" />
 				</Linker>
 			</Target>
+			<Target title="cave-reposistory-create-config">
+				<Option output="bin/Debug/cave" prefix_auto="1" extension_auto="1" />
+				<Option object_output="bin/obj/Debug" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Option parameters="repository import /home/azael/develop/octetos/cave/tests/package/muposys-1.ocpk --update-config /home/azael/develop/octetos/cave/tests/config-dev" />
+				<Compiler>
+					<Add option="`pkg-config libconfig++ --cflags`" />
+					<Add option="-DOCTEOTOS_CAVE_DRIVER_MMSQL" />
+					<Add option="-DOCTEOTOS_CAVE_ENABLE_TDD_V1" />
+				</Compiler>
+				<Linker>
+					<Add option="`pkg-config --libs libmariadb` `pkg-config libconfig++ --libs`" />
+					<Add library="cave-mmsql-1" />
+					<Add directory="bin/Debug" />
+				</Linker>
+			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-Wall -pedantic -std=c++23 `pkg-config --cflags libmariadb`" />
@@ -173,6 +190,7 @@
 			<Option target="cave-create-dbg" />
 			<Option target="cave-reposistory-dbg" />
 			<Option target="cave-reposistory-create" />
+			<Option target="cave-reposistory-create-config" />
 		</Unit>
 		<Unit filename="1/maria.hh">
 			<Option target="Debug" />
