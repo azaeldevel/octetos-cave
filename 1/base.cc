@@ -70,6 +70,59 @@ const std::string& DataSource::get_database()const
             out << str << "\n";
         }
     }
+    void Script::create_database(const char* database)
+    {
+        std::string str;
+        str = "CREATE DATABASE ";
+        str += "`";
+        str += database;
+        str += "`;";
+        sql.push_back(str);
+    }
+    void Script::drop_database(const char* database)
+    {
+        std::string str;
+        str = "DROP DATABASE ";
+        str += "`";
+        str += database;
+        str += "`;";
+        sql.push_back(str);
+    }
+    void Script::use(const char* database)
+    {
+        std::string str;
+        str = "USE ";
+        str += "`";
+        str += database;
+        str += "`;";
+        sql.push_back(str);
+    }
+    void Script::create_user(const char *user,bool check_exist,const char* host,const char* password)
+    {
+        std::string str;
+        str = "CREATE USER ";
+        if(not check_exist) str += "IF NOT EXISTS";
+        str += " '";
+        str += user;
+        str += "'@'";
+        str += host;
+        str += "' IDENTIFIED BY '";
+        str += password;
+        str += "';";
+        sql.push_back(str);
+    }
+    void Script::grand_all_privileges(const char *database,const char *user,const char* host,const char* password)
+    {
+        std::string str;
+        str = "GRANT ALL PRIVILEGES ON `";
+        str += database;
+        str += "`.* TO '";
+        str += user;
+        str += "'@'%' IDENTIFIED BY '";
+        str += password;
+        str += "';";
+        sql.push_back(str);
+    }
 
     Database::Database(Database::Type t,const char* d) : type(t),database(d)
     {
@@ -86,30 +139,21 @@ const std::string& DataSource::get_database()const
         {
         case create:
             if(not database) break;
-            str = "CREATE DATABASE ";
-            str += "`";
-            str += database;
-            str += "`;";
+            create_database(database);
             break;
         case drop:
             if(not database) break;
-            str = "DROP DATABASE ";
-            str += "`";
-            str += database;
-            str += "`;";
+            drop_database(database);
             break;
         case use:
             if(not database) break;
-            str = "USE ";
-            str += "`";
-            str += database;
-            str += "`;";
+            Script::use(database);
             break;
         case basic_header:
             if(not database) break;
             if(not user) break;
             if(not password) break;
-            str = "CREATE  USER IF NOT EXISTS '";
+            str = "CREATE USER IF NOT EXISTS '";
             str += user;
             str += "'@'%' IDENTIFIED BY '";
             str += password;

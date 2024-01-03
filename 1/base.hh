@@ -487,6 +487,13 @@ namespace oct::cave::v1
 
         void print(std::ostream&);
 
+        void create_database(const char*);
+        void drop_database(const char*);
+        void create_user(const char*user,bool check_exist,const char* host,const char* password);
+        void use(const char*);
+        void flush_privileges(const char*);
+        void grand_all_privileges(const char* database,const char*user,const char* host,const char* password);
+
 	protected:
         std::vector<std::string> sql;
 
