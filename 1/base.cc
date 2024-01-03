@@ -114,8 +114,9 @@ const std::string& DataSource::get_database()const
             str += password;
             str += "';";
             sql.push_back(str);
-            str = "FLUSH PRIVILEGES;\n";
-            str += "USE `";
+            str = "FLUSH PRIVILEGES;";
+            sql.push_back(str);
+            str = "USE `";
             str += database;
             str += "`;";
             sql.push_back(str);

@@ -273,7 +273,10 @@ namespace oct::cave::v1
 		if(ret_query == 0) return Result<char,mmsql::Data>(mysql_store_result(reinterpret_cast<MYSQL*>(connection)));
 
 		//std::cout << "Connection::execute Step 3\n";
-        throw ExceptionDriver((Handle)connection,"Fallo la ejecucion de la consulta");
+		std::string failstr = "Fallo en : '";
+		failstr += str ;
+		failstr += "'" ;
+        throw ExceptionDriver((Handle)connection,failstr);
 	}
 
     template<> template<> size_t Connection<char, mmsql::Data>::last_id<size_t>()

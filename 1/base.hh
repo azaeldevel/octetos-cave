@@ -906,16 +906,6 @@ namespace oct::cave::v1
 	};
 
 
-    template<char_base CB, datasource DS, result RS = Result<CB,DS>> void execute(Connection<CB,DS,RS>& conn,const std::vector<std::string>& source, bool log)
-    {
-        //std::cout << "\ttemplate<char_base CB, datasource DS, result RS = Result<CB,DS>> void execute(Connection<CB,DS,RS>& conn,const std::vector<std::string>& source, bool log)\n";
-        Result<CB,DS> rs;
-        for(const std::string& str : source)
-        {
-            //std::cout << "\tsql : '" << str << "'\n";
-            rs = conn.execute(str);
-        }
-    }
     std::vector<std::string> split(const std::string& source,bool log);
     template<char_base CB, datasource DS, result RS = Result<CB,DS>> void execute(Connection<CB,DS,RS>& conn,const std::string& str, bool log)
     {
