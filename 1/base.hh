@@ -471,6 +471,14 @@ namespace oct::cave::v1
         };
 	}
 
+
+
+	class Statement
+	{
+    public:
+        virtual operator const std::vector<std::string>&() const = 0;
+	};
+
 	template<char_base CB, datasource DS, result RS = Result<CB,DS>> class Connection
 	{
 	public:
@@ -501,6 +509,15 @@ namespace oct::cave::v1
 		RS execute(const std::string& str)
 		{
 		    return execute(str.c_str());
+		}
+		void execute(const Statement& q)
+		{
+		    Result<CB,DS> rs;
+            for(const std::string& str : (const std::vector<std::string>&)q)
+            {
+                //std::cout << "\tsql : '" << str << "'\n";
+                rs = execute(str);
+            }
 		}
 
 		template<core::natural ID> ID last_id();
@@ -855,7 +872,6 @@ namespace oct::cave::v1
 		bool autocommit;
 	};
 
-
 	template<class C> struct Query : public C
 	{
         virtual void select() = 0;
@@ -864,6 +880,49 @@ namespace oct::cave::v1
         virtual void remove() = 0;
 	};
 
+	class Database : public Statement
+	{
+    public:
+        enum Type
+        {
+            create,
+            drop,
+            use,
+            basic_header,
+        };
+    public:
+        Database() = default;
+        Database(Type,const char* database);
+        Database(Type,const char* database,const char* user,const char* password);
+        virtual operator const std::vector<std::string>&() const;
+
+    private:
+        void build();
+
+    private:
+        Type type;
+        const char *database,*user,*password;
+        std::vector<std::string> sql;
+	};
+
+
+    template<char_base CB, datasource DS, result RS = Result<CB,DS>> void execute(Connection<CB,DS,RS>& conn,const std::vector<std::string>& source, bool log)
+    {
+        //std::cout << "\ttemplate<char_base CB, datasource DS, result RS = Result<CB,DS>> void execute(Connection<CB,DS,RS>& conn,const std::vector<std::string>& source, bool log)\n";
+        Result<CB,DS> rs;
+        for(const std::string& str : source)
+        {
+            //std::cout << "\tsql : '" << str << "'\n";
+            rs = conn.execute(str);
+        }
+    }
+    std::vector<std::string> split(const std::string& source,bool log);
+    template<char_base CB, datasource DS, result RS = Result<CB,DS>> void execute(Connection<CB,DS,RS>& conn,const std::string& str, bool log)
+    {
+        std::vector<std::string> ls = split(str,log);
+        execute(conn,ls,log);
+    }
+    void print(std::ostream&,const std::vector<std::string>&);
 
 }
 

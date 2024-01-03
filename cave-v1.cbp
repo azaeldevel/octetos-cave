@@ -12,13 +12,13 @@
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
-					<Add option="-g `pkg-config cunit --cflags`" />
+					<Add option="-g `pkg-config cunit --cflags`  `pkg-config libmariadb --libs` `pkg-config libconfig++ --cflags`" />
 					<Add option="-DOCTEOTOS_CAVE_V1_TDD" />
 					<Add option="-DOCTEOTOS_CAVE_TESTS_MMSQL_PORT=3306" />
 					<Add option="-DOCTEOTOS_CAVE_DRIVER_MMSQL" />
 				</Compiler>
 				<Linker>
-					<Add option="`pkg-config cunit --libs` `pkg-config --libs libmariadb`" />
+					<Add option="`pkg-config cunit --libs` `pkg-config libmariadb --libs`  `pkg-config libconfig++ --libs`" />
 				</Linker>
 			</Target>
 			<Target title="Release">

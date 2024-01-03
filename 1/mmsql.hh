@@ -71,7 +71,7 @@ namespace oct::cave::v1::mmsql
 
 
     bool create_database(Connection& conn,const std::string& database);
-    bool execute(Connection& conn,const std::vector<std::filesystem::path>& sources,bool log);
+    void execute(Connection& conn,const std::vector<std::filesystem::path>& sources,bool log);
     void copy_chars(const std::string& from,std::string& to);
 
 }

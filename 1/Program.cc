@@ -359,10 +359,16 @@ namespace oct::cave::v1
                 std::string database,user,password;
                 std::cout << "Database : ";
                 std::cin >> database;
+#ifdef OCTEOTOS_CAVE_V1_TDD
+                user = "develop";
+                password = "123456";
+#else
                 std::cout << "Usuario : ";
                 std::cin >> user;
                 std::cout << "Password : ";
                 std::cin >> password;
+
+#endif // OCTEOTOS_CAVE_V1_TDD
 
                 std::string str = "CREATE  USER IF NOT EXISTS '" + user + "'@'%' IDENTIFIED BY '" + password + "';";
                 sqlheader.push_back(str);

@@ -351,7 +351,7 @@ namespace oct::cave::v1::mmsql
         return true;
     }
 
-    bool execute(Connection& conn,const std::vector<std::filesystem::path>& sources, bool log)
+    void execute(Connection& conn,const std::vector<std::filesystem::path>& sources, bool log)
     {
         std::ifstream actual;
         //std::string strsql,strline;
@@ -361,44 +361,31 @@ namespace oct::cave::v1::mmsql
         Result rs;
         for(const std::filesystem::path& p : sources)
         {
-            if(log) std::cout << "Ejecutando : " << p << "\n";
+            if(log) std::cout << "executing : " << p << "\n";
             actual.open(p);
+            if(not actual.good()) throw core::exception("Fallo al abrir el archivo " + p.string());
             //streamsql << actual.rdbuf();
             //strsql = streamsql.str();
             //std::cout << strsql << "\n";
             while(std::getline(actual,strline))
             {
-                if(strline.empty())continue;
-                if(strline.starts_with("--"))continue;
+                if(strline.empty())
+                {
+                    strline.clear();
+                    strsql.clear();
+                    continue;
+                }
+                //if(strline.starts_with("--"))continue;
+                //copy_chars(strline,strsql);
 
-                copy_chars(strline,strsql);
-                std::cout << strsql << "\n";
-                try
-                {
-                    rs = conn.execute(strsql);
-                }
-                catch (const ExceptionDriver& e)
-                {
-                    std::cout << e.what() << "\n";
-                    return EXIT_FAILURE;
-                }
-                catch (const std::exception& e)
-                {
-                    std::cout << e.what() << "\n";
-                    return EXIT_FAILURE;
-                }
-                catch (...)
-                {
-                    return EXIT_FAILURE;
-                }
+                std::cout << "\tsql : '" << strline << "'\n";
+                rs = conn.execute(strline);
+
+                strline.clear();
+                strsql.clear();
             }
-
-            strline.clear();
-            strsql.clear();
             actual.close();
         }
-
-        return true;
     }
     void copy_chars(const std::string& from,std::string& to)
     {
@@ -419,7 +406,7 @@ namespace oct::cave::v1::mmsql
             }
             else
             {
-                std::cout << "|"<< from[i] << "|\n";
+                //std::cout << "|"<< from[i] << "|\n";
                 to[i] = ' ';
             }
         }

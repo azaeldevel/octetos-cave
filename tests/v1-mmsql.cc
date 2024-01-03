@@ -177,8 +177,58 @@ void v1_develop()
     std::mt19937 rng(dev());
     std::uniform_int_distribution<std::mt19937::result_type> longint(1,92233720368547);
     std::uniform_int_distribution<std::mt19937::result_type> smallint(1,128);
+    std::string database_name = "cave-30-dev";
 
-    cave::mmsql::Data dtm("localhost","develop","123456", "muposys-dev", OCTEOTOS_CAVE_TESTS_MMSQL_PORT);
+    cave::mmsql::Data dtmroot("localhost","root","4dm1nK3y", OCTEOTOS_CAVE_TESTS_MMSQL_PORT);
+	bool conectflroot = false;
+	cave::mmsql::Connection connroot;
+	try
+	{
+		conectflroot = connroot.connect(dtmroot, true);
+	}
+	catch (const cave::ExceptionDriver& e)
+	{
+		CU_ASSERT(false);
+		std::cout << "Exception (cave testing) : " << e.what() << "\n";
+		return;
+	}
+	catch (const std::exception& e)
+	{
+		CU_ASSERT(false);
+		std::cout << "Exception (cave testing) : " << e.what() << "\n";
+		return;
+	}
+	catch (...)
+	{
+		CU_ASSERT(false);
+	}
+	CU_ASSERT(conectflroot);
+
+	cave::Database stmt(cave::Database::basic_header,database_name.c_str(),"develop","123456");
+    cave::print(std::cout,stmt);
+
+	try
+    {
+        cave::execute(connroot,stmt,true);
+    }
+    catch (const cave::ExceptionDriver& e)
+    {
+        std::cout << e.what() << "\n";
+        CU_ASSERT(false);
+    }
+    catch (const std::exception& e)
+    {
+        std::cout << e.what() << "\n";
+        CU_ASSERT(false);
+    }
+    catch (...)
+    {
+        CU_ASSERT(false);
+    }
+
+
+
+    /*cave::mmsql::Data dtm("localhost","develop","123456", database_name.c_str(), OCTEOTOS_CAVE_TESTS_MMSQL_PORT);
 	bool conectfl = false;
 	cave::mmsql::Connection conn;
 	try
@@ -203,66 +253,32 @@ void v1_develop()
 	}
 	CU_ASSERT(conectfl);
 
-
-	std::string sqlversionInser = "INSERT INTO Version(name,major,minor) VALUES(";
-	sqlversionInser += "'name" + std::to_string(longint(rng)) + "'," + std::to_string(smallint(rng))  + "," + std::to_string(smallint(rng)) + ")";
-	//std::cout << sqlversionInser << "\n";
-    cave::mmsql::Result rs1;
-	try
-	{
-        rs1 = conn.execute(sqlversionInser);
-	}
-	catch(...)
-	{
-        std::cout << "Error desconocido en escritura de base de datos\n";
-	}
-
-    Version ver1;
-    ver1.name = "name" + std::to_string(longint(rng));
-    ver1.major = smallint(rng);
-    ver1.minor = smallint(rng);
-    cave::mmsql::Result rs2 = conn.insert(ver1);
-
-    std::vector<Version> rs3;
+    std::vector<std::filesystem::path> files;
+    files.push_back("/home/azael/develop/octetos/cave/tests/package/base.sql");
+    files.push_back("/home/azael/develop/octetos/cave/tests/package/defaul-data-1.sql");
     try
     {
-		 conn.select(rs3,"RAND()",3);
-	}
-	catch (const cave::ExceptionDriver&)
-	{
-		CU_ASSERT(false);
-	}
-	catch (...)
-	{
-		CU_ASSERT(false);
-	}
-	/*for(size_t i = 0; i < rs3.size(); i++)
-    {
-        std::cout << "id:" << rs3[i].id << "\n";
-    }*/
-
-    for(size_t i = 0; i < rs3.size(); i++)
-    {
-        rs3[i].major = smallint(rng);
-        try
-        {
-             conn.update(rs3[i],{1});
-        }
-        catch (const cave::ExceptionDriver&)
-        {
-            CU_ASSERT(false);
-        }
-        catch (...)
-        {
-            CU_ASSERT(false);
-        }
+        cave::mmsql::execute(conn,files,true);
     }
-
+    catch (const cave::ExceptionDriver& e)
+    {
+        std::cout << e.what() << "\n";
+        CU_ASSERT(false);
+    }
+    catch (const std::exception& e)
+    {
+        std::cout << e.what() << "\n";
+        CU_ASSERT(false);
+    }
+    catch (...)
+    {
+        CU_ASSERT(false);
+    }*/
 }
 
 void v1_selects()
 {
-    cave::mmsql::Data dtm("localhost","develop","123456", "muposys-dev", OCTEOTOS_CAVE_TESTS_MMSQL_PORT);
+    cave::mmsql::Data dtm("localhost","develop","123456", "cave-dev", OCTEOTOS_CAVE_TESTS_MMSQL_PORT);
 	bool conectfl = false;
 	cave::mmsql::Connection conn;
 	try
@@ -349,7 +365,7 @@ void v1_writes()
     std::uniform_int_distribution<std::mt19937::result_type> longint(1,92233720368547);
     std::uniform_int_distribution<std::mt19937::result_type> smallint(1,128);
 
-    cave::mmsql::Data dtm("localhost","develop","123456", "muposys-dev", OCTEOTOS_CAVE_TESTS_MMSQL_PORT);
+    cave::mmsql::Data dtm("localhost","develop","123456", "cave-dev", OCTEOTOS_CAVE_TESTS_MMSQL_PORT);
 	bool conectfl = false;
 	cave::mmsql::Connection conn;
 	try
