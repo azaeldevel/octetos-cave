@@ -177,7 +177,7 @@ void v1_develop()
     std::mt19937 rng(dev());
     std::uniform_int_distribution<std::mt19937::result_type> longint(1,92233720368547);
     std::uniform_int_distribution<std::mt19937::result_type> smallint(1,128);
-    std::string database_name = "cave-40-dev";
+    std::string database_name = "cave-49-dev";
 
     cave::mmsql::Data dtmroot("localhost","root","4dm1nK3y", OCTEOTOS_CAVE_TESTS_MMSQL_PORT);
 	bool conectflroot = false;
@@ -206,7 +206,7 @@ void v1_develop()
 
 	cave::Database stmt(cave::Database::basic_header,database_name.c_str(),"develop","123456");
     //cave::print(std::cout,stmt);
-    stmt.print(std::cout);
+    //stmt.print(std::cout);
 
 	try
     {
@@ -223,12 +223,42 @@ void v1_develop()
         std::cout << e.what() << "\n";
         CU_ASSERT(false);
     }
+    catch (const cave::core::exception& e)
+    {
+        std::cout << e.what() << "\n";
+        CU_ASSERT(false);
+    }
     catch (...)
     {
         CU_ASSERT(false);
     }
 
-
+    try
+    {
+        cave::Script base("/home/azael/develop/octetos/cave/tests/package/base.sql");
+        base.execute(connroot);
+        cave::Script data("/home/azael/develop/octetos/cave/tests/package/default-data-1.sql");
+        data.execute(connroot);
+    }
+    catch (const cave::ExceptionDriver& e)
+    {
+        std::cout << e.what() << "\n";
+        CU_ASSERT(false);
+    }
+    catch (const std::exception& e)
+    {
+        std::cout << e.what() << "\n";
+        CU_ASSERT(false);
+    }
+    catch (const cave::core::exception& e)
+    {
+        std::cout << e.what() << "\n";
+        CU_ASSERT(false);
+    }
+    catch (...)
+    {
+        CU_ASSERT(false);
+    }
 
     /*cave::mmsql::Data dtm("localhost","develop","123456", database_name.c_str(), OCTEOTOS_CAVE_TESTS_MMSQL_PORT);
 	bool conectfl = false;

@@ -58,7 +58,24 @@ const std::string& DataSource::get_database()const
 }
 
 
+    Script::Script(const std::filesystem::path& p)
+    {
+        std::ifstream actual(p);
+        if(not actual.good()) throw core::exception("Fallo al abrir el archivo " + p.string());
+        std::string strline;
 
+        while(std::getline(actual,strline))
+        {
+            if(strline.empty() or strline.starts_with("--"))
+            {
+                strline.clear();
+                continue;
+            }
+            //std::cout << "\tsql : '" << strline << "'\n";
+            sql.push_back(strline);
+            strline.clear();
+        }
+    }
     Script::operator const std::vector<std::string>& () const
     {
         return sql;
@@ -122,6 +139,12 @@ const std::string& DataSource::get_database()const
         str += password;
         str += "';";
         sql.push_back(str);
+    }
+    Script& Script::operator << (const char* str)
+    {
+        sql.push_back(str);
+
+        return *this;
     }
 
     Database::Database(Database::Type t,const char* d) : type(t),database(d)

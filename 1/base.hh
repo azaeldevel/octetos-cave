@@ -482,7 +482,11 @@ namespace oct::cave::v1
 
 		template<class C> void execute(C& c)
 		{
-		    c.execute(*this);
+            for(size_t i = 0; i < sql.size(); i++)
+            {
+                std::cout << "\texecuting : '" << sql[i] << "'\n";
+                c.execute(sql[i]);
+            }
 		}
 
         void print(std::ostream&);
@@ -493,6 +497,7 @@ namespace oct::cave::v1
         void use(const char*);
         void flush_privileges(const char*);
         void grand_all_privileges(const char* database,const char*user,const char* host,const char* password);
+        Script& operator << (const char*);
 
 	protected:
         std::vector<std::string> sql;

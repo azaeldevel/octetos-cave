@@ -42,3 +42,4 @@ CREATE TABLE UserPermission(id BIGINT NOT NULL, user BIGINT NOT NULL,permission 
 ALTER TABLE UserPermission MODIFY id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY;
 ALTER TABLE UserPermission ADD CONSTRAINT fk_user_User_id FOREIGN KEY(user) REFERENCES User(id);
 ALTER TABLE UserPermission ADD CONSTRAINT fk_permission_Permission_id FOREIGN KEY(permission) REFERENCES Permission(id);
+
