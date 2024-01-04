@@ -24,7 +24,6 @@
 #else
 	#error "Plataforma desconocida."
 #endif
-
 #include "v1.hh"
 
 #include <cave/1/mmsql.hh>
@@ -33,6 +32,15 @@ namespace core = oct::core::v3;
 namespace cave = oct::cave::v1;
 
 
+#ifdef OCTETOS_CLIENT
+    static cave::mmsql::Data dt_root("tests/config-root","192.168.1.102");
+    static cave::mmsql::Data dt_cave("tests/config-cave","192.168.1.102");
+#elif defined OCTETOS_SERVER
+    static cave::mmsql::Data dt_root("tests/config-root");
+    static cave::mmsql::Data dt_cave("tests/config-cave");
+#else
+    #error "Deve estar definido uno de los macros OCTETOS_CLIENT o OCTETOS_SERVER"
+#endif // OCTETOS_CLIENT
 
 struct DB_name
 {
@@ -274,6 +282,7 @@ void v1_script()
 
 void v1_selects()
 {
+    std::cout << "Conecting..\n";
 	bool conectfl = false;
 	cave::mmsql::Connection conn;
 	try
@@ -304,6 +313,8 @@ void v1_selects()
 	}
 	CU_ASSERT(conectfl);
 
+    std::cout << "Reading..\n";
+
     cave::mmsql::Result rs1;
     try
     {
@@ -322,6 +333,8 @@ void v1_selects()
         std::cout << "id:" << rs1.next()[0] << "\n";
     }*/
 
+
+    std::cout << "Reading..\n";
 
     std::vector<Version> rs2;
     try

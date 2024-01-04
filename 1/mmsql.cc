@@ -66,7 +66,7 @@ namespace oct::cave::v1::mmsql
 	}
 	Data::Data(const std::filesystem::path& p,const std::string& h)
 	{
-	    load(p);
+	    load(p,h);
 	}
 	Data::~Data()
 	{
@@ -120,7 +120,6 @@ namespace oct::cave::v1::mmsql
         std::cout << "Port : " << port << "\n";
         std::cout << "\n";
         */
-
 	}
 
 
