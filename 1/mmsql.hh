@@ -37,6 +37,7 @@ namespace oct::cave::v1::mmsql
 		Data(const std::string& host, const std::string& user, const std::string& password, const std::string& database, unsigned int port);
 		Data(const std::string& host, const std::string& user, const std::string& password, const std::string& database, unsigned int port, const std::string& socket);
 		Data(const std::string& host, const std::string& user, const std::string& password, const std::string& database, unsigned int port, const std::string& socket, unsigned long flags);
+		Data(const std::filesystem::path&);
 		~Data();
 
 		const std::string& get_host()const;

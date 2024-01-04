@@ -480,12 +480,11 @@ namespace oct::cave::v1
         Script(const std::filesystem::path&);
         operator const std::vector<std::string>&() const;
 
-		template<class C> void execute(C& c)
+		template<class C> void execute(C& c, bool echo = false,std::ostream& out = std::cout)
 		{
             for(size_t i = 0; i < sql.size(); i++)
             {
-                std::cout << "\texecuting : '" << sql[i] << "'\n";
-                c.execute(sql[i]);
+                c.execute(sql[i],echo,out);
             }
 		}
 
@@ -532,18 +531,18 @@ namespace oct::cave::v1
 			return connection;
 		}
 
-		RS execute(const char*);
-		RS execute(const std::string& str)
+		RS execute(const char*,bool echo = false,std::ostream& = std::cout);
+		RS execute(const std::string& str,bool echo = false,std::ostream& out = std::cout)
 		{
-		    return execute(str.c_str());
+		    return execute(str.c_str(),echo,out);
 		}
-		void execute(const Script& q)
+		void execute(const Script& q,bool echo = false,std::ostream& out = std::cout)
 		{
 		    Result<CB,DS> rs;
             for(const std::string& str : (const std::vector<std::string>&)q)
             {
                 //std::cout << "\tsql : '" << str << "'\n";
-                rs = execute(str);
+                rs = execute(str,echo,out);
             }
 		}
 

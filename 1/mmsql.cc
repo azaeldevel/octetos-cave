@@ -36,6 +36,8 @@
 	#error "Plataforma desconocida."
 #endif
 
+#include <libconfig.h++>
+
 namespace cave = oct::cave::v1;
 
 namespace oct::cave::v1::mmsql
@@ -57,6 +59,21 @@ namespace oct::cave::v1::mmsql
 	}
 	Data::Data(const std::string& h, const std::string& u, const std::string& pwd, const std::string& d, unsigned int p, const std::string& s, unsigned long f) : DataSource(d), host(h), user(u), password(pwd), socket(s), port(p), flags(f)
 	{
+	}
+	Data::Data(const std::filesystem::path& p)
+	{
+	    libconfig::Config config;
+	    config.readFile(p.c_str());
+        const libconfig::Setting &root = config.getRoot();
+        const libconfig::Setting &mmsql = root["database"]["mmsql"];
+        host = mmsql["host"].c_str();
+        user = mmsql["user"].c_str();
+        password = mmsql["password"].c_str();
+        if(mmsql.exists("database"))
+        {
+            database = root["database"]["mmsql"]["database"].c_str();
+        }
+        port = (int)root["database"]["mmsql"]["port"];
 	}
 	Data::~Data()
 	{
@@ -259,12 +276,13 @@ namespace oct::cave::v1
 		}
 	}
 
-	template<> Result<char,mmsql::Data> Connection<char, mmsql::Data>::execute(const char* str)
+	template<> Result<char,mmsql::Data> Connection<char, mmsql::Data>::execute(const char* str,bool echo,std::ostream& out)
 	{
-		if (not connected) throw std::runtime_error("No se ha realizado la conexion.");
-		if (not connection) throw std::runtime_error("No se ha establesido la cionexion");
+		if (not connected) throw ExceptionDriver("No se ha realizado la conexion.");
+		if (not connection) throw ExceptionDriver("No se ha establesido la cionexion");
 
 		//std::cout << "Connection::execute Step 1\n";
+        if(echo) out << "\t'" << str << "'\n";
 
 		int ret_query = mysql_query(reinterpret_cast<MYSQL*>(connection), str);
 

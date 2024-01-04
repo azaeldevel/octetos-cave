@@ -181,7 +181,7 @@ void v1_develop()
     database_name += std::to_string(smallint(rng));
     database_name += "-dev";
 
-    cave::mmsql::Data dtmroot("localhost","root","4dm1nK3y", OCTEOTOS_CAVE_TESTS_MMSQL_PORT);
+    cave::mmsql::Data dtmroot("192.168.1.102","root","4dm1nK3y", OCTEOTOS_CAVE_TESTS_MMSQL_PORT);
 	bool conectflroot = false;
 	cave::mmsql::Connection connroot;
 	try
@@ -212,8 +212,7 @@ void v1_develop()
 
 	try
     {
-        //connroot.execute(stmt);
-        stmt.execute(connroot);
+        stmt.execute(connroot,true);
     }
     catch (const cave::ExceptionDriver& e)
     {
@@ -235,6 +234,7 @@ void v1_develop()
         CU_ASSERT(false);
     }
 
+    /*
     try
     {
         cave::Script base("/home/azael/develop/octetos/cave/tests/package/base.sql");
@@ -261,9 +261,12 @@ void v1_develop()
     {
         CU_ASSERT(false);
     }
+    */
 
     std::string dropsql = "DROP DATABASE `";
     dropsql += database_name;
+    dropsql += "`;";
+    connroot.execute(dropsql,true);
 
 
     /*cave::mmsql::Data dtm("localhost","develop","123456", database_name.c_str(), OCTEOTOS_CAVE_TESTS_MMSQL_PORT);

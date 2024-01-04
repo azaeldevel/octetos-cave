@@ -30,6 +30,14 @@
 	#error "Plataforma desconocida."
 #endif
 
+#include <cave/1/mmsql.hh>
+
+namespace core = oct::core::v3;
+namespace cave = oct::cave::v1;
+
+static cave::mmsql::Data dt_root("tests/config");
+static cave::mmsql::Connection conn_root;
+
 int v1_init(void);
 int v1_clean(void);
 void v1_develop();
