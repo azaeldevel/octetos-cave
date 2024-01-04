@@ -71,9 +71,16 @@ namespace oct::cave::v1::mmsql
         password = mmsql["password"].c_str();
         if(mmsql.exists("database"))
         {
-            database = root["database"]["mmsql"]["database"].c_str();
+            database = mmsql["database"].c_str();
         }
-        port = (int)root["database"]["mmsql"]["port"];
+        port = (int)mmsql["port"];
+
+        std::cout << "User : " << user << "\n";
+        std::cout << "Host : " << host << "\n";
+        std::cout << "Password : " << password << "\n";
+        std::cout << "Database : " << database << "\n";
+        std::cout << "Port : " << port << "\n";
+        std::cout << "\n";
 	}
 	Data::~Data()
 	{

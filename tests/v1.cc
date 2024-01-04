@@ -25,37 +25,11 @@
 
 int v1_init(void)
 {
-    bool conectfl;
-    try
-	{
-		conectfl = conn_root.connect(dt_root, true);
-	}
-	catch (const cave::ExceptionDriver& e)
-	{
-		std::cout << "Exception (cave testing) : " << e.what() << "\n";
-		return 1;
-	}
-	catch (const std::exception& e)
-	{
-		std::cout << "Exception (cave testing) : " << e.what() << "\n";
-		return 1;
-	}
-	catch (const core::exception& e)
-	{
-		std::cout << "Exception (cave testing) : " << e.what() << "\n";
-		return 1;
-	}
-	catch (...)
-	{
-	    return 1;
-	}
-	if(not conectfl) return 1;
 
 	return 0;
 }
 int v1_clean(void)
 {
-    conn_root.close();
 	return 0;
 }
 
