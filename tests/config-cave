@@ -11,10 +11,10 @@ database :
 {
   mmsql : 
   {
-    host = "localhost";
+    host = "198.168.1.102";
     port = 3306;
     flags = 0;
-    database = "cav-25";
+    database = "cave-dev";
     user = "develop";
     password = "123456";
   };

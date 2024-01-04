@@ -173,6 +173,10 @@ struct Version
 
 void v1_develop()
 {
+
+}
+void v1_script()
+{
     std::random_device dev;
     std::mt19937 rng(dev());
     std::uniform_int_distribution<std::mt19937::result_type> longint(1,92233720368547);
@@ -180,12 +184,13 @@ void v1_develop()
     std::string database_name = "cave-";
     database_name += std::to_string(smallint(rng));
     database_name += "-dev";
+    bool echo = false;
 
 	bool conectflroot = false;
 	cave::mmsql::Connection connroot;
 	try
 	{
-		conectflroot = connroot.connect(dt_root, true);
+		conectflroot = connroot.connect(dt_root, echo);
 	}
 	catch (const cave::ExceptionDriver& e)
 	{
@@ -211,7 +216,7 @@ void v1_develop()
 
 	try
     {
-        stmt.execute(connroot,true);
+        stmt.execute(connroot,echo);
     }
     catch (const cave::ExceptionDriver& e)
     {
@@ -236,9 +241,9 @@ void v1_develop()
     try
     {
         cave::Script base("/home/azael/develop/octetos/cave/tests/package/base.sql");
-        base.execute(connroot,true);
+        base.execute(connroot,echo);
         cave::Script data("/home/azael/develop/octetos/cave/tests/package/default-data-1.sql");
-        data.execute(connroot,true);
+        data.execute(connroot,echo);
     }
     catch (const cave::ExceptionDriver& e)
     {
@@ -263,68 +268,17 @@ void v1_develop()
     std::string dropsql = "DROP DATABASE `";
     dropsql += database_name;
     dropsql += "`;";
-    connroot.execute(dropsql,true);
+    connroot.execute(dropsql,echo);
 
-    database_name = "cave-";
-    database_name += std::to_string(smallint(rng));
-    database_name += "-dev";
-
-    /*cave::mmsql::Data dtm("localhost","develop","123456", database_name.c_str(), OCTEOTOS_CAVE_TESTS_MMSQL_PORT);
-	bool conectfl = false;
-	cave::mmsql::Connection conn;
-	try
-	{
-		conectfl = conn.connect(dtm, true);
-	}
-	catch (const cave::ExceptionDriver& e)
-	{
-		CU_ASSERT(false);
-		std::cout << "Exception (cave testing) : " << e.what() << "\n";
-		return;
-	}
-	catch (const std::exception& e)
-	{
-		CU_ASSERT(false);
-		std::cout << "Exception (cave testing) : " << e.what() << "\n";
-		return;
-	}
-	catch (...)
-	{
-		CU_ASSERT(false);
-	}
-	CU_ASSERT(conectfl);
-
-    std::vector<std::filesystem::path> files;
-    files.push_back("/home/azael/develop/octetos/cave/tests/package/base.sql");
-    files.push_back("/home/azael/develop/octetos/cave/tests/package/defaul-data-1.sql");
-    try
-    {
-        cave::mmsql::execute(conn,files,true);
-    }
-    catch (const cave::ExceptionDriver& e)
-    {
-        std::cout << e.what() << "\n";
-        CU_ASSERT(false);
-    }
-    catch (const std::exception& e)
-    {
-        std::cout << e.what() << "\n";
-        CU_ASSERT(false);
-    }
-    catch (...)
-    {
-        CU_ASSERT(false);
-    }*/
 }
 
 void v1_selects()
 {
-    cave::mmsql::Data dtm("localhost","develop","123456", "cave-dev", OCTEOTOS_CAVE_TESTS_MMSQL_PORT);
 	bool conectfl = false;
 	cave::mmsql::Connection conn;
 	try
 	{
-		conectfl = conn.connect(dtm, true);
+		conectfl = conn.connect(dt_cave, true);
 	}
 	catch (const cave::ExceptionDriver& e)
 	{
@@ -333,6 +287,12 @@ void v1_selects()
 		return;
 	}
 	catch (const std::exception& e)
+	{
+		CU_ASSERT(false);
+		std::cout << "Exception (cave testing) : " << e.what() << "\n";
+		return;
+	}
+	catch (const core::exception& e)
 	{
 		CU_ASSERT(false);
 		std::cout << "Exception (cave testing) : " << e.what() << "\n";
@@ -394,10 +354,12 @@ void v1_selects()
 	{
 		CU_ASSERT(false);
 	}
-	/*for(size_t i = 0; i < rs3.size(); i++)
+	/*
+	for(size_t i = 0; i < rs3.size(); i++)
     {
         std::cout << "id:" << rs3.next()[0] << "\n";
-    }*/
+    }
+    */
 }
 void v1_writes()
 {
@@ -406,12 +368,11 @@ void v1_writes()
     std::uniform_int_distribution<std::mt19937::result_type> longint(1,92233720368547);
     std::uniform_int_distribution<std::mt19937::result_type> smallint(1,128);
 
-    cave::mmsql::Data dtm("localhost","develop","123456", "cave-dev", OCTEOTOS_CAVE_TESTS_MMSQL_PORT);
 	bool conectfl = false;
 	cave::mmsql::Connection conn;
 	try
 	{
-		conectfl = conn.connect(dtm, true);
+		conectfl = conn.connect(dt_cave, true);
 	}
 	catch (const cave::ExceptionDriver& e)
 	{

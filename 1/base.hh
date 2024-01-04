@@ -504,7 +504,7 @@ namespace oct::cave::v1
         std::vector<std::string> sql;
 
     private:
-
+        std::filesystem::path file;
 	};
 
 	template<char_base CB, datasource DS, result RS = Result<CB,DS>> class Connection

@@ -62,6 +62,18 @@ namespace oct::cave::v1::mmsql
 	}
 	Data::Data(const std::filesystem::path& p)
 	{
+	    load(p);
+	}
+	Data::Data(const std::filesystem::path& p,const std::string& h)
+	{
+	    load(p);
+	}
+	Data::~Data()
+	{
+	}
+
+	void Data::load(const std::filesystem::path& p)
+	{
 	    libconfig::Config config;
 	    config.readFile(p.c_str());
         const libconfig::Setting &root = config.getRoot();
@@ -84,8 +96,31 @@ namespace oct::cave::v1::mmsql
         std::cout << "\n";
         */
 	}
-	Data::~Data()
+
+	void Data::load(const std::filesystem::path& p,const std::string& h)
 	{
+	    libconfig::Config config;
+	    config.readFile(p.c_str());
+        const libconfig::Setting &root = config.getRoot();
+        const libconfig::Setting &mmsql = root["database"]["mmsql"];
+        host = h;
+        user = mmsql["user"].c_str();
+        password = mmsql["password"].c_str();
+        if(mmsql.exists("database"))
+        {
+            database = mmsql["database"].c_str();
+        }
+        port = (int)mmsql["port"];
+
+        /*
+        std::cout << "User : " << user << "\n";
+        std::cout << "Host : " << host << "\n";
+        std::cout << "Password : " << password << "\n";
+        std::cout << "Database : " << database << "\n";
+        std::cout << "Port : " << port << "\n";
+        std::cout << "\n";
+        */
+
 	}
 
 

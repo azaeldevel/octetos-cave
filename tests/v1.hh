@@ -35,13 +35,15 @@
 namespace core = oct::core::v3;
 namespace cave = oct::cave::v1;
 
-static cave::mmsql::Data dt_root("tests/config");
+static cave::mmsql::Data dt_root("tests/config-root");
+static cave::mmsql::Data dt_cave("tests/config-cave");
 
 int v1_init(void);
 int v1_clean(void);
 void v1_develop();
 void v1_selects();
 void v1_writes();
+void v1_script();
 
 
 #endif

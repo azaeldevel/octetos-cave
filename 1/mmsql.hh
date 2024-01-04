@@ -38,6 +38,7 @@ namespace oct::cave::v1::mmsql
 		Data(const std::string& host, const std::string& user, const std::string& password, const std::string& database, unsigned int port, const std::string& socket);
 		Data(const std::string& host, const std::string& user, const std::string& password, const std::string& database, unsigned int port, const std::string& socket, unsigned long flags);
 		Data(const std::filesystem::path&);
+		Data(const std::filesystem::path&,const std::string& host);
 		~Data();
 
 		const std::string& get_host()const;
@@ -61,6 +62,8 @@ namespace oct::cave::v1::mmsql
 		}
 #endif // OCTEOTOS_CAVE_ENABLE_TDD_V1
 
+        void load(const std::filesystem::path&);
+        void load(const std::filesystem::path&, const std::string& );
 	private:
 		std::string host, user, password, socket;
 		int port;

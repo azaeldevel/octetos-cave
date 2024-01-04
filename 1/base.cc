@@ -58,7 +58,7 @@ const std::string& DataSource::get_database()const
 }
 
 
-    Script::Script(const std::filesystem::path& p)
+    Script::Script(const std::filesystem::path& p) : file(p)
     {
         load(p);
     }
@@ -171,6 +171,7 @@ const std::string& DataSource::get_database()const
     }
     void Script::load(const std::filesystem::path& p)
     {
+        if(file.empty()) file = p;
         std::ifstream actual(p);
         if(not actual.good()) throw core::exception("Fallo al abrir el archivo " + p.string());
         std::string strline;
