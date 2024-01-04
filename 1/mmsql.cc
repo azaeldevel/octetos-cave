@@ -75,12 +75,14 @@ namespace oct::cave::v1::mmsql
         }
         port = (int)mmsql["port"];
 
+        /*
         std::cout << "User : " << user << "\n";
         std::cout << "Host : " << host << "\n";
         std::cout << "Password : " << password << "\n";
         std::cout << "Database : " << database << "\n";
         std::cout << "Port : " << port << "\n";
         std::cout << "\n";
+        */
 	}
 	Data::~Data()
 	{

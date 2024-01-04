@@ -488,6 +488,8 @@ namespace oct::cave::v1
             }
 		}
 
+		void load(const std::filesystem::path&);
+
         void print(std::ostream&);
 
         void create_database(const char*);

@@ -233,7 +233,6 @@ void v1_develop()
         CU_ASSERT(false);
     }
 
-
     try
     {
         cave::Script base("/home/azael/develop/octetos/cave/tests/package/base.sql");
@@ -266,6 +265,9 @@ void v1_develop()
     dropsql += "`;";
     connroot.execute(dropsql,true);
 
+    database_name = "cave-";
+    database_name += std::to_string(smallint(rng));
+    database_name += "-dev";
 
     /*cave::mmsql::Data dtm("localhost","develop","123456", database_name.c_str(), OCTEOTOS_CAVE_TESTS_MMSQL_PORT);
 	bool conectfl = false;
