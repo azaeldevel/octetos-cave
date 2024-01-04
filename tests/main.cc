@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
 		return CU_get_error();
 	}
 
-	/*if (NULL == CU_add_test(pSuite_v1, "Selects v1", v1_selects))
+	if (NULL == CU_add_test(pSuite_v1, "Selects v1", v1_selects))
 	{
 		CU_cleanup_registry();
 		return CU_get_error();
@@ -94,7 +94,7 @@ int main(int argc, char *argv[])
 	{
 		CU_cleanup_registry();
 		return CU_get_error();
-	}*/
+	}
 
 	if (NULL == CU_add_test(pSuite_v1, "Script class v1", v1_script))
 	{

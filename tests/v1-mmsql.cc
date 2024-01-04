@@ -282,7 +282,7 @@ void v1_script()
 
 void v1_selects()
 {
-    std::cout << "Conecting..\n";
+    //std::cout << "Conecting..\n";
 	bool conectfl = false;
 	cave::mmsql::Connection conn;
 	try
@@ -313,7 +313,7 @@ void v1_selects()
 	}
 	CU_ASSERT(conectfl);
 
-    std::cout << "Reading..\n";
+    //std::cout << "Reading..\n";
 
     cave::mmsql::Result rs1;
     try
@@ -333,8 +333,7 @@ void v1_selects()
         std::cout << "id:" << rs1.next()[0] << "\n";
     }*/
 
-
-    std::cout << "Reading..\n";
+    //std::cout << "Reading..\n";
 
     std::vector<Version> rs2;
     try
