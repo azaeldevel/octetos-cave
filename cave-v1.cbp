@@ -76,11 +76,11 @@
 				<Option createDefFile="1" />
 				<Option createStaticLib="1" />
 				<Compiler>
-					<Add option="-g -fPIC" />
+					<Add option="-g -fPIC  `pkg-config libconfig++ --cflags`" />
 					<Add option="-DOCTEOTOS_CAVE_DRIVER_MMSQL" />
 				</Compiler>
 				<Linker>
-					<Add option="`pkg-config --libs libmariadb`" />
+					<Add option="`pkg-config --libs libmariadb`  `pkg-config libconfig++ --libs`" />
 					<Add directory="../core/bin/Debug" />
 				</Linker>
 			</Target>
@@ -90,11 +90,11 @@
 				<Option type="3" />
 				<Option compiler="gcc" />
 				<Compiler>
-					<Add option="-O2 -fPIC" />
+					<Add option="-O2 -fPIC `pkg-config libconfig++ --cflags`" />
 					<Add option="-DOCTEOTOS_CAVE_DRIVER_MMSQL" />
 				</Compiler>
 				<Linker>
-					<Add option="`pkg-config --libs libmariadb`" />
+					<Add option="`pkg-config --libs libmariadb`  `pkg-config libconfig++ --libs`" />
 					<Add directory="../core/bin/Debug" />
 				</Linker>
 			</Target>
@@ -105,11 +105,12 @@
 				<Option compiler="gcc" />
 				<Option parameters="create database --user root --database muposysdev4 --password 4dm1nK3y " />
 				<Compiler>
+					<Add option="-g `pkg-config libconfig++ --cflags`" />
 					<Add option="-DOCTEOTOS_CAVE_DRIVER_MMSQL" />
 					<Add option="-DOCTEOTOS_CAVE_V1_TDD" />
 				</Compiler>
 				<Linker>
-					<Add option="`pkg-config --libs libmariadb`" />
+					<Add option="`pkg-config --libs libmariadb`  `pkg-config libconfig++ --libs`" />
 					<Add library="cave-mmsql-1" />
 					<Add directory="bin/Debug" />
 				</Linker>
@@ -121,6 +122,7 @@
 				<Option compiler="gcc" />
 				<Option parameters="repository /home/azael/develop/octetos/cave/tests/package" />
 				<Compiler>
+					<Add option="-g `pkg-config libconfig++ --cflags`" />
 					<Add option="-DOCTEOTOS_CAVE_DRIVER_MMSQL" />
 					<Add option="-DOCTEOTOS_CAVE_V1_TDD" />
 				</Compiler>
@@ -137,7 +139,7 @@
 				<Option compiler="gcc" />
 				<Option parameters="repository import /home/azael/develop/octetos/cave/tests/package/muposys-1.ocpk" />
 				<Compiler>
-					<Add option="`pkg-config libconfig++ --cflags`" />
+					<Add option="-g `pkg-config libconfig++ --cflags`" />
 					<Add option="-DOCTEOTOS_CAVE_DRIVER_MMSQL" />
 					<Add option="-DOCTEOTOS_CAVE_ENABLE_TDD_V1" />
 					<Add option="-DOCTEOTOS_CAVE_V1_TDD" />
@@ -155,7 +157,7 @@
 				<Option compiler="gcc" />
 				<Option parameters="repository import /home/azael/develop/octetos/cave/tests/package/muposys-1.ocpk --update-config /home/azael/develop/octetos/cave/tests/config-dev" />
 				<Compiler>
-					<Add option="`pkg-config libconfig++ --cflags`" />
+					<Add option="-g `pkg-config libconfig++ --cflags`" />
 					<Add option="-DOCTEOTOS_CAVE_DRIVER_MMSQL" />
 					<Add option="-DOCTEOTOS_CAVE_ENABLE_TDD_V1" />
 					<Add option="-DOCTEOTOS_CAVE_V1_TDD" />
