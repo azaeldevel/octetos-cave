@@ -48,16 +48,16 @@ namespace oct::cave::v1::mmsql
 	Data::Data(const std::string& h, const std::string& u, const std::string& pwd, const std::string& d) : DataSource(d), host(h), user(u), password(pwd), port(3306), flags(0)
 	{
 	}
-	Data::Data(const std::string& h, const std::string& u, const std::string& pwd, unsigned int p) : host(h), user(u), password(pwd), port(p), flags(0)
+	Data::Data(const std::string& h, const std::string& u, const std::string& pwd, int p) : host(h), user(u), password(pwd), port(p), flags(0)
 	{
 	}
-	Data::Data(const std::string& h, const std::string& u, const std::string& pwd, const std::string& d, unsigned int p) : DataSource(d), host(h), user(u), password(pwd), port(p), flags(0)
+	Data::Data(const std::string& h, const std::string& u, const std::string& pwd, const std::string& d, int p) : DataSource(d), host(h), user(u), password(pwd), port(p), flags(0)
 	{
 	}
-	Data::Data(const std::string& h, const std::string& u, const std::string& pwd, const std::string& d, unsigned int p, const std::string& s) : DataSource(d), host(h), user(u), password(pwd), socket(s), port(p), flags(0)
+	Data::Data(const std::string& h, const std::string& u, const std::string& pwd, const std::string& d, int p, const std::string& s) : DataSource(d), host(h), user(u), password(pwd), socket(s), port(p), flags(0)
 	{
 	}
-	Data::Data(const std::string& h, const std::string& u, const std::string& pwd, const std::string& d, unsigned int p, const std::string& s, unsigned long f) : DataSource(d), host(h), user(u), password(pwd), socket(s), port(p), flags(f)
+	Data::Data(const std::string& h, const std::string& u, const std::string& pwd, const std::string& d, int p, const std::string& s, unsigned long f) : DataSource(d), host(h), user(u), password(pwd), socket(s), port(p), flags(f)
 	{
 	}
 	Data::Data(const std::filesystem::path& p)
@@ -166,7 +166,7 @@ namespace oct::cave::v1::mmsql
 	    port = 3306;
 	    flags = 0;
 	}
-	void Data::set(const std::string& h, const std::string& u, const std::string& pwd, unsigned int p)
+	void Data::set(const std::string& h, const std::string& u, const std::string& pwd, int p)
 	{
 	    host = h;
 	    user = u;
@@ -174,7 +174,7 @@ namespace oct::cave::v1::mmsql
 	    port = p;
 	    flags = 0;
 	}
-	void Data::set(const std::string& h, const std::string& u, const std::string& pwd, const std::string& d, unsigned int p)
+	void Data::set(const std::string& h, const std::string& u, const std::string& pwd, const std::string& d, int p)
 	{
 	    database = d;
 	    host = h;
@@ -183,7 +183,7 @@ namespace oct::cave::v1::mmsql
 	    port = p;
 	    flags = 0;
 	}
-	void Data::set(const std::string& h, const std::string& u, const std::string& pwd, const std::string& d, unsigned int p, const std::string& s)
+	void Data::set(const std::string& h, const std::string& u, const std::string& pwd, const std::string& d, int p, const std::string& s)
 	{
 	    database = d;
 	    host = h;
@@ -193,7 +193,7 @@ namespace oct::cave::v1::mmsql
 	    port = 3306;
 	    flags = 0;
 	}
-	void Data::set(const std::string& h, const std::string& u, const std::string& pwd, const std::string& d, unsigned int p, const std::string& s, unsigned long f)
+	void Data::set(const std::string& h, const std::string& u, const std::string& pwd, const std::string& d, int p, const std::string& s, unsigned long f)
 	{
 	    database = d;
 	    host = h;
