@@ -30,12 +30,7 @@
 #endif
 
 namespace cave = oct::cave::v1;
-
 const std::string cmdpwd("[require]");
-
-
-
-
 int main(int argc, char* argv[])
 {
     cave::Program prg;

@@ -131,7 +131,7 @@ namespace oct::cave::v1
     }
     int Program::repository_import(int argc, char* argv[])
     {
-        std::filesystem::path file = argv[1];
+        std::filesystem::path repodir,file = argv[1];
         std::filesystem::path config_file = argv[3];
         mmsql::Data dt_create;
         if(argc == 2)
@@ -159,6 +159,8 @@ namespace oct::cave::v1
         std::vector<std::string> header;
         //std::cout << file << std::endl;
         std::vector<std::filesystem::path> files;
+        if(repodir.empty()) repodir = file.parent_path();
+        std::cout << "Repositorio : " << repodir << std::endl;
         libconfig::Config config;
         config.readFile(file.c_str());
         libconfig::Setting &root = config.getRoot();
@@ -180,7 +182,7 @@ namespace oct::cave::v1
         for(int i = 0; i < list.getLength(); i++)
         {
             //std::cout << (std::string)list[i] << "\n";
-            files.push_back((std::filesystem::path)list[i]);
+            files.push_back(repodir/(std::filesystem::path)list[i]);
         }
 
         if(host.compare(cmd_require) == 0)
@@ -293,9 +295,15 @@ namespace oct::cave::v1
                 }
             }
 
+            std::cout << "Scripting.....\n";
+
             try
             {
-                mmsql::execute(connection,files,true);
+                connection.execute(files);
+                for(const std::filesystem::path& p : files)
+                {
+                    std::cout << p << "\n";
+                }
             }
             catch (const ExceptionDriver& e)
             {
@@ -325,6 +333,7 @@ namespace oct::cave::v1
                 connection.commit();
             }
         }
+        std::cout << "Completada....\n";
 
         return EXIT_SUCCESS;
     }

@@ -547,6 +547,19 @@ namespace oct::cave::v1
                 rs = execute(str,echo,out);
             }
 		}
+		void execute(const std::filesystem::path& p,bool echo = false,std::ostream& out = std::cout)
+		{
+            Script script(p);
+            execute(script,echo,out);
+		}
+		void execute(const std::vector<std::filesystem::path>& q,bool echo = false,std::ostream& out = std::cout)
+		{
+            for(const std::filesystem::path& p : q)
+            {
+                //std::cout << "\tsql : '" << str << "'\n";
+                execute(p,echo,out);
+            }
+		}
 
 		template<core::natural ID> ID last_id();
 
