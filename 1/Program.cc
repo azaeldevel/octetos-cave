@@ -20,6 +20,7 @@
 
 #include <cstring>
 #include <fstream>
+#include <core/3/Configuration.hh>
 
 #include "Program.hh"
 
@@ -126,6 +127,20 @@ namespace oct::cave::v1
         root["database"]["mmsql"]["database"] = dt.get_database();
 
         config.writeFile(file.c_str());
+
+        return true;
+    }
+    bool update_config(core::Configuration& file,const mmsql::Data& dt)
+    {
+        libconfig::Setting &database_setting = file.lookup("database");
+        std::cout << "DB : " << (std::string) dt.get_database() << "\n";
+        database_setting["mmsql"]["host"] = dt.get_host();
+        database_setting["mmsql"]["user"] = dt.get_user();
+        database_setting["mmsql"]["port"] = dt.get_port();
+        database_setting["mmsql"]["password"] = dt.get_password();
+        database_setting["mmsql"]["database"] = dt.get_database();
+
+        file.save();
 
         return true;
     }
