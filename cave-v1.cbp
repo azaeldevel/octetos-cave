@@ -155,7 +155,7 @@
 				<Option object_output="bin/obj/Debug" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters="repository import /home/azael/develop/octetos/cave/tests/package/muposys-1.ocpk --update-config /home/azael/develop/octetos/cave/tests/config-dev" />
+				<Option parameters="repository import /home/azael/develop/octetos/cave/tests/package/muposys-1.ocpk --update-config /home/azael/develop/octetos/cave/tests/config-cave" />
 				<Compiler>
 					<Add option="-g `pkg-config libconfig++ --cflags`" />
 					<Add option="-DOCTEOTOS_CAVE_DRIVER_MMSQL" />
@@ -173,6 +173,10 @@
 			<Add option="-Wall -pedantic -std=c++23 `pkg-config --cflags libmariadb`" />
 			<Add directory="../../octetos" />
 		</Compiler>
+		<Linker>
+			<Add library="octetos-core-3" />
+			<Add directory="../core/bin/Debug" />
+		</Linker>
 		<Unit filename="1/Program.cc" />
 		<Unit filename="1/Program.hh" />
 		<Unit filename="1/base.cc">
