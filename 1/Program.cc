@@ -132,7 +132,7 @@ namespace oct::cave::v1
     int Program::repository_import(int argc, char* argv[])
     {
         std::filesystem::path repodir,file = argv[1];
-        std::filesystem::path config_file = argv[3];
+        std::filesystem::path config_file;
         mmsql::Data dt_create;
         if(argc == 2)
         {
@@ -300,10 +300,6 @@ namespace oct::cave::v1
             try
             {
                 connection.execute(files);
-                for(const std::filesystem::path& p : files)
-                {
-                    std::cout << p << "\n";
-                }
             }
             catch (const ExceptionDriver& e)
             {
@@ -319,6 +315,8 @@ namespace oct::cave::v1
             {
                 return EXIT_FAILURE;
             }
+
+            std::cout << "Config file.....\n";
 
             //write config file
             if(not config_file.empty())
