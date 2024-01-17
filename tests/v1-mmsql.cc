@@ -248,9 +248,9 @@ void v1_script()
 
     try
     {
-        cave::Script base("/home/azael/develop/octetos/cave/tests/package/base.sql");
+        cave::Script base("tests/package/base.sql");
         base.execute(connroot,echo);
-        cave::Script data("/home/azael/develop/octetos/cave/tests/package/default-data-1.sql");
+        cave::Script data("tests/package/default-data-1.sql");
         data.execute(connroot,echo);
     }
     catch (const cave::ExceptionDriver& e)
