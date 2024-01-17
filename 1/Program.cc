@@ -116,7 +116,7 @@ namespace oct::cave::v1
     bool update_config(const std::filesystem::path& file,const mmsql::Data& dt)
     {
         libconfig::Config config;
-        config.readFile(file.c_str());
+        config.readFile(file.string().c_str());
 
         libconfig::Setting &root = config.getRoot();
         std::cout << "DB : " << (std::string) dt.get_database() << "\n";
@@ -126,7 +126,7 @@ namespace oct::cave::v1
         root["database"]["mmsql"]["password"] = dt.get_password();
         root["database"]["mmsql"]["database"] = dt.get_database();
 
-        config.writeFile(file.c_str());
+        config.writeFile(file.string().c_str());
 
         return true;
     }
@@ -177,7 +177,7 @@ namespace oct::cave::v1
         if(repodir.empty()) repodir = file.parent_path();
         std::cout << "Repositorio : " << repodir << std::endl;
         libconfig::Config config;
-        config.readFile(file.c_str());
+        config.readFile(file.string().c_str());
         libconfig::Setting &root = config.getRoot();
 
         //
@@ -197,7 +197,7 @@ namespace oct::cave::v1
         for(int i = 0; i < list.getLength(); i++)
         {
             //std::cout << (std::string)list[i] << "\n";
-            files.push_back(repodir/(std::filesystem::path)list[i]);
+            files.push_back(repodir/(std::filesystem::path)(std::string)list[i]);
         }
 
         if(host.compare(cmd_require) == 0)

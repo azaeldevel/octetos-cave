@@ -75,7 +75,7 @@ namespace oct::cave::v1::mmsql
 	void Data::load(const std::filesystem::path& p)
 	{
 	    libconfig::Config config;
-	    config.readFile(p.c_str());
+	    config.readFile(p.string().c_str());
         const libconfig::Setting &root = config.getRoot();
         const libconfig::Setting &mmsql = root["database"]["mmsql"];
         host = mmsql["host"].c_str();
@@ -100,7 +100,7 @@ namespace oct::cave::v1::mmsql
 	void Data::load(const std::filesystem::path& p,const std::string& h)
 	{
 	    libconfig::Config config;
-	    config.readFile(p.c_str());
+	    config.readFile(p.string().c_str());
         const libconfig::Setting &root = config.getRoot();
         const libconfig::Setting &mmsql = root["database"]["mmsql"];
         host = h;

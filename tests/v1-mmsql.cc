@@ -39,7 +39,7 @@ namespace cave = oct::cave::v1;
     static cave::mmsql::Data dt_root("tests/config-root");
     static cave::mmsql::Data dt_cave("tests/config-cave");
 #else
-    #error "Deve estar definido uno de los macros OCTETOS_CLIENT o OCTETOS_SERVER"
+    #error "Deve estar definido uno de los macros OCTETOS_CLIENT o OCTETOS_SERVER(en donde se ejecuta el programa)"
 #endif // OCTETOS_CLIENT
 
 struct DB_name
