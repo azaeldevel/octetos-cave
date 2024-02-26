@@ -85,7 +85,7 @@
 				</Compiler>
 				<Linker>
 					<Add option="`pkg-config --libs libmariadb`" />
-					<Add directory="../core/bin/Debug" />
+					<Add directory="../core/bin/Release" />
 				</Linker>
 			</Target>
 		</Build>
