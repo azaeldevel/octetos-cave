@@ -121,7 +121,7 @@
 				<Option object_output="bin/obj/Debug" />
 				<Option type="1" />
 				<Option compiler="gcc" />
-				<Option parameters="repository import /home/azael/develop/octetos/cave/tests/package/muposys.ocpk /home/azael/develop/octetos/cave/tests/package/muposys-new.ocpk" />
+				<Option parameters="repository import /home/azael/develop/octetos/muposys/db/alpha/mariadb/muposys.ocpk /home/azael/develop/octetos/cave/tests/package/muposys-new.ocpk" />
 				<Compiler>
 					<Add option="-g `pkg-config libconfig++ --cflags`" />
 					<Add option="-DOCTEOTOS_CAVE_DRIVER_MMSQL" />
