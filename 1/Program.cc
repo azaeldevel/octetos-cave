@@ -55,7 +55,7 @@ namespace oct::cave::v1
                     return EXIT_FAILURE;
                 }
 
-                password = argv[++i];
+                password_connection = argv[++i];
             }
             else if(strcmp("--database",argv[i]) == 0)
             {
@@ -86,7 +86,7 @@ namespace oct::cave::v1
                     return EXIT_FAILURE;
                 }
 
-                user = argv[++i];
+                user_connection = argv[++i];
             }
             else if(strcmp("--port",argv[i]) == 0)
             {
@@ -183,18 +183,18 @@ namespace oct::cave::v1
                 exit(EXIT_FAILURE);
             }
         }
-        if(user.empty())
+        if(user_connection.empty())
         {
             if(root.exists("user"))
             {
-                user = (const char*)root.lookup("user");
-                if(user.compare(cmd_require) == 0)
+                user_connection = (const char*)root.lookup("user");
+                if(user_connection.compare(cmd_require) == 0)
                 {
                     std::cout << "Indique usuario [root]: ";
-                    std::cin >> user;
-                    if(user.compare(".") == 0)
+                    std::cin >> user_connection;
+                    if(user_connection.compare(".") == 0)
                     {
-                        user = "root";
+                        user_connection = "root";
                     }
                 }
             }
@@ -204,15 +204,15 @@ namespace oct::cave::v1
                 exit(EXIT_FAILURE);
             }
         }
-        if(password.empty())
+        if(password_connection.empty())
         {
             if(root.exists("password"))
             {
-                password = (const char*)root.lookup("password");
-                if(password.compare(cmd_require) == 0)
+                password_connection = (const char*)root.lookup("password");
+                if(password_connection.compare(cmd_require) == 0)
                 {
                     std::cout << "Indique password : ";
-                    std::cin >> password;
+                    std::cin >> password_connection;
                 }
             }
             else
@@ -262,7 +262,7 @@ namespace oct::cave::v1
                 database = (const char*)root.lookup("database");
                 if(database.compare(cmd_require) == 0)
                 {
-                    std::cout << "Nombre de la base de datos : ";
+                    std::cout << "Nueva base de datos : ";
                     std::cin >> database;
                 }
             }
@@ -322,10 +322,10 @@ namespace oct::cave::v1
                 host = cmd;
             }
         }
-        if(user.compare(cmd_require) == 0)
+        if(user_connection.compare(cmd_require) == 0)
         {
-            user = "root";
-            std::cout << "Conection user [" << user << "] : ";
+            user_connection = "root";
+            std::cout << "Conection user [" << user_connection << "] : ";
             std::string cmd;
             std::cin >> cmd;
             if(cmd.compare("S") == 0 or cmd.compare("s") == 0 )
@@ -334,7 +334,7 @@ namespace oct::cave::v1
             }
             else
             {
-                user = cmd;
+                user_connection = cmd;
             }
         }
         if(port == 0)
@@ -351,11 +351,11 @@ namespace oct::cave::v1
                 port = std::atoi(cmd.c_str());
             }
         }
-        if(password.compare(cmd_require) == 0)
+        if(password_connection.compare(cmd_require) == 0)
         {
-            password.clear();
-            std::cout << "Conection Password [" << user << "] : ";
-            std::cin >> password;
+            password_connection.clear();
+            std::cout << "Conection Password [" << user_connection << "] : ";
+            std::cin >> password_connection;
         }
 
         return EXIT_SUCCESS;
@@ -399,10 +399,10 @@ namespace oct::cave::v1
 
         loadconfig(config_file);
 
-        std::cout << "data : " << host << "," <<  user << "," <<  password << "," <<  port  << "," <<  database  << "," <<  templatedb << std::endl;
+        std::cout << "data : " << host << "," <<  user_connection << "," <<  password_connection << "," <<  port  << "," <<  database  << "," <<  templatedb << std::endl;
 
 
-        mmsql::Data dtm(host, user, password, port);
+        mmsql::Data dtm(host, user_connection, password_connection, port);
         bool conectfl = false;
         mmsql::Connection connection;
         try
@@ -477,8 +477,25 @@ namespace oct::cave::v1
             }
             else if(templatedb.compare("muposys-1") == 0)
             {
-                Script script;
+                std::string newpass;
+                std::cout << "Nueva contrasena : ";
+                std::cin >> newpass;
+                std::string newuser;
+                std::cout << "Nuevo usuario : ";
+                std::cin >> newuser;
 
+                Script script;
+                script.create_user(newuser.c_str(),true,host.c_str(),newpass.c_str());
+                script.create_database(database.c_str());
+                script.grand_all_privileges(database.c_str(),newuser.c_str(),host.c_str(),newpass.c_str());
+                script.use(database.c_str());
+                for(const std::filesystem::path& p : files)
+                {
+                    //std::cout << "Execution " << p.string() << "\n";
+                    script.load(p);
+                }
+                script.print(std::cout);
+                script.execute(connection,true,std::cout);
             }
 
 

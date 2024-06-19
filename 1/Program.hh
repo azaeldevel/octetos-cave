@@ -47,7 +47,7 @@ namespace oct::cave::v1
 
     private:
         std::filesystem::path dir,repodir,config_file,config_update,package = "ocpk";
-        std::string user,password,database, host,templatedb;
+        std::string user_connection,password_connection,database, host,templatedb;
         std::vector<std::filesystem::path> files;
         int port = 3306;
     };
