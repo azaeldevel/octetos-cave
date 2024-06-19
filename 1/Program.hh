@@ -38,14 +38,17 @@ namespace oct::cave::v1
     {
     public:
         int main(int argc, char* argv[]);
+        int check(int argc, char* argv[]);
+        int loadconfig(const std::filesystem::path&);
         int repository_import(int argc, char* argv[]);
         int repository(int argc, char* argv[]);
 
         virtual std::vector<std::string> resolved_database(const std::string& type,const std::string& name,mmsql::Data&);
 
     private:
-        std::filesystem::path dir,package = "ocpk";
-        std::string user = "root",password,database, host = "localhost";
+        std::filesystem::path dir,repodir,config_file,config_update,package = "ocpk";
+        std::string user,password,database, host,templatedb;
+        std::vector<std::filesystem::path> files;
         int port = 3306;
     };
 }

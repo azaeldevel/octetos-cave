@@ -21,6 +21,7 @@
 #include <cstring>
 #include <fstream>
 #include <core/3/Configuration.hh>
+#include <string.h>
 
 #include "Program.hh"
 
@@ -110,6 +111,10 @@ namespace oct::cave::v1
             {
                 return repository(argc - i,&argv[i]);
             }
+            else if(strcmp("check",argv[i]) == 0)
+            {
+                return check(argc - i,&argv[i]);
+            }
         }
         return EXIT_FAILURE;
     }
@@ -144,60 +149,162 @@ namespace oct::cave::v1
 
         return true;
     }
-    int Program::repository_import(int argc, char* argv[])
-    {
-        std::filesystem::path repodir,file = argv[1];
-        std::filesystem::path config_file;
-        mmsql::Data dt_create;
-        if(argc == 2)
-        {
-            file = argv[1];
-        }
-        else if(argc == 4 and strcmp(argv[2],"--update-config") == 0)
-        {
-            file = argv[1];
-            config_file = argv[3];
-            //std::cout << "config : " << config_file << "\n";
-        }
-        else if(argc == 5)
-        {
-            std::cerr << "En desarrollo...!\n";
-        }
-        else
-        {
-            std::cerr << "El sub-comando import tiene los formato los siguinetes : ";
-            std::cerr << "\timport 'archivo de repositorio'";
-            std::cerr << "\timport 'archivo de repositorio' archivo de configuracion poara actualizar";
-            std::cerr << "\timport 'archivo de repositorio' 'archivo de configuracion poara actualizar' 'path in config file'";
-        }
 
-        std::vector<std::string> header;
-        //std::cout << file << std::endl;
-        std::vector<std::filesystem::path> files;
-        if(repodir.empty()) repodir = file.parent_path();
-        std::cout << "Repositorio : " << repodir << std::endl;
+
+
+
+
+
+    int Program::loadconfig(const std::filesystem::path& config_file)
+    {
         libconfig::Config config;
-        config.readFile(file.string().c_str());
+        config.readFile(config_file.string().c_str());
         libconfig::Setting &root = config.getRoot();
 
         //
-        host = (std::string)root.lookup("host");
-        //std::cout << "host : " << host << std::endl;
-        user = (std::string)root.lookup("user");
-        //std::cout << "user : " << user << std::endl;
-        password = (std::string)root.lookup("password");
-        //std::cout << "password : " << password << std::endl;
-        //port = (int)root.lookup("port");
-        //std::cout << "port : " << port << std::endl;
+        if(host.empty())
+        {
+            if(root.exists("host"))
+            {
+                host = (const char*)root.lookup("host");
+                if(host.compare(cmd_require) == 0)
+                {
+                    std::cout << "Indique Host [localhost]: ";
+                    std::cin >> host;
+                    if(host.compare(".") == 0)
+                    {
+                        host = "localhost";
+                    }
+                }
+            }
+            else
+            {
+                std::cout << "Deve indicar Host " << std::endl;
+                exit(EXIT_FAILURE);
+            }
+        }
+        if(user.empty())
+        {
+            if(root.exists("user"))
+            {
+                user = (const char*)root.lookup("user");
+                if(user.compare(cmd_require) == 0)
+                {
+                    std::cout << "Indique usuario [root]: ";
+                    std::cin >> user;
+                    if(user.compare(".") == 0)
+                    {
+                        user = "root";
+                    }
+                }
+            }
+            else
+            {
+                std::cout << "Deve indicar el usuario " << std::endl;
+                exit(EXIT_FAILURE);
+            }
+        }
+        if(password.empty())
+        {
+            if(root.exists("password"))
+            {
+                password = (const char*)root.lookup("password");
+                if(password.compare(cmd_require) == 0)
+                {
+                    std::cout << "Indique password : ";
+                    std::cin >> password;
+                }
+            }
+            else
+            {
+                std::cout << "Deve indicar el password " << std::endl;
+                exit(EXIT_FAILURE);
+            }
+        }
+        if(port == 0)
+        {
+            std::string strport;
+            if(root.exists("port"))
+            {
+                strport = (const char*)root.lookup("port");
+                if(strport.compare(cmd_require) == 0)
+                {
+                    std::cout << "Indique puerto de conexion a base de datos : ";
+                    std::cin >> strport;
+                    if(strport.compare(".") == 0)
+                    {
+                        strport = "3306";
+                    }
+                    port = std::stoi(strport);
+                }
+                else
+                {
+                    port = std::stoi(strport);
+                }
+                if(port == 0)
+                {
+                    port = 3306;
+                }
+            }
+            else
+            {
+                std::cout << "Deve indicar el password " << std::endl;
+                exit(EXIT_FAILURE);
+            }
+        }
+        std::cout << "port : " << port << std::endl;
 
-        database = (std::string)root.lookup("database");
-        //std::cout << "database : " << database << std::endl;
+
+        if(database.empty())
+        {
+            if(root.exists("database"))
+            {
+                database = (const char*)root.lookup("database");
+                if(database.compare(cmd_require) == 0)
+                {
+                    std::cout << "Nombre de la base de datos : ";
+                    std::cin >> database;
+                }
+            }
+            else
+            {
+                std::cout << "Deve indicar la base de datos " << std::endl;
+                exit(EXIT_FAILURE);
+            }
+        }
+        std::cout << "database : " << database << std::endl;
         const libconfig::Setting &list = root["files"];
-        //std::cout << "cantidad : " << list.getLength() << std::endl;
+        std::cout << "cantidad : " << list.getLength() << std::endl;
         for(int i = 0; i < list.getLength(); i++)
         {
-            //std::cout << (std::string)list[i] << "\n";
+            std::cout << (std::string)list[i] << "\n";
             files.push_back(repodir/(std::filesystem::path)(std::string)list[i]);
+        }
+
+
+        if(templatedb.empty())
+        {
+            if(root.exists("template"))
+            {
+                templatedb = (const char*)root.lookup("template");
+                if(templatedb.compare("none") == 0)
+                {
+                    templatedb = "none";
+                }
+                else if(templatedb.compare(cmd_require) == 0)
+                {
+                    std::cout << "Indique plantilla [none]: ";
+                    std::cin >> templatedb;
+                    if(templatedb.compare(".") == 0)
+                    {
+                        templatedb = "none";
+                    }
+                }
+            }
+            else
+            {
+                templatedb = "none";
+            }
         }
 
         if(host.compare(cmd_require) == 0)
@@ -251,13 +358,48 @@ namespace oct::cave::v1
             std::cin >> password;
         }
 
-        if(database.compare("[basic-template]") == 0)
+        return EXIT_SUCCESS;
+    }
+
+    int Program::repository_import(int argc, char* argv[])
+    {
+        mmsql::Data dt_create;
+        //std::cout << "argv[1] : " << argv[1] << "\n";
+        if(argc == 2)
         {
-            //
-            header = this->resolved_database(database,"database-header",dt_create);
+            config_file = argv[1];
+            std::cout << "config : " << config_file << "\n";
+        }
+        else if(argc == 3)
+        {
+            config_file = argv[1];
+            std::cout << "config : " << config_file << "\n";
+            config_update = argv[2];
+            std::cout << "config-update : " << config_file << "\n";
+        }
+        /*else if(argc == 4 and strcmp(argv[2],"--update-config") == 0)
+        {
+            config_file = argv[1];
+            std::cout << "config : " << config_file << "\n";
+            config_update = argv[2];
+            std::cout << "config-update : " << config_file << "\n";
+        }*/
+        else
+        {
+            std::cerr << "El sub-comando import tiene los formato los siguinetes : ";
+            std::cerr << "\timport 'archivo de repositorio'";
+            std::cerr << "\timport 'archivo de repositorio' archivo de configuracion poara actualizar";
+            //std::cerr << "\timport 'archivo de repositorio' 'archivo de configuracion poara actualizar' 'path in config file'";
         }
 
-        std::cout << "data : " << host << "," <<  user << "," <<  password << "," <<  port << std::endl;
+        std::vector<std::string> header;
+        //std::cout << file << std::endl;
+        if(repodir.empty()) repodir = config_file.parent_path();
+        std::cout << "Repositorio : " << repodir << std::endl;
+
+        loadconfig(config_file);
+
+        std::cout << "data : " << host << "," <<  user << "," <<  password << "," <<  port  << "," <<  database  << "," <<  templatedb << std::endl;
 
 
         mmsql::Data dtm(host, user, password, port);
@@ -312,29 +454,39 @@ namespace oct::cave::v1
 
             std::cout << "Scripting.....\n";
 
-            try
+            if(templatedb.compare("none") == 0)
             {
-                connection.execute(files);
+                try
+                {
+                    connection.execute(files);
+                }
+                catch (const ExceptionDriver& e)
+                {
+                    std::cout << e.what() << "\n";
+                    return EXIT_FAILURE;
+                }
+                catch (const std::exception& e)
+                {
+                    std::cout << e.what() << "\n";
+                    return EXIT_FAILURE;
+                }
+                catch (...)
+                {
+                    return EXIT_FAILURE;
+                }
             }
-            catch (const ExceptionDriver& e)
+            else if(templatedb.compare("muposys-1") == 0)
             {
-                std::cout << e.what() << "\n";
-                return EXIT_FAILURE;
+                Script script;
+
             }
-            catch (const std::exception& e)
-            {
-                std::cout << e.what() << "\n";
-                return EXIT_FAILURE;
-            }
-            catch (...)
-            {
-                return EXIT_FAILURE;
-            }
+
+
 
             std::cout << "Config file.....\n";
 
             //write config file
-            if(not config_file.empty())
+            /*if(not config_file.empty())
             {
                 if(update_config(config_file,dt_create))
                 {
@@ -344,12 +496,25 @@ namespace oct::cave::v1
             else
             {
                 connection.commit();
-            }
+            }*/
         }
         std::cout << "Completada....\n";
 
         return EXIT_SUCCESS;
     }
+
+
+
+    int Program::check(int argc, char* argv[])
+    {
+        return EXIT_SUCCESS;
+    }
+
+
+
+
+
+
     int Program::repository(int argc, char* argv[])
     {
         for(int i = 1; i < argc; i++)

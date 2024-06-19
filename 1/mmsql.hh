@@ -48,6 +48,8 @@ namespace oct::cave::v1::mmsql
 		int get_port()const;
 		unsigned long get_flags()const;
 
+		static int default_port();
+
 		void set(const std::string& host, const std::string& user, const std::string& password);
 		void set(const std::string& host, const std::string& user, const std::string& password, const std::string& database);
 		void set(const std::string& host, const std::string& user, const std::string& password, int port);

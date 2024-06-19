@@ -2,4 +2,6 @@ host = "[require]";
 user = "[require]";
 port = "3306";
 password = "[require]";
+database = "[require]";
+template = "muposys-1.0";
 files = ("database.sql","base.sql","stock.sql","user-mang.sql","servicies.sql","fabric.sql","sales.sql","http.sql","default-data.sql");

@@ -149,6 +149,11 @@ namespace oct::cave::v1::mmsql
 		return flags;
 	}
 
+    int Data::default_port()
+    {
+        return MYSQL_DEFAULT_PORT;
+    }
+
 	void Data::set(const std::string& h, const std::string& u, const std::string& pwd)
 	{
 	    host = h;
