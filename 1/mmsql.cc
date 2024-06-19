@@ -151,7 +151,7 @@ namespace oct::cave::v1::mmsql
 
     int Data::default_port()
     {
-        return MYSQL_DEFAULT_PORT;
+        return 3306;
     }
 
 	void Data::set(const std::string& h, const std::string& u, const std::string& pwd)
@@ -330,7 +330,7 @@ namespace oct::cave::v1
 		if (not connection) throw ExceptionDriver("No se ha establesido la cionexion");
 
 		//std::cout << "Connection::execute Step 1\n";
-        if(echo) out << "\t'" << str << "'\n";
+        if(echo) out << str << "\n";
 
 		int ret_query = mysql_query(reinterpret_cast<MYSQL*>(connection), str);
 
@@ -447,7 +447,7 @@ namespace oct::cave::v1::mmsql
                 //if(strline.starts_with("--"))continue;
                 //copy_chars(strline,strsql);
 
-                std::cout << "\tsql : '" << strline << "'\n";
+                //std::cout << strline << "\n";
                 rs = conn.execute(strline);
 
                 strline.clear();

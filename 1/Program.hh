@@ -28,9 +28,10 @@
 #include <vector>
 #include <filesystem>
 #include <iostream>
-#include <libconfig.h++>
+//#include <libconfig.h++>
 
 #include "mmsql.hh"
+#include "core/3/Configuration.hh"
 
 namespace oct::cave::v1
 {
@@ -40,6 +41,14 @@ namespace oct::cave::v1
         int main(int argc, char* argv[]);
         int check(int argc, char* argv[]);
         int loadconfig(const std::filesystem::path&);
+        /**
+        *\brief Crea un nuevo archivco de configuracion con los paarametros usados para crear la base de datos
+        *\param database nombre de la nueva base de datos
+        *\param user nombre de la nuevo usuario
+        *\param password nombre de la nueva contrasena
+        *\param host host en el que se realiza la operacion
+        **/
+        bool updateconfig(const std::string& database,const std::string& user,const std::string& password,const std::string& host);
         int repository_import(int argc, char* argv[]);
         int repository(int argc, char* argv[]);
 
@@ -50,6 +59,7 @@ namespace oct::cave::v1
         std::string user_connection,password_connection,database, host,templatedb;
         std::vector<std::filesystem::path> files;
         int port = 3306;
+        core::Configuration config;
     };
 }
 

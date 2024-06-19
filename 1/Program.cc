@@ -157,8 +157,7 @@ namespace oct::cave::v1
 
     int Program::loadconfig(const std::filesystem::path& config_file)
     {
-        libconfig::Config config;
-        config.readFile(config_file.string().c_str());
+        config.open(config_file);
         libconfig::Setting &root = config.getRoot();
 
         //
@@ -272,9 +271,9 @@ namespace oct::cave::v1
                 exit(EXIT_FAILURE);
             }
         }
-        std::cout << "database : " << database << std::endl;
+        //std::cout << "database : " << database << std::endl;
         const libconfig::Setting &list = root["files"];
-        std::cout << "cantidad : " << list.getLength() << std::endl;
+        //std::cout << "cantidad : " << list.getLength() << std::endl;
         for(int i = 0; i < list.getLength(); i++)
         {
             std::cout << (std::string)list[i] << "\n";
@@ -395,11 +394,11 @@ namespace oct::cave::v1
         std::vector<std::string> header;
         //std::cout << file << std::endl;
         if(repodir.empty()) repodir = config_file.parent_path();
-        std::cout << "Repositorio : " << repodir << std::endl;
+        //std::cout << "Repositorio : " << repodir << std::endl;
 
         loadconfig(config_file);
 
-        std::cout << "data : " << host << "," <<  user_connection << "," <<  password_connection << "," <<  port  << "," <<  database  << "," <<  templatedb << std::endl;
+        //std::cout << "data : " << host << "," <<  user_connection << "," <<  password_connection << "," <<  port  << "," <<  database  << "," <<  templatedb << std::endl;
 
 
         mmsql::Data dtm(host, user_connection, password_connection, port);
@@ -452,7 +451,7 @@ namespace oct::cave::v1
                 }
             }
 
-            std::cout << "Scripting.....\n";
+            std::cout << "Executing...\n";
 
             if(templatedb.compare("none") == 0)
             {
@@ -477,13 +476,28 @@ namespace oct::cave::v1
             }
             else if(templatedb.compare("muposys-1") == 0)
             {
-                std::string newpass;
+                std::string newuser,newpass;
+#ifdef OCTETOS_CAVE_1_DEVELOPING
+                std::cout << "Nuevo usuario [develop]: ";
+                std::cin >> newuser;
+                if(newuser.compare(".") == 0)
+                {
+                    newuser = "develop";
+                }
+
+                std::cout << "Nueva contrasena [123456]: ";
+                std::cin >> newpass;
+                if(newpass.compare(".") == 0)
+                {
+                    newpass = "123456";
+                }
+#else
+                std::cout << "Nuevo usuario : ";
+                std::cin >> newuser;OCTETOS_CAVE_1_DEVELOPING
+
                 std::cout << "Nueva contrasena : ";
                 std::cin >> newpass;
-                std::string newuser;
-                std::cout << "Nuevo usuario : ";
-                std::cin >> newuser;
-
+#endif // OCTETOS_CAVE_1_DEVELOPING
                 Script script;
                 script.create_user(newuser.c_str(),true,host.c_str(),newpass.c_str());
                 script.create_database(database.c_str());
@@ -494,26 +508,13 @@ namespace oct::cave::v1
                     //std::cout << "Execution " << p.string() << "\n";
                     script.load(p);
                 }
-                script.print(std::cout);
+                //script.print(std::cout);
                 script.execute(connection,true,std::cout);
+                if(not config_update.empty()) updateconfig(database,newuser,newpass,host);
             }
 
 
 
-            std::cout << "Config file.....\n";
-
-            //write config file
-            /*if(not config_file.empty())
-            {
-                if(update_config(config_file,dt_create))
-                {
-                    connection.commit();
-                }
-            }
-            else
-            {
-                connection.commit();
-            }*/
         }
         std::cout << "Completada....\n";
 
@@ -528,6 +529,21 @@ namespace oct::cave::v1
     }
 
 
+    bool Program::updateconfig(const std::string& db,const std::string& u,const std::string& p,const std::string& h)
+    {
+        libconfig::Setting &root = config.getRoot();
+        std::cout << "Updating config...\n";
+
+        root["host"] = h.c_str();
+        root["database"] = db.c_str();
+        root["user"] = u.c_str();
+        root["password"] = p.c_str();
+
+
+        config.save(config_update);
+
+        return true;
+    }
 
 
 
