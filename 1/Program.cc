@@ -493,7 +493,7 @@ namespace oct::cave::v1
                 }
 #else
                 std::cout << "Nuevo usuario : ";
-                std::cin >> newuser;OCTETOS_CAVE_1_DEVELOPING
+                std::cin >> newuser;
 
                 std::cout << "Nueva contrasena : ";
                 std::cin >> newpass;
