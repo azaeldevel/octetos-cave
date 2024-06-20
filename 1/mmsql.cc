@@ -330,13 +330,21 @@ namespace oct::cave::v1
 		if (not connection) throw ExceptionDriver("No se ha establesido la cionexion");
 
 		//std::cout << "Connection::execute Step 1\n";
-        if(echo) out << str << "\n";
+        if(echo) out << str << " : ";
 
 		int ret_query = mysql_query(reinterpret_cast<MYSQL*>(connection), str);
 
 		//std::cout << "Connection::execute Step 2\n";
 
-		if(ret_query == 0) return Result<char,mmsql::Data>(mysql_store_result(reinterpret_cast<MYSQL*>(connection)));
+		if(ret_query == 0)
+        {
+            if(echo) out << "completada\n";
+            return Result<char,mmsql::Data>(mysql_store_result(reinterpret_cast<MYSQL*>(connection)));
+        }
+        else
+        {
+            if(echo) out << "fallo\n";
+        }
 
 		//std::cout << "Connection::execute Step 3\n";
 		std::string failstr = "Fallo en : '";

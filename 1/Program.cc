@@ -511,6 +511,7 @@ namespace oct::cave::v1
                 //script.print(std::cout);
                 script.execute(connection,true,std::cout);
                 if(not config_update.empty()) updateconfig(database,newuser,newpass,host);
+                connection.commit();
             }
 
 
