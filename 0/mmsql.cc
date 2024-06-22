@@ -59,8 +59,23 @@ namespace oct::cave::v0::mmsql
 	Data::Data(const std::string& h, const std::string& u, const std::string& pwd, const std::string& d, unsigned int p, const std::string& s, unsigned long f) : DataSource(d), host(h), user(u), password(pwd), socket(s), port(p), flags(f)
 	{
 	}
+	Data::Data(const Data& dt) : DataSource(dt), host(dt.host), user(dt.user), password(dt.password), socket(dt.socket), port(dt.port), flags(dt.flags)
+	{
+	}
 	Data::~Data()
 	{
+	}
+
+	Data& Data::operator =(const Data& dt)
+	{
+	    host = dt.host;
+	    user = dt.user;
+	    password = dt.password;
+	    socket = dt.socket;
+	    port = dt.port;
+	    flags = dt.flags;
+
+	    return *this;
 	}
 
 
