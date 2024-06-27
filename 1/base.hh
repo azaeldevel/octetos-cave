@@ -563,6 +563,8 @@ namespace oct::cave::v1
 
 		template<core::natural ID> ID last_id();
 
+
+
 		//Por string
         RS select(const char* table)
 		{
@@ -573,6 +575,10 @@ namespace oct::cave::v1
 
 			return execute(srtsql.c_str());
 		}
+        RS select(const std::string& table)
+		{
+		    return select(table.c_str());
+		}
         RS select(const char* table,const char* fields)
 		{
 			std::string srtsql = "SELECT ";
@@ -582,6 +588,10 @@ namespace oct::cave::v1
 			//std::cout << srtsql << "\n";
 
 			return execute(srtsql.c_str());
+		}
+        RS select(const std::string& table,const std::string& fields)
+		{
+		    return select(table.c_str(),fields.c_str());
 		}
         RS select(const char* table,const char* fields,const char* where)
 		{
@@ -595,6 +605,10 @@ namespace oct::cave::v1
 
 			return execute(srtsql.c_str());
 		}
+        RS select(const std::string& table,const std::string& fields,const std::string& where)
+		{
+		    return select(table.c_str(),fields.c_str(),where.c_str());
+		}
         RS select(const char* table,const char* fields,size_t limit)
 		{
 			std::string srtsql = "SELECT ";
@@ -606,6 +620,10 @@ namespace oct::cave::v1
 			//std::cout << srtsql << "\n";
 
 			return execute(srtsql.c_str());
+		}
+        RS select(const std::string& table,const std::string& fields,size_t limit)
+		{
+		    return select(table.c_str(),fields.c_str(),limit);
 		}
         RS select(const char* table,const char* fields,const char* where, size_t limit)
 		{
@@ -621,6 +639,10 @@ namespace oct::cave::v1
 
 			return execute(srtsql.c_str());
 		}
+        RS select(const std::string& table,const std::string& fields,const std::string& where, size_t limit)
+		{
+		    return select(table.c_str(),fields.c_str(),where.c_str(),limit);
+		}
         RS select(const char* table,const char* fields,const char* where, const char* order)
 		{
 			std::string srtsql = "SELECT ";
@@ -634,6 +656,10 @@ namespace oct::cave::v1
 			//std::cout << srtsql << "\n";
 
 			return execute(srtsql.c_str());
+		}
+        RS select(const std::string& table,const std::string& fields,const std::string& where, const std::string& order)
+		{
+		    return select(table.c_str(),fields.c_str(),where.c_str(),order.c_str());
 		}
         RS select(const char* table,const char* fields,const char* where, const char* order, size_t limit)
 		{
@@ -651,6 +677,10 @@ namespace oct::cave::v1
 
 			return execute(srtsql.c_str());
 		}
+        RS select(const std::string& table,const std::string& fields,const std::string& where, const std::string& order, size_t limit)
+		{
+		    return select(table.c_str(),fields.c_str(),where.c_str(),order.c_str(),limit);
+		}
 		//Por contenedor
         template<selectable SC> void select(std::vector<SC>& rs)
 		{
@@ -662,6 +692,10 @@ namespace oct::cave::v1
                 rs.push_back(result.next());
             }
 		}
+        template<selectable SC> void select(std::vector<SC>& rs,const std::string& where)
+		{
+			return select(rs,where.c_str());
+		}
         template<selectable SC> void select(std::vector<SC>& rs,const char* where)
 		{
 			std::string srtsql = "SELECT " + SC::select_fields() + " FROM " + SC::table() + " WHERE " + where;
@@ -672,6 +706,10 @@ namespace oct::cave::v1
                 rs.push_back(result.next());
             }
 		}
+        template<selectable SC> void select(std::vector<SC>& rs,const std::string& where,size_t limit)
+		{
+			return select(rs.where.c_str(),limit);
+		}
         template<selectable SC> void select(std::vector<SC>& rs,const char* where,size_t limit)
 		{
 			std::string srtsql = "SELECT " + SC::select_fields() + " FROM " + SC::table() + " WHERE " + where + " LIMIT " + std::to_string(limit);
@@ -681,6 +719,10 @@ namespace oct::cave::v1
             {
                 rs.push_back(result.next());
             }
+		}
+        template<selectable SC> void select(std::vector<SC>& rs,const std::string& where,const std::string& order,size_t limit)
+		{
+			return select(rs.where.c_str(),order,limit);
 		}
         template<selectable SC> void select(std::vector<SC>& rs,const char* where,const char* order,size_t limit)
 		{
@@ -733,20 +775,24 @@ namespace oct::cave::v1
 
 
         //por string
+        RS insert(const std::string& str)
+		{
+			return execute(str.c_str());
+		}
         RS insert(const char* str)
 		{
 			return execute(str);
 		}
+        template<core::natural ID> RS insert(const std::string& str, ID& id)
+        {
+            return insert(str.c_str(),id);
+        }
         template<core::natural ID> RS insert(const char* str, ID& id)
         {
             RS rs = insert(str);
             id = last_id();
             return rs;
         }
-        RS insert(const std::string& str)
-		{
-			return insert(str.c_str());
-		}
         RS insert(const char* table,const char* fields,const char* values)
 		{
 			std::string srtsql = "INSERT INTO ";
@@ -760,6 +806,10 @@ namespace oct::cave::v1
 			//std::cout << srtsql << "\n";
 
 			return insert(srtsql);
+		}
+        RS insert(const std::string& table,const std::string& fields,const  std::string& values)
+		{
+			return insert(table.c_str(),fields.c_str(),values.c_str());
 		}
 		//Por contenedor
         template<insertable IC> RS insert(const IC& ic)
@@ -788,6 +838,11 @@ namespace oct::cave::v1
 
 			return update(srtsql);
 		}
+
+        RS update(const std::string& table,const std::string& sets)
+		{
+		    return update(table.c_str(),sets.c_str());
+		}
         RS update(const char* table,const char* sets,const char* where)
 		{
 			std::string srtsql = "UPDATE ";
@@ -799,6 +854,11 @@ namespace oct::cave::v1
 			//std::cout << srtsql << "\n";
 
 			return update(srtsql);
+		}
+
+        RS update(const std::string& table,const std::string& sets,const std::string& where)
+		{
+		    return update(table.c_str(),sets.c_str(),where.c_str());
 		}
 		//Por contenedor
         template<updatable UC> RS update(const UC& uc)
@@ -866,16 +926,19 @@ namespace oct::cave::v1
         }
 
 
-
 		RS remove(const char* str)
 		{
 			return execute(str);
 		}
 		RS remove(const std::string& str)
 		{
-			return execute(str.c_str());
+			return remove(str.c_str());
 		}
 		//por string
+		RS remove(const std::string& table,const std::string& where)
+		{
+			return remove(table.c_str(),where.c_str());
+		}
 		RS remove(const char* table,const char* where)
 		{
 			std::string strsql = "DELETE FROM ";

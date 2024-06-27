@@ -118,37 +118,6 @@ namespace oct::cave::v1
         }
         return EXIT_FAILURE;
     }
-    bool update_config(const std::filesystem::path& file,const mmsql::Data& dt)
-    {
-        libconfig::Config config;
-        config.readFile(file.string().c_str());
-
-        libconfig::Setting &root = config.getRoot();
-        std::cout << "DB : " << (std::string) dt.get_database() << "\n";
-        root["database"]["mmsql"]["host"] = dt.get_host();
-        root["database"]["mmsql"]["user"] = dt.get_user();
-        root["database"]["mmsql"]["port"] = dt.get_port();
-        root["database"]["mmsql"]["password"] = dt.get_password();
-        root["database"]["mmsql"]["database"] = dt.get_database();
-
-        config.writeFile(file.string().c_str());
-
-        return true;
-    }
-    bool update_config(core::Configuration& file,const mmsql::Data& dt)
-    {
-        libconfig::Setting &database_setting = file.lookup("database");
-        std::cout << "DB : " << (std::string) dt.get_database() << "\n";
-        database_setting["mmsql"]["host"] = dt.get_host();
-        database_setting["mmsql"]["user"] = dt.get_user();
-        database_setting["mmsql"]["port"] = dt.get_port();
-        database_setting["mmsql"]["password"] = dt.get_password();
-        database_setting["mmsql"]["database"] = dt.get_database();
-
-        file.save();
-
-        return true;
-    }
 
 
 
